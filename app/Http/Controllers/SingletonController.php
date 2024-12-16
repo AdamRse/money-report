@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Revenu;
+use App\Models\TypeRevenu;
 use Illuminate\Http\Request;
 
 class SingletonController extends Controller
@@ -11,7 +13,8 @@ class SingletonController extends Controller
      */
     public function index()
     {
-        return view('accueil');
+        $typeRevenus = TypeRevenu::all();
+        return view('accueil', compact('typeRevenus'));
     }
 
     /**
@@ -19,7 +22,7 @@ class SingletonController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -27,7 +30,27 @@ class SingletonController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validation des données
+        $validated = $request->validate([
+            'montant' => 'required|numeric|min:0',
+            'date_revenu' => 'required|date',
+            'type_revenu_id' => 'required|exists:type_revenus,id',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        try {
+            // Création du revenu
+            Revenu::create($validated);
+
+            // Redirection avec message de succès
+            return redirect()->route('accueil')
+                           ->with('success', 'Le revenu a été enregistré avec succès');
+        } catch (\Exception $e) {
+            // En cas d'erreur, redirection avec message d'erreur
+            return redirect()->route('accueil')
+                           ->with('error', 'Une erreur est survenue lors de l\'enregistrement')
+                           ->withInput();
+        }
     }
 
     /**
