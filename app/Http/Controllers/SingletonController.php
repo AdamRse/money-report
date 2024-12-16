@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Revenu;
 use App\Models\TypeRevenu;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SingletonController extends Controller
 {
@@ -15,6 +17,59 @@ class SingletonController extends Controller
     {
         $typeRevenus = TypeRevenu::all();
         return view('accueil', compact('typeRevenus'));
+    }
+
+    public function list(Request $request)
+    {
+        // Validation des filtres
+        $validated = $request->validate([
+            'filter_type' => 'nullable|in:period,month',
+            'start_date' => 'nullable|date|required_if:filter_type,period',
+            'end_date' => 'nullable|date|required_if:filter_type,period|after_or_equal:start_date',
+            'month_number' => 'nullable|required_if:filter_type,month|integer|between:1,12',
+            'year_number' => 'nullable|required_if:filter_type,month|integer|min:1900',
+        ]);
+
+        // Construction de la requête de base
+        $query = Revenu::with('typeRevenu')
+                      ->orderBy('date_revenu', 'desc');
+
+        // Application des filtres
+        if ($request->filled('filter_type')) {
+            if ($request->filter_type === 'period') {
+                $query->whereBetween('date_revenu', [
+                    $request->start_date,
+                    $request->end_date
+                ]);
+            } elseif ($request->filter_type === 'month') {
+                $query->whereYear('date_revenu', $request->year_number)
+                      ->whereMonth('date_revenu', $request->month_number);
+            }
+        }
+
+        // Récupération des revenus et calcul des statistiques
+        $revenus = $query->get();
+
+        // Calcul des totaux
+        $stats = [
+            'total' => $revenus->sum('montant'),
+            'count' => $revenus->count(),
+            'average' => $revenus->avg('montant'),
+            'by_type' => $revenus->groupBy('typeRevenu.nom')
+                                ->map(function ($group) {
+                                    return [
+                                        'total' => $group->sum('montant'),
+                                        'count' => $group->count(),
+                                    ];
+                                }),
+        ];
+
+        // Préparation des données pour les filtres
+        $months = Revenu::selectRaw('DISTINCT DATE_FORMAT(date_revenu, "%Y-%m") as month')
+                        ->orderBy('month', 'desc')
+                        ->pluck('month');
+
+        return view('list', compact('revenus', 'stats', 'months'));
     }
 
     /**

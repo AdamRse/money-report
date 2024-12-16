@@ -8,7 +8,7 @@
     <nav>
         <ul>
             <li><a href="/">Accueil</a></li>
-            <li><a href="/about">À propos</a></li>
+            <li><a href="/revenus">Liste des revenus</a></li>
         </ul>
     </nav>
 
@@ -19,5 +19,6 @@
     <footer>
         Money Report &copy; Adam
     </footer>
+    @stack('scripts')
 </body>
 </html>
