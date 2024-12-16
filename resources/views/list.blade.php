@@ -11,7 +11,11 @@
             <h2>Détail des revenus</h2>
             @if($revenus->isEmpty())
                 <div class="empty-state">
-                    <p>Aucun revenu trouvé pour cette période</p>
+                    @if(isset($periodMessage) && !empty($periodMessage))
+                        <p>{{ $periodMessage }}</p>
+                    @else
+                        <p>Aucun revenu enregistré</p>
+                    @endif
                 </div>
             @else
                 <div class="table-container">
@@ -42,10 +46,18 @@
                 </div>
             @endif
         </div>
+    </div>
 
         <!-- Filtres -->
         <div class="filters-card">
             <h2 class="filters-title">Filtrer les revenus</h2>
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    @foreach($errors->all() as $error)
+                        <div class="alert-message">{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
             <form action="{{ route('revenus.list') }}" method="GET" class="filters-form" id="filterForm">
                 <div class="filters-type">
                     <div class="form-group">
@@ -144,14 +156,12 @@
                 @endforeach
             </div>
         </div>
-    </div>
 
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Script chargé'); // Debug
+        console.log('Script chargé');
 
-        // Récupération des éléments
         const filterType = document.getElementById('filter_type');
         const periodFilter = document.getElementById('periodFilter');
         const monthFilter = document.getElementById('monthFilter');
@@ -160,18 +170,15 @@
             filterType: filterType,
             periodFilter: periodFilter,
             monthFilter: monthFilter
-        }); // Debug
+        });
 
-        // Fonction pour afficher/masquer les filtres
         function updateFilters() {
             const selectedValue = filterType.value;
             console.log('Filtre sélectionné :', selectedValue);
 
-            // Cache tous les filtres
             periodFilter.style.display = 'none';
             monthFilter.style.display = 'none';
 
-            // Affiche le filtre sélectionné
             if (selectedValue === 'period') {
                 periodFilter.style.display = 'block';
             } else if (selectedValue === 'month') {
@@ -179,11 +186,9 @@
             }
         }
 
-        // Ajoute l'écouteur d'événement
         filterType.addEventListener('change', updateFilters);
         console.log('Écouteur d\'événement ajouté');
 
-        // Applique les filtres au chargement
         updateFilters();
     });
     </script>

@@ -21,55 +21,111 @@ class SingletonController extends Controller
 
     public function list(Request $request)
     {
-        // Validation des filtres
-        $validated = $request->validate([
-            'filter_type' => 'nullable|in:period,month',
-            'start_date' => 'nullable|date|required_if:filter_type,period',
-            'end_date' => 'nullable|date|required_if:filter_type,period|after_or_equal:start_date',
-            'month_number' => 'nullable|required_if:filter_type,month|integer|between:1,12',
-            'year_number' => 'nullable|required_if:filter_type,month|integer|min:1900',
-        ]);
+        try {
+            // Règles de base
+            $rules = [
+                'filter_type' => 'nullable|in:period,month',
+            ];
 
-        // Construction de la requête de base
-        $query = Revenu::with('typeRevenu')
-                      ->orderBy('date_revenu', 'desc');
-
-        // Application des filtres
-        if ($request->filled('filter_type')) {
+            // Ajout des règles en fonction du type de filtre
             if ($request->filter_type === 'period') {
-                $query->whereBetween('date_revenu', [
-                    $request->start_date,
-                    $request->end_date
-                ]);
+                $rules['start_date'] = [
+                    'required',
+                    'date',
+                    'before_or_equal:today',
+                ];
+                $rules['end_date'] = [
+                    'required',
+                    'date',
+                    'before_or_equal:today',
+                ];
             } elseif ($request->filter_type === 'month') {
-                $query->whereYear('date_revenu', $request->year_number)
-                      ->whereMonth('date_revenu', $request->month_number);
+                $rules['month_number'] = 'required|numeric|between:1,12';
+                $rules['year_number'] = [
+                    'required',
+                    'numeric',
+                    'min:1900',
+                    'max:' . date('Y')
+                ];
             }
+
+            $messages = [
+                'start_date.required' => 'La date de début est requise',
+                'end_date.required' => 'La date de fin est requise',
+                'start_date.before_or_equal' => 'La date de début ne peut pas être dans le futur',
+                'end_date.before_or_equal' => 'La date de fin ne peut pas être dans le futur',
+                'month_number.required' => 'Le mois est requis',
+                'month_number.between' => 'Le mois doit être compris entre 1 et 12',
+                'year_number.required' => 'L\'année est requise',
+                'year_number.max' => 'L\'année ne peut pas être dans le futur'
+            ];
+
+            $validated = $request->validate($rules, $messages);
+
+            // Validation supplémentaire pour la cohérence des dates de période
+            if ($request->filter_type === 'period' && $request->filled(['start_date', 'end_date'])) {
+                if ($request->start_date > $request->end_date) {
+                    throw new \Exception('La date de début doit être antérieure à la date de fin');
+                }
+            }
+
+            // Construction de la requête de base
+            $query = Revenu::with('typeRevenu')
+                        ->orderBy('date_revenu', 'desc');
+
+            // Application des filtres
+            if ($request->filled('filter_type')) {
+                if ($request->filter_type === 'period') {
+                    $query->whereBetween('date_revenu', [
+                        $request->start_date,
+                        $request->end_date
+                    ]);
+                } elseif ($request->filter_type === 'month') {
+                    $query->whereYear('date_revenu', $request->year_number)
+                        ->whereMonth('date_revenu', $request->month_number);
+                }
+            }
+
+            // Récupération des revenus
+            $revenus = $query->get();
+
+            // Préparation du message pour période vide
+            $periodMessage = '';
+            if ($revenus->isEmpty() && $request->filled('filter_type')) {
+                if ($request->filter_type === 'period') {
+                    $debut = Carbon::parse($request->start_date)->format('d/m/Y');
+                    $fin = Carbon::parse($request->end_date)->format('d/m/Y');
+                    $periodMessage = "Aucun revenu trouvé entre le $debut et le $fin";
+                } elseif ($request->filter_type === 'month') {
+                    $date = Carbon::create()
+                        ->setYear((int)$request->year_number)
+                        ->setMonth((int)$request->month_number)
+                        ->locale('fr');
+                    $periodMessage = "Aucun revenu trouvé pour " . $date->isoFormat('MMMM YYYY');
+                }
+            }
+
+            // Calcul des statistiques
+            $stats = [
+                'total' => $revenus->sum('montant'),
+                'count' => $revenus->count(),
+                'average' => $revenus->avg('montant'),
+                'by_type' => $revenus->groupBy('typeRevenu.nom')
+                                    ->map(function ($group) {
+                                        return [
+                                            'total' => $group->sum('montant'),
+                                            'count' => $group->count(),
+                                        ];
+                                    }),
+            ];
+
+            return view('list', compact('revenus', 'stats', 'periodMessage'));
+
+        } catch (\Exception $e) {
+            return redirect()->route('revenus.list')
+                            ->withErrors(['filter_error' => $e->getMessage()])
+                            ->withInput();
         }
-
-        // Récupération des revenus et calcul des statistiques
-        $revenus = $query->get();
-
-        // Calcul des totaux
-        $stats = [
-            'total' => $revenus->sum('montant'),
-            'count' => $revenus->count(),
-            'average' => $revenus->avg('montant'),
-            'by_type' => $revenus->groupBy('typeRevenu.nom')
-                                ->map(function ($group) {
-                                    return [
-                                        'total' => $group->sum('montant'),
-                                        'count' => $group->count(),
-                                    ];
-                                }),
-        ];
-
-        // Préparation des données pour les filtres
-        $months = Revenu::selectRaw('DISTINCT DATE_FORMAT(date_revenu, "%Y-%m") as month')
-                        ->orderBy('month', 'desc')
-                        ->pluck('month');
-
-        return view('list', compact('revenus', 'stats', 'months'));
     }
 
     /**
