@@ -56,7 +56,7 @@ nav a:hover {
 
 /* Layout principal */
 main {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -340,6 +340,30 @@ h1 {
     text-overflow: ellipsis;
 }
 
+.nvRevenu{
+    background-color: #e9f4fd;
+    color: #0D3C61;
+    padding: 20px 0;
+}
+.nvRevenu hr{
+    margin: 15px 0;
+}
+.nvRevenu label{
+    display: inline;
+    cursor: pointer;
+
+}
+.nvRevenu .partLabel{
+    display: inline-block;
+    width: 45%;
+}
+.nvRevenu .partCheckbox{
+    display: inline-block;
+    width: 40%;
+    padding-left: 5%;
+}
+
+
 /* État vide */
 .empty-state {
     text-align: center;
@@ -382,6 +406,9 @@ footer {
     }
 }
 @media (max-width: 768px) {
+    main{
+        width: 100%;
+    }
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -422,6 +449,11 @@ footer {
     .month-selects {
         flex-direction: column;
         gap: 1rem;
+    }
+}
+@media (max-width: 1200px) {
+    main{
+        width: 700px;
     }
 }
 

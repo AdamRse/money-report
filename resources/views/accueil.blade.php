@@ -64,7 +64,7 @@
 
             <div class="form-group">
                 <label for="type_revenu_id" class="form-label">Type de revenu</label>
-                <select name="type_revenu_id"
+                <select id="select_type_revenu" name="type_revenu_id"
                         id="type_revenu_id"
                         required
                         class="form-select @error('type_revenu_id') form-input-error @enderror">
@@ -75,11 +75,60 @@
                             {{ $type->nom }}
                         </option>
                     @endforeach
+                    <option value="0">
+                        + Autre (ajouter un nouveau type de revenu)
+                    </option>
                 </select>
                 @error('type_revenu_id')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
+
+            <div class="form-group nvRevenu hidden">
+                <h3>Ajouter un type revenu</h3>
+                <div class="partLabel">
+                    <label for="nvRevenu" class="form-label">Label</label>
+                    <input type="text" name="nvRevenu" id="nvRevenu" class="form-input @error('nv_revenu') form-input-error @enderror" />
+                    @error('nv_revenu')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                    <hr>
+                    <label for="nvRevenuDesc" class="form-label">Description (optionel)</label>
+                    <textarea type="text" name="nvRevenuDesc" id="nvRevenuDesc" class="form-input" rows="2"></textarea>
+                    @error('nv_revenu')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="partCheckbox">
+                    <input type="checkbox" name="imposable" id="imposable" checked="1" value="1" />
+                    <label for="imposable" class="form-label">Revenu imposable</label>
+                    <br/>
+                    <hr>
+                    <input type="checkbox" name="declarable" id="declarable" checked="1" value="1" />
+                    <label for="declarable" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
+                </div>
+            </div>
+            @push('scripts')
+            <script>
+                const selectNvRvn = document.querySelector("#select_type_revenu");
+                const divNvRvn = document.querySelector(".form-group.nvRevenu");
+                const iNvRevenu = document.querySelector("#nvRevenu");
+
+                function checkNvrevenu(){
+                    console.log(selectNvRvn.value);
+
+                    if(selectNvRvn.value === "0"){
+                        divNvRvn.classList.remove("hidden");
+                        iNvRevenu.focus();
+                    }
+                    else{
+                        divNvRvn.classList.add("hidden");
+                    }
+                }
+                selectNvRvn.addEventListener('change', checkNvrevenu);
+            </script>
+            @endpush
+
 
             <div class="form-group">
                 <label for="notes" class="form-label">Notes (optionnel)</label>

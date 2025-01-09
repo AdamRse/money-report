@@ -7,20 +7,18 @@ use App\Models\TypeRevenu;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
-class SingletonController extends Controller
-{
+class SingletonController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index() {
         $typeRevenus = TypeRevenu::all();
         return view('accueil', compact('typeRevenus'));
     }
 
-    public function list(Request $request)
-    {
+    public function list(Request $request) {
         try {
             // Règles de base
             $rules = [
@@ -71,7 +69,7 @@ class SingletonController extends Controller
 
             // Construction de la requête de base
             $query = Revenu::with('typeRevenu')
-                        ->orderBy('date_revenu', 'desc');
+                ->orderBy('date_revenu', 'desc');
 
             // Application des filtres
             if ($request->filled('filter_type')) {
@@ -111,88 +109,104 @@ class SingletonController extends Controller
                 'count' => $revenus->count(),
                 'average' => $revenus->avg('montant'),
                 'by_type' => $revenus->groupBy('typeRevenu.nom')
-                                    ->map(function ($group) {
-                                        return [
-                                            'total' => $group->sum('montant'),
-                                            'count' => $group->count(),
-                                        ];
-                                    }),
+                    ->map(function ($group) {
+                        return [
+                            'total' => $group->sum('montant'),
+                            'count' => $group->count(),
+                        ];
+                    }),
             ];
 
             return view('list', compact('revenus', 'stats', 'periodMessage'));
-
         } catch (\Exception $e) {
             return redirect()->route('revenus.list')
-                            ->withErrors(['filter_error' => $e->getMessage()])
-                            ->withInput();
+                ->withErrors(['filter_error' => $e->getMessage()])
+                ->withInput();
         }
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-
+    public function create() {
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         // Validation des données
         $validated = $request->validate([
             'montant' => 'required|numeric|min:0',
             'date_revenu' => 'required|date',
-            'type_revenu_id' => 'required|exists:type_revenus,id',
+            'type_revenu_id' => [
+                'required',
+                'integer',
+                Rule::when($request->type_revenu_id != 0, ['exists:type_revenus,id'])
+            ],
             'notes' => 'nullable|string|max:1000',
+            'nvRevenu' => "required_if:type_revenu_id,0|string|between:2,63",
+            'nvRevenuDesc' => "nullable|string|max:255",
+            'imposable' => "required_if:type_revenu_id,0|boolean",
+            'declarable' => "required_if:type_revenu_id,0|boolean"
         ]);
 
+        $createRevenu = [
+            'montant' => $validated['montant'],
+            'date_revenu' => $validated['date_revenu'],
+            'type_revenu_id' => $validated['type_revenu_id'],
+            'notes' => $validated['notes'] ?? null
+        ];
+
         try {
+            if ($validated['type_revenu_id'] == 0) { //On ajoute un nouveau champ
+                $newTypeRevenu = TypeRevenu::create([
+                    'nom' => $validated['nvRevenu'],
+                    'description' => $validated['nvRevenuDesc'] ?? null,
+                    'imposable' => $validated['imposable'],
+                    'declarable' => $validated['declarable']
+                ]);
+                $createRevenu['type_revenu_id'] = $newTypeRevenu->id;
+            }
             // Création du revenu
-            Revenu::create($validated);
+            Revenu::create($createRevenu);
 
             // Redirection avec message de succès
             return redirect()->route('accueil')
-                           ->with('success', 'Le revenu a été enregistré avec succès');
+                ->with('success', 'Le revenu a été enregistré avec succès');
         } catch (\Exception $e) {
             // En cas d'erreur, redirection avec message d'erreur
             return redirect()->route('accueil')
-                           ->with('error', 'Une erreur est survenue lors de l\'enregistrement')
-                           ->withInput();
+                ->with('error', 'Une erreur est survenue lors de l\'enregistrement')
+                ->withInput();
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
+    public function show(string $id) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
+    public function edit(string $id) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
+    public function update(Request $request, string $id) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
+    public function destroy(string $id) {
         //
     }
 }
