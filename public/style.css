@@ -324,6 +324,11 @@ h1 {
     border-bottom: 1px solid var(--gray-medium);
 }
 
+.revenus-table .affirmative {
+    font-weight: bolder;
+    color: var(--primary-color);
+}
+
 .date-cell {
     white-space: nowrap;
 }
@@ -435,10 +440,6 @@ footer {
         padding: 0.75rem;
     }
 
-    .revenus-table b {
-        font-weight: bolder;
-        color: var(--primary-color);
-    }
     .notes-cell {
         max-width: 150px;
     }

@@ -36,13 +36,18 @@
                                     <td class="date-cell">
                                         {{ Carbon\Carbon::parse($revenu->date_revenu)->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                     </td>
-                                    <td class="type-cell">{{ $revenu->typeRevenu->nom }}</td>
+                                    <td class="type-cell" title="{{ $revenu->typeRevenu->description }}">{{ $revenu->typeRevenu->nom }}</td>
+
                                     <td class="amount-cell">
                                         <b>{{ number_format($revenu->montant, 2, ',', ' ') }} €</b>
                                     </td>
                                     <td>{{ $revenu->notes ?: '-' }}</td>
-                                    <td>{{ $revenu->imposable ? "<b>Oui</b>" : "Non" }}</td>
-                                    <td>{{ $revenu->declarable ? "<b>Oui</b>" : "Non" }}</td>
+                                    <td class="{{ $revenu->typeRevenu->imposable ? 'affirmative' : '' }}">
+                                        {{ $revenu->typeRevenu->imposable ? "Oui" : "Non" }}
+                                    </td>
+                                    <td class="{{ $revenu->typeRevenu->declarable ? 'affirmative' : '' }}">
+                                        {{ $revenu->typeRevenu->declarable ? "Oui" : "Non" }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -134,6 +139,14 @@
         <!-- Statistiques -->
         <div class="stats-grid">
             <div class="stats-card">
+                <span class="stats-label">Total imposable</span>
+                <span class="stats-value">{{ number_format($stats['total_imposable'], 2) }} €</span>
+            </div>
+            <div class="stats-card">
+                <span class="stats-label">Total déclarables</span>
+                <span class="stats-value">{{ number_format($stats['total_declarable'], 2) }} €</span>
+            </div>
+            <div class="stats-card">
                 <span class="stats-label">Total</span>
                 <span class="stats-value">{{ number_format($stats['total'], 2, ',', ' ') }} €</span>
             </div>
@@ -148,7 +161,7 @@
         </div>
 
         <!-- Répartition par type -->
-        <div class="types-card">
+        {{-- <div class="types-card">
             <h2>Répartition par type</h2>
             <div class="types-grid">
                 @foreach($stats['by_type'] as $type => $typeStats)
@@ -159,7 +172,7 @@
                     </div>
                 @endforeach
             </div>
-        </div>
+        </div> --}}
 
     @push('scripts')
     <script>

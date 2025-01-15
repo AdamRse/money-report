@@ -108,6 +108,12 @@ class SingletonController extends Controller {
                 'total' => $revenus->sum('montant'),
                 'count' => $revenus->count(),
                 'average' => $revenus->avg('montant'),
+                'total_imposable' => $revenus->filter(function ($revenu) {
+                    return $revenu->typeRevenu->imposable;
+                })->sum('montant'),
+                'total_declarable' => $revenus->filter(function ($revenu) {
+                    return $revenu->typeRevenu->declarable;
+                })->sum('montant'),
                 'by_type' => $revenus->groupBy('typeRevenu.nom')
                     ->map(function ($group) {
                         return [
@@ -135,49 +141,53 @@ class SingletonController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        // Validation des données
-        $validated = $request->validate([
-            'montant' => 'required|numeric|min:0',
-            'date_revenu' => 'required|date',
-            'type_revenu_id' => [
-                'required',
-                'integer',
-                Rule::when($request->type_revenu_id != 0, ['exists:type_revenus,id'])
-            ],
-            'notes' => 'nullable|string|max:1000',
-            'nvRevenu' => "required_if:type_revenu_id,0|string|between:2,63",
-            'nvRevenuDesc' => "nullable|string|max:255",
-            'imposable' => "required_if:type_revenu_id,0|boolean",
-            'declarable' => "required_if:type_revenu_id,0|boolean"
-        ]);
-
-        $createRevenu = [
-            'montant' => $validated['montant'],
-            'date_revenu' => $validated['date_revenu'],
-            'type_revenu_id' => $validated['type_revenu_id'],
-            'notes' => $validated['notes'] ?? null
-        ];
+        try {
+            $validated = $request->validate([
+                'montant' => 'required|numeric|min:0',
+                'date_revenu' => 'required|date',
+                'type_revenu_id' => [
+                    'required',
+                    'integer',
+                    Rule::when($request->type_revenu_id != 0, ['exists:type_revenus,id'])
+                ],
+                'notes' => 'nullable|string|max:1000',
+                'nvRevenu' => 'nullable|required_if:type_revenu_id,0|string|between:2,63',
+                'nvRevenuDesc' => 'nullable|string|max:255',
+                'imposable' => 'nullable|boolean',
+                'declarable' => 'nullable|boolean'
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Une erreur est survenue: ' . $e->getMessage())
+                ->withInput();
+        }
 
         try {
-            if ($validated['type_revenu_id'] == 0) { //On ajoute un nouveau champ
+            $createRevenu = [
+                'montant' => $validated['montant'],
+                'date_revenu' => $validated['date_revenu'],
+                'type_revenu_id' => $validated['type_revenu_id'],
+                'notes' => $validated['notes'] ?? null
+            ];
+
+            if ($validated['type_revenu_id'] == 0) {
                 $newTypeRevenu = TypeRevenu::create([
                     'nom' => $validated['nvRevenu'],
                     'description' => $validated['nvRevenuDesc'] ?? null,
-                    'imposable' => $validated['imposable'],
-                    'declarable' => $validated['declarable']
+                    'imposable' => isset($validated['imposable']) ? 1 : 0,
+                    'declarable' => isset($validated['declarable']) ? 1 : 0
                 ]);
                 $createRevenu['type_revenu_id'] = $newTypeRevenu->id;
             }
+
             // Création du revenu
             Revenu::create($createRevenu);
 
-            // Redirection avec message de succès
             return redirect()->route('accueil')
                 ->with('success', 'Le revenu a été enregistré avec succès');
         } catch (\Exception $e) {
-            // En cas d'erreur, redirection avec message d'erreur
             return redirect()->route('accueil')
-                ->with('error', 'Une erreur est survenue lors de l\'enregistrement')
+                ->with('error', 'Une erreur est survenue lors de l\'enregistrement : ' . $e->getMessage())
                 ->withInput();
         }
     }
