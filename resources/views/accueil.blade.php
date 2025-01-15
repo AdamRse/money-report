@@ -125,6 +125,7 @@
                         divNvRvn.classList.add("hidden");
                     }
                 }
+                checkNvrevenu();
                 selectNvRvn.addEventListener('change', checkNvrevenu);
             </script>
             @endpush

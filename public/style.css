@@ -435,6 +435,10 @@ footer {
         padding: 0.75rem;
     }
 
+    .revenus-table b {
+        font-weight: bolder;
+        color: var(--primary-color);
+    }
     .notes-cell {
         max-width: 150px;
     }

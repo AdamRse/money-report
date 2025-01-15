@@ -25,20 +25,24 @@
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Montant</th>
-                                <th>Notes</th>
+                                <th>Note</th>
+                                <th>Imposable</th>
+                                <th>Déclarable</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($revenus as $revenu)
                                 <tr>
                                     <td class="date-cell">
-                                        {{ Carbon\Carbon::parse($revenu->date_revenu)->format('d/m/Y') }}
+                                        {{ Carbon\Carbon::parse($revenu->date_revenu)->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                     </td>
                                     <td class="type-cell">{{ $revenu->typeRevenu->nom }}</td>
                                     <td class="amount-cell">
-                                        {{ number_format($revenu->montant, 2, ',', ' ') }} €
+                                        <b>{{ number_format($revenu->montant, 2, ',', ' ') }} €</b>
                                     </td>
-                                    <td class="notes-cell">{{ $revenu->notes ?: '-' }}</td>
+                                    <td>{{ $revenu->notes ?: '-' }}</td>
+                                    <td>{{ $revenu->imposable ? "<b>Oui</b>" : "Non" }}</td>
+                                    <td>{{ $revenu->declarable ? "<b>Oui</b>" : "Non" }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
