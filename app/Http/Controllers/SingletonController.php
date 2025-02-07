@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Revenu;
 use App\Models\TypeRevenu;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class SingletonController extends Controller {
@@ -16,6 +19,38 @@ class SingletonController extends Controller {
     public function index() {
         $typeRevenus = TypeRevenu::all();
         return view('accueil', compact('typeRevenus'));
+    }
+
+    public function login(Request $request) {
+        if ($request->has('email') && $request->has('password')) {
+            dd($request);
+            return view('accueil');
+        }
+        return view('login');
+    }
+    public function register(Request $request) {
+        if ($request->isMethod('post')) {
+            // Validation des champs
+            $request->validate([
+                'user' => 'required|string|max:31',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            // Création de l'utilisateur
+            $user = User::create([
+                'name' => $request->user,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Connexion automatique
+            Auth::login($user);
+
+            return redirect()->route('accueil')->with('success', 'Inscription réussie');
+        }
+
+        return view('register');
     }
 
     public function list(Request $request) {
