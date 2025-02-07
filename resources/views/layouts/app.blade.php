@@ -14,7 +14,12 @@
             @endguest
             @auth
                 <li><a href="/revenus">Liste des revenus</a></li>
-                <li><a href="/logout">Déconnexion</a></li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit">Déconnexion</button>
+                    </form>
+                </li>
             @endauth
         </ul>
     </nav>

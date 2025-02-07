@@ -14,5 +14,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', 'index')->name('accueil');
         Route::post('/revenu', 'store')->name('revenu.store');
         Route::get('/revenus', 'list')->name('revenus.list');
+        Route::get('/logout', 'logout')->name('logout');
     });
 });

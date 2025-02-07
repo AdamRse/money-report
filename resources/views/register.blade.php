@@ -28,12 +28,12 @@
         @error('password')
             <span>{{ $message }}</span>
         @enderror
-        <input type="password" id="passwordConfirm" name="passwordConfirm" required>
-        @error('passwordConfirm')
+        <input type="password" id="password_confirmation" name="password_confirmation" required>
+        @error('password_confirmation')
             <span>{{ $message }}</span>
         @enderror
     </div>
 
-    <button type="submit">Se connecter</button>
+    <button type="submit">Créer un compte</button>
 </form>
 @endsection

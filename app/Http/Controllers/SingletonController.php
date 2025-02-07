@@ -21,9 +21,19 @@ class SingletonController extends Controller {
         return view('accueil', compact('typeRevenus'));
     }
 
+    public function logout() {
+        Auth::logout();
+        // Invalider la session pour plus de sécurité
+        request()->session()->invalidate();
+
+        // Régénérer le token CSRF
+        request()->session()->regenerateToken();
+
+        // Rediriger vers la page d'accueil
+        return redirect('/');
+    }
     public function login(Request $request) {
         if ($request->has('email') && $request->has('password')) {
-            dd($request);
             return view('accueil');
         }
         return view('login');
@@ -34,7 +44,7 @@ class SingletonController extends Controller {
             $request->validate([
                 'user' => 'required|string|max:31',
                 'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:6|confirmed',
+                'password' => 'required|string|min:4|confirmed',
             ]);
 
             // Création de l'utilisateur
