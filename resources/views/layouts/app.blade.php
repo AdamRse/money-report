@@ -7,7 +7,6 @@
 <body>
     <nav>
         <ul>
-            <li><a href="/">Accueil</a></li>
             @guest
                 <li><a href="/login">Connexion</a></li>
                 <li><a href="/register">Inscription</a></li>

@@ -33,12 +33,25 @@ class SingletonController extends Controller {
         return redirect('/');
     }
     public function login(Request $request) {
-        if ($request->has('email') && $request->has('password')) {
-            return view('accueil');
+        //POST pour l'envoi des données
+        if ($request->isMethod('post')) {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
+            if (Auth::attempt($credentials, $request->boolean('remember'))) {
+                $request->session()->regenerate();
+                return redirect()->intended('accueil');
+            }
+            return back()->withErrors([
+                'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
+            ])->onlyInput('email');
         }
+
         return view('login');
     }
     public function register(Request $request) {
+        //POST pour l'envoi des données
         if ($request->isMethod('post')) {
             // Validation des champs
             $request->validate([
