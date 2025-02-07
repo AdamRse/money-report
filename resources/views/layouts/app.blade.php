@@ -8,7 +8,14 @@
     <nav>
         <ul>
             <li><a href="/">Accueil</a></li>
-            <li><a href="/revenus">Liste des revenus</a></li>
+            @guest
+                <li><a href="/login">Connexion</a></li>
+                <li><a href="/register">Inscription</a></li>
+            @endguest
+            @auth
+                <li><a href="/revenus">Liste des revenus</a></li>
+                <li><a href="/logout">Déconnexion</a></li>
+            @endauth
         </ul>
     </nav>
 
