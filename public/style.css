@@ -513,3 +513,51 @@ footer {
 .month-selects .form-group {
     flex: 1;
 }
+
+/*
+** Parsing
+*/
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.import-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
+.revenus-table td:first-child {
+    text-align: center;
+    width: 80px;
+}
+
+#importForm {
+    margin-top: 2rem;
+}
+
+.type-select {
+    min-width: 200px;
+    max-width: 300px;
+    background-color: #fff;
+}
+
+/* Ajustement de la largeur des colonnes */
+.revenus-table td:nth-child(3) {
+    /* Colonne libellé */
+    max-width: 400px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.revenus-table td:nth-child(5) {
+    /* Colonne select */
+    min-width: 200px;
+}
+
+/* Style pour les options du select */
+.type-select option {
+    padding: 8px;
+}

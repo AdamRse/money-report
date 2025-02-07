@@ -53,34 +53,82 @@
     </div>
 
     @if(isset($revenus))
-        <div class="revenus-card">
-            <h2>Revenus détectés</h2>
-            @if(empty($revenus))
-                <div class="empty-state">
-                    <p>Aucun revenu n'a été détecté dans le fichier</p>
+    <div class="revenus-card">
+        <h2>Revenus détectés</h2>
+        @if(empty($revenus))
+            <div class="empty-state">
+                <p>Aucun revenu n'a été détecté dans le fichier</p>
+            </div>
+        @else
+            <form action="{{ route('multipleRevenus') }}" method="POST" id="importForm">
+                @csrf
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="toggleAll()">Tout sélectionner</button>
+                    <button type="submit" class="btn btn-primary">Importer les revenus sélectionnés</button>
                 </div>
-            @else
+
                 <div class="table-container">
                     <table class="revenus-table">
                         <thead>
                             <tr>
+                                <th>Importer</th>
                                 <th>Date</th>
                                 <th>Libellé</th>
                                 <th>Montant</th>
+                                <th>Type de revenu</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($revenus as $revenu)
+                            @foreach($revenus as $index => $revenu)
                                 <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                            name="revenus[{{ $index }}][selected]"
+                                            class="import-checkbox"
+                                            {{ $revenu['selected'] ? 'checked' : '' }}>
+                                        <input type="hidden"
+                                            name="revenus[{{ $index }}][date]"
+                                            value="{{ $revenu['date'] }}">
+                                        <input type="hidden"
+                                            name="revenus[{{ $index }}][libelle]"
+                                            value="{{ $revenu['libelle'] }}">
+                                        <input type="hidden"
+                                            name="revenus[{{ $index }}][montant]"
+                                            value="{{ $revenu['montant'] }}">
+                                    </td>
                                     <td class="date-cell">{{ $revenu['date'] }}</td>
                                     <td>{{ $revenu['libelle'] }}</td>
                                     <td class="amount-cell">{{ number_format($revenu['montant'], 2, ',', ' ') }} €</td>
+                                    <td>
+                                        <select name="revenus[{{ $index }}][type_revenu_id]"
+                                                class="form-select type-select">
+                                            <option value="">Sélectionner un type</option>
+                                            @foreach($typeRevenus as $type)
+                                                <option value="{{ $type->id }}"
+                                                    {{ isset($revenu['type_revenu_id']) && $revenu['type_revenu_id'] == $type->id ? 'selected' : '' }}
+                                                    title="{{ $type->description }}">
+                                                        {{ $type->nom }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-            @endif
-        </div>
-    @endif
+            </form>
+
+            @push('scripts')
+            <script>
+                function toggleAll() {
+                    const checkboxes = document.querySelectorAll('.import-checkbox');
+                    const isAllChecked = [...checkboxes].every(cb => cb.checked);
+                    checkboxes.forEach(cb => cb.checked = !isAllChecked);
+                }
+            </script>
+            @endpush
+        @endif
+    </div>
+@endif
 @endsection
