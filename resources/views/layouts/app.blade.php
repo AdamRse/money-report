@@ -13,7 +13,9 @@
             @endguest
             @auth
                 <li><span>{{ auth()->user()->name }}</span></li>
+                <li><a href="/revenu">Ajouter un revenu</a></li>
                 <li><a href="/revenus">Liste des revenus</a></li>
+                <li><a href="/parse">Parser un document</a></li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

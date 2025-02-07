@@ -15,5 +15,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/revenu', 'store')->name('revenu.store');
         Route::get('/revenus', 'list')->name('revenus.list');
         Route::post('/logout', 'logout')->name('logout');
+        Route::get('/parse', 'parse')->name('parse');
+        Route::post('/parse', 'parse')->name('parse.request');
     });
 });

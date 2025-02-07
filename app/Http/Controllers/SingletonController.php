@@ -16,6 +16,84 @@ class SingletonController extends Controller {
     /**
      * Display a listing of the resource.
      */
+
+    public function parse(Request $request) {
+        // Affichage du formulaire pour GET
+        if ($request->isMethod('get')) {
+            return view('parse');
+        }
+
+        // Traitement du fichier pour POST
+        try {
+            // Validation du fichier
+            $request->validate([
+                'bankFile' => 'required|file|mimes:csv,tsv,txt|max:2048'
+            ]);
+
+            $file = $request->file('bankFile');
+            $content = file_get_contents($file->path());
+
+            // Détection du délimiteur (CSV ou TSV)
+            $delimiter = str_contains($file->getClientOriginalName(), '.tsv') ? "\t" : ";";
+
+            // Conversion en tableau de lignes
+            $lines = explode("\n", $content);
+
+            // Recherche de la ligne d'en-tête
+            $headerIndex = -1;
+            foreach ($lines as $index => $line) {
+                if (str_contains($line, 'Date') && str_contains($line, 'Montant')) {
+                    $headerIndex = $index;
+                    break;
+                }
+            }
+
+            if ($headerIndex === -1) {
+                throw new \Exception("Format de fichier invalide : impossible de trouver l'en-tête des colonnes");
+            }
+
+            // Initialisation du tableau des revenus
+            $revenus = [];
+
+            // Traitement des lignes après l'en-tête
+            for ($i = $headerIndex + 1; $i < count($lines); $i++) {
+                $line = trim($lines[$i]);
+                if (empty($line)) continue;
+
+                // Découpage de la ligne
+                $columns = str_getcsv($line, $delimiter);
+                if (count($columns) < 3) continue;
+
+                // Extraction des données
+                $date = trim($columns[0]);
+                $libelle = trim($columns[1], " \t\n\r\0\x0B\""); // Nettoyage des guillemets et espaces
+                $montant = str_replace(',', '.', trim($columns[2])); // Conversion virgule en point
+
+                // Ne garder que les montants positifs
+                if (floatval($montant) <= 0) continue;
+
+                $revenus[] = [
+                    'date' => $date,
+                    'libelle' => $libelle,
+                    'montant' => floatval($montant)
+                ];
+            }
+
+            // Tri des revenus par date décroissante
+            usort($revenus, function ($a, $b) {
+                return strtotime($b['date']) - strtotime($a['date']);
+            });
+
+            return view('parse', [
+                'revenus' => $revenus,
+                'parseResults' => true
+            ]);
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('parse')
+                ->with('error', 'Erreur lors du parsing : ' . $e->getMessage());
+        }
+    }
     public function index() {
         $typeRevenus = TypeRevenu::all();
         return view('accueil', compact('typeRevenus'));
