@@ -41,17 +41,36 @@ nav ul {
     margin: 0 auto;
 }
 
-nav a {
+nav button{
+    border-color: var(--primary-color);
     color: var(--primary-color);
+    background-color: #fff;
+    font-weight: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+nav a{
     text-decoration: none;
+}
+nav a:visited{
+    color: inherit;
+}
+
+nav li {
+    color: var(--primary-color);
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: var(--radius);
     transition: background-color 0.2s;
 }
 
-nav a:hover {
+nav li:hover {
     background-color: var(--gray-light);
+    cursor: pointer;
 }
 
 /* Layout principal */

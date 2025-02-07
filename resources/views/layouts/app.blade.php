@@ -12,6 +12,7 @@
                 <li><a href="/register">Inscription</a></li>
             @endguest
             @auth
+                <li><span>{{ auth()->user()->name }}</span></li>
                 <li><a href="/revenus">Liste des revenus</a></li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
