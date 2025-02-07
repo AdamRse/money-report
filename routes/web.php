@@ -12,6 +12,7 @@ Route::controller(SingletonController::class)->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::controller(SingletonController::class)->group(function () {
         Route::get('/', 'index')->name('accueil');
+        Route::get('/revenu', 'index')->name('revenu');
         Route::post('/revenu', 'store')->name('revenu.store');
         Route::get('/revenus', 'list')->name('revenus.list');
         Route::post('/logout', 'logout')->name('logout');
