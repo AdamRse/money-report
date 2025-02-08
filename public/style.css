@@ -55,6 +55,7 @@ nav button{
 
 nav a{
     text-decoration: none;
+    color: inherit;
 }
 nav a:visited{
     color: inherit;

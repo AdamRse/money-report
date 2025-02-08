@@ -179,6 +179,45 @@ class SingletonController extends Controller {
         }
     }
 
+    public function typeRevenu(Request $request) {
+        // GET pour afficher le formulaire
+        if ($request->isMethod('get')) {
+            return view('type-revenu');
+        }
+
+        // POST pour traiter le formulaire
+        try {
+            $validated = $request->validate([
+                'nom' => 'required|string|min:2|max:63|unique:type_revenus,nom',
+                'description' => 'nullable|string|max:255',
+                'imposable' => 'sometimes|boolean',
+                'declarable' => 'sometimes|boolean',
+            ], [
+                'nom.required' => 'Le nom du type de revenu est obligatoire',
+                'nom.min' => 'Le nom doit faire au moins 2 caractères',
+                'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
+                'nom.unique' => 'Ce type de revenu existe déjà',
+                'description.max' => 'La description ne peut pas dépasser 255 caractères',
+            ]);
+
+            TypeRevenu::create([
+                'nom' => $validated['nom'],
+                'description' => $validated['description'] ?? null,
+                'imposable' => isset($validated['imposable']) ? 1 : 0,
+                'declarable' => isset($validated['declarable']) ? 1 : 0,
+            ]);
+
+            return redirect()
+                ->route('typeRevenu')
+                ->with('success', 'Type de revenu créé avec succès');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('typeRevenu')
+                ->with('error', 'Une erreur est survenue lors de la création du type de revenu : ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
     /**
      * Enregistre plusieurs revenus en base de données
      */

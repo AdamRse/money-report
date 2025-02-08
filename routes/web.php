@@ -19,5 +19,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/parse', 'parse')->name('parse');
         Route::post('/parse', 'parse')->name('parse.request');
         Route::post('/multipleRevenus', 'multipleRevenus')->name('multipleRevenus');
+        Route::get('/type-revenu', 'typeRevenu')->name('typeRevenu');
+        Route::post('/type-revenu', 'typeRevenu')->name('typeRevenu.store');
     });
 });
