@@ -1,4 +1,5 @@
 <?php
+// routes/web.php
 
 use App\Http\Controllers\SingletonController;
 use Illuminate\Support\Facades\Route;
@@ -21,5 +22,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/multipleRevenus', 'multipleRevenus')->name('multipleRevenus');
         Route::get('/type-revenu', 'typeRevenu')->name('typeRevenu');
         Route::post('/type-revenu', 'typeRevenu')->name('typeRevenu.store');
+        // Ajout des nouvelles routes pour la modification et suppression
+        Route::put('/type-revenu/{id}', 'updateTypeRevenu')->name('typeRevenu.update');
+        Route::delete('/type-revenu/{id}', 'deleteTypeRevenu')->name('typeRevenu.destroy');
     });
 });

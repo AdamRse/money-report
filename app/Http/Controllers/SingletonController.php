@@ -179,13 +179,54 @@ class SingletonController extends Controller {
         }
     }
 
+    // public function typeRevenu(Request $request) {
+    //     // GET pour afficher le formulaire
+    //     if ($request->isMethod('get')) {
+    //         return view('type-revenu');
+    //     }
+
+    //     // POST pour traiter le formulaire
+    //     try {
+    //         $validated = $request->validate([
+    //             'nom' => 'required|string|min:2|max:63|unique:type_revenus,nom',
+    //             'description' => 'nullable|string|max:255',
+    //             'imposable' => 'sometimes|boolean',
+    //             'declarable' => 'sometimes|boolean',
+    //         ], [
+    //             'nom.required' => 'Le nom du type de revenu est obligatoire',
+    //             'nom.min' => 'Le nom doit faire au moins 2 caractères',
+    //             'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
+    //             'nom.unique' => 'Ce type de revenu existe déjà',
+    //             'description.max' => 'La description ne peut pas dépasser 255 caractères',
+    //         ]);
+
+    //         TypeRevenu::create([
+    //             'nom' => $validated['nom'],
+    //             'description' => $validated['description'] ?? null,
+    //             'imposable' => isset($validated['imposable']) ? 1 : 0,
+    //             'declarable' => isset($validated['declarable']) ? 1 : 0,
+    //         ]);
+
+    //         return redirect()
+    //             ->route('typeRevenu')
+    //             ->with('success', 'Type de revenu créé avec succès');
+    //     } catch (\Exception $e) {
+    //         return redirect()
+    //             ->route('typeRevenu')
+    //             ->with('error', 'Une erreur est survenue lors de la création du type de revenu : ' . $e->getMessage())
+    //             ->withInput();
+    //     }
+    // }
+
     public function typeRevenu(Request $request) {
         // GET pour afficher le formulaire
         if ($request->isMethod('get')) {
-            return view('type-revenu');
+            // Récupérer tous les types de revenus pour l'affichage dans le tableau
+            $typeRevenus = TypeRevenu::all();
+            return view('type-revenu', compact('typeRevenus'));
         }
 
-        // POST pour traiter le formulaire
+        // Le reste de la méthode reste inchangé pour le POST
         try {
             $validated = $request->validate([
                 'nom' => 'required|string|min:2|max:63|unique:type_revenus,nom',
@@ -215,6 +256,87 @@ class SingletonController extends Controller {
                 ->route('typeRevenu')
                 ->with('error', 'Une erreur est survenue lors de la création du type de revenu : ' . $e->getMessage())
                 ->withInput();
+        }
+    }
+
+
+    /**
+     * Met à jour un type de revenu
+     */
+    public function updateTypeRevenu(Request $request, $id) {
+        try {
+            $typeRevenu = TypeRevenu::findOrFail($id);
+
+            // Validation
+            $validated = $request->validate([
+                'nom' => [
+                    'required',
+                    'string',
+                    'min:2',
+                    'max:63',
+                    Rule::unique('type_revenus')->ignore($typeRevenu->id),
+                ],
+                'description' => 'nullable|string|max:255',
+                'imposable' => 'sometimes|boolean',
+                'declarable' => 'sometimes|boolean',
+            ], [
+                'nom.required' => 'Le nom du type de revenu est obligatoire',
+                'nom.min' => 'Le nom doit faire au moins 2 caractères',
+                'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
+                'nom.unique' => 'Ce type de revenu existe déjà',
+                'description.max' => 'La description ne peut pas dépasser 255 caractères',
+            ]);
+
+            // Mise à jour
+            $typeRevenu->update([
+                'nom' => $validated['nom'],
+                'description' => $validated['description'] ?? null,
+                'imposable' => isset($validated['imposable']) ? 1 : 0,
+                'declarable' => isset($validated['declarable']) ? 1 : 0,
+            ]);
+
+            return redirect()
+                ->route('typeRevenu')
+                ->with('success', 'Type de revenu modifié avec succès');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('typeRevenu')
+                ->with('error', 'Type de revenu non trouvé');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('typeRevenu')
+                ->with('error', 'Une erreur est survenue lors de la modification : ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Supprime un type de revenu.
+     */
+    public function deleteTypeRevenu(string $id) {
+        try {
+            $typeRevenu = TypeRevenu::findOrFail($id);
+
+            // Vérifier si le type est utilisé dans des revenus
+            if ($typeRevenu->revenus()->exists()) {
+                return redirect()
+                    ->route('typeRevenu')
+                    ->with('error', 'Impossible de supprimer ce type de revenu car il est utilisé par des revenus existants');
+            }
+
+            $typeRevenu->delete();
+
+            return redirect()
+                ->route('typeRevenu')
+                ->with('success', 'Type de revenu supprimé avec succès');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('typeRevenu')
+                ->with('error', 'Type de revenu non trouvé');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('typeRevenu')
+                ->with('error', 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
         }
     }
 

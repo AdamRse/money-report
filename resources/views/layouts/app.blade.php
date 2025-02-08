@@ -13,7 +13,6 @@
             @endguest
             @auth
                 <li><span>{{ auth()->user()->name }}</span></li>
-                <li><a href="/register">Inscription</a></li>
                 <li><a href="/revenu">Ajouter un revenu</a></li>
                 <li><a href="/revenus">Liste des revenus</a></li>
                 <li><a href="/type-revenu">Ajouter un type de revenu</a></li>

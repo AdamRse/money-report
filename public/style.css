@@ -562,3 +562,52 @@ footer {
 .type-select option {
     padding: 8px;
 }
+
+/* Vue type-revenu */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
+}
+
+.inline-form {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.btn-danger {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.actions-cell {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.form-section {
+    margin-top: 2rem;
+    border-top: 1px solid var(--gray-medium);
+    padding-top: 2rem;
+}
