@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class SingletonController extends Controller {
+
     /**
      * Patterns à détecter dans les libellés pour exclusion lors du parsing (les résultats restent affichés mais décochés, il est possible de les rajoutter quand même)
      * Les patterns sont insensibles à la casse
@@ -21,6 +22,7 @@ class SingletonController extends Controller {
         'adam rousselle',
         'rousselle adam'
     ];
+
     /**
      * Patterns pour la détection des types de revenus
      * Key = pattern à détecter (insensible à la casse)
