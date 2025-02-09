@@ -179,45 +179,6 @@ class SingletonController extends Controller {
         }
     }
 
-    // public function typeRevenu(Request $request) {
-    //     // GET pour afficher le formulaire
-    //     if ($request->isMethod('get')) {
-    //         return view('type-revenu');
-    //     }
-
-    //     // POST pour traiter le formulaire
-    //     try {
-    //         $validated = $request->validate([
-    //             'nom' => 'required|string|min:2|max:63|unique:type_revenus,nom',
-    //             'description' => 'nullable|string|max:255',
-    //             'imposable' => 'sometimes|boolean',
-    //             'declarable' => 'sometimes|boolean',
-    //         ], [
-    //             'nom.required' => 'Le nom du type de revenu est obligatoire',
-    //             'nom.min' => 'Le nom doit faire au moins 2 caractères',
-    //             'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
-    //             'nom.unique' => 'Ce type de revenu existe déjà',
-    //             'description.max' => 'La description ne peut pas dépasser 255 caractères',
-    //         ]);
-
-    //         TypeRevenu::create([
-    //             'nom' => $validated['nom'],
-    //             'description' => $validated['description'] ?? null,
-    //             'imposable' => isset($validated['imposable']) ? 1 : 0,
-    //             'declarable' => isset($validated['declarable']) ? 1 : 0,
-    //         ]);
-
-    //         return redirect()
-    //             ->route('typeRevenu')
-    //             ->with('success', 'Type de revenu créé avec succès');
-    //     } catch (\Exception $e) {
-    //         return redirect()
-    //             ->route('typeRevenu')
-    //             ->with('error', 'Une erreur est survenue lors de la création du type de revenu : ' . $e->getMessage())
-    //             ->withInput();
-    //     }
-    // }
-
     public function typeRevenu(Request $request) {
         // GET pour afficher le formulaire
         if ($request->isMethod('get')) {
@@ -410,9 +371,20 @@ class SingletonController extends Controller {
         }
     }
 
-    public function index() {
+    public function index(Request $request) {
+        // Récupération de tous les types de revenus pour le formulaire
         $typeRevenus = TypeRevenu::all();
-        return view('accueil', compact('typeRevenus'));
+
+        // Récupération de l'année sélectionnée (par défaut année courante)
+        $selectedYear = $request->input('annee_filtre', date('Y'));
+
+        // Récupération des revenus de l'année sélectionnée
+        $revenus = Revenu::with('typeRevenu')
+            ->whereYear('date_revenu', $selectedYear)
+            ->orderBy('date_revenu', 'desc')
+            ->get();
+
+        return view('revenu', compact('typeRevenus', 'revenus'));
     }
 
     public function logout() {
@@ -435,7 +407,7 @@ class SingletonController extends Controller {
             ]);
             if (Auth::attempt($credentials, $request->boolean('remember'))) {
                 $request->session()->regenerate();
-                return redirect()->intended('accueil');
+                return redirect()->intended('revenu');
             }
             return back()->withErrors([
                 'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
@@ -464,7 +436,7 @@ class SingletonController extends Controller {
             // Connexion automatique
             Auth::login($user);
 
-            return redirect()->route('accueil')->with('success', 'Inscription réussie');
+            return redirect()->route('revenu')->with('success', 'Inscription réussie');
         }
 
         return view('register');
@@ -635,10 +607,10 @@ class SingletonController extends Controller {
             // Création du revenu
             Revenu::create($createRevenu);
 
-            return redirect()->route('accueil')
+            return redirect()->route('revenu')
                 ->with('success', 'Le revenu a été enregistré avec succès');
         } catch (\Exception $e) {
-            return redirect()->route('accueil')
+            return redirect()->route('revenu')
                 ->with('error', 'Une erreur est survenue lors de l\'enregistrement : ' . $e->getMessage())
                 ->withInput();
         }
@@ -659,16 +631,58 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Update the specified resource in storage.
+     * Met à jour un revenu existant
      */
     public function update(Request $request, string $id) {
-        //
+        try {
+            // Validation des données
+            $validated = $request->validate([
+                'montant' => 'required|numeric|min:0',
+                'date_revenu' => 'required|date',
+                'type_revenu_id' => 'required|exists:type_revenus,id',
+                'notes' => 'nullable|string|max:1000'
+            ]);
+
+            // Récupération du revenu
+            $revenu = Revenu::findOrFail($id);
+
+            // Mise à jour
+            $revenu->update($validated);
+
+            return redirect()
+                ->route('revenu')
+                ->with('success', 'Le revenu a été modifié avec succès');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('revenu')
+                ->with('error', 'Revenu non trouvé');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('revenu')
+                ->with('error', 'Une erreur est survenue lors de la modification : ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprime un revenu
      */
     public function destroy(string $id) {
-        //
+        try {
+            $revenu = Revenu::findOrFail($id);
+            $revenu->delete();
+
+            return redirect()
+                ->route('revenu')
+                ->with('success', 'Le revenu a été supprimé avec succès');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('revenu')
+                ->with('error', 'Revenu non trouvé');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('revenu')
+                ->with('error', 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
+        }
     }
 }

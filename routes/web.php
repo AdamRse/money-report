@@ -12,7 +12,7 @@ Route::controller(SingletonController::class)->group(function () {
 });
 Route::middleware(['auth'])->group(function () {
     Route::controller(SingletonController::class)->group(function () {
-        Route::get('/', 'index')->name('accueil');
+        Route::get('/', 'list')->name('accueil');
         Route::get('/revenu', 'index')->name('revenu');
         Route::post('/revenu', 'store')->name('revenu.store');
         Route::get('/revenus', 'list')->name('revenus.list');
@@ -25,5 +25,10 @@ Route::middleware(['auth'])->group(function () {
         // Ajout des nouvelles routes pour la modification et suppression
         Route::put('/type-revenu/{id}', 'updateTypeRevenu')->name('typeRevenu.update');
         Route::delete('/type-revenu/{id}', 'deleteTypeRevenu')->name('typeRevenu.destroy');
+        // Routes pour les revenus
+        Route::get('/revenu', [SingletonController::class, 'index'])->name('revenu');
+        Route::post('/revenu', [SingletonController::class, 'store'])->name('revenu.store');
+        Route::put('/revenu/{id}', [SingletonController::class, 'update'])->name('revenu.update');
+        Route::delete('/revenu/{id}', [SingletonController::class, 'destroy'])->name('revenu.destroy');
     });
 });

@@ -31,47 +31,6 @@
             </div>
         @endif
 
-        <div class="revenus-card">
-            <h2>Types de revenus existants</h2>
-            <div class="table-container">
-                <table class="revenus-table">
-                    <thead>
-                        <tr>
-                            <th>Label</th>
-                            <th>Description</th>
-                            <th>Imposable</th>
-                            <th>Déclarable</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($typeRevenus as $type)
-                            <tr>
-                                <td>{{ $type->nom }}</td>
-                                <td>{{ $type->description ?: '-' }}</td>
-                                <td class="{{ $type->imposable ? 'affirmative' : '' }}">
-                                    {{ $type->imposable ? "Oui" : "Non" }}
-                                </td>
-                                <td class="{{ $type->declarable ? 'affirmative' : '' }}">
-                                    {{ $type->declarable ? "Oui" : "Non" }}
-                                </td>
-                                <td class="actions-cell">
-                                    <button class="btn btn-secondary btn-edit" onclick="showEditForm('{{ $type->id }}')">
-                                        Modifier
-                                    </button>
-                                    <form action="{{ route('typeRevenu.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <div class="form-section">
             <h2>Ajouter un type de revenu</h2>
             <form action="{{ route('typeRevenu.store') }}" method="POST" class="form">
@@ -128,6 +87,49 @@
                     <a href="{{ route('accueil') }}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>
+        </div>
+
+        <hr>
+
+        <div class="revenus-card">
+            <h2>Types de revenus existants</h2>
+            <div class="table-container">
+                <table class="revenus-table">
+                    <thead>
+                        <tr>
+                            <th>Label</th>
+                            <th>Description</th>
+                            <th>Imposable</th>
+                            <th>Déclarable</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($typeRevenus as $type)
+                            <tr>
+                                <td>{{ $type->nom }}</td>
+                                <td>{{ $type->description ?: '-' }}</td>
+                                <td class="{{ $type->imposable ? 'affirmative' : '' }}">
+                                    {{ $type->imposable ? "Oui" : "Non" }}
+                                </td>
+                                <td class="{{ $type->declarable ? 'affirmative' : '' }}">
+                                    {{ $type->declarable ? "Oui" : "Non" }}
+                                </td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-secondary btn-edit" onclick="showEditForm('{{ $type->id }}')">
+                                        Modifier
+                                    </button>
+                                    <form action="{{ route('typeRevenu.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

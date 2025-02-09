@@ -13,10 +13,10 @@
             @endguest
             @auth
                 <li><span>{{ auth()->user()->name }}</span></li>
-                <li><a href="/revenu">Ajouter un revenu</a></li>
-                <li><a href="/revenus">Liste des revenus</a></li>
-                <li><a href="/type-revenu">Ajouter un type de revenu</a></li>
+                <li><a href="/revenus">Récapitulatif</a></li>
+                <li><a href="/revenu">Revenus</a></li>
                 <li><a href="/parse">Parser un document</a></li>
+                <li><a href="/type-revenu">Types de revenu</a></li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

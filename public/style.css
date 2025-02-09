@@ -530,11 +530,6 @@ footer {
     cursor: pointer;
 }
 
-.revenus-table td:first-child {
-    text-align: center;
-    width: 80px;
-}
-
 #importForm {
     margin-top: 2rem;
 }
@@ -610,4 +605,8 @@ footer {
     margin-top: 2rem;
     border-top: 1px solid var(--gray-medium);
     padding-top: 2rem;
+}
+
+hr{
+    margin: 2rem 0;
 }
