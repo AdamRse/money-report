@@ -63,6 +63,14 @@ class SingletonController extends Controller {
         return null;
     }
 
+    /**
+     * Traite et analyse un fichier CSV/TSV de relevé bancaire pour en extraire les revenus.
+     * En GET : Affiche le formulaire d'upload
+     * En POST : Analyse le fichier ou importe les revenus sélectionnés
+     *
+     * @param Request $request Requête HTTP contenant soit le fichier à analyser, soit les revenus à importer
+     * @return \Illuminate\Http\Response Vue avec les résultats du parsing ou redirection avec message
+     */
     public function parse(Request $request) {
         // Affichage du formulaire pour GET
         if ($request->isMethod('get')) {
@@ -179,6 +187,14 @@ class SingletonController extends Controller {
         }
     }
 
+    /**
+     * Gère les types de revenus (création et affichage).
+     * En GET : Affiche le formulaire et la liste des types
+     * En POST : Crée un nouveau type de revenu
+     *
+     * @param Request $request Requête HTTP avec les données du type de revenu
+     * @return \Illuminate\Http\Response Vue ou redirection avec message
+     */
     public function typeRevenu(Request $request) {
         // GET pour afficher le formulaire
         if ($request->isMethod('get')) {
@@ -222,7 +238,11 @@ class SingletonController extends Controller {
 
 
     /**
-     * Met à jour un type de revenu
+     * Met à jour un type de revenu existant.
+     *
+     * @param Request $request Requête HTTP contenant les données de mise à jour
+     * @param string $id Identifiant du type de revenu à modifier
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function updateTypeRevenu(Request $request, $id) {
         try {
@@ -272,7 +292,10 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Supprime un type de revenu.
+     * Supprime un type de revenu s'il n'est pas utilisé par des revenus existants.
+     *
+     * @param string $id Identifiant du type de revenu à supprimer
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function deleteTypeRevenu(string $id) {
         try {
@@ -302,7 +325,11 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Enregistre plusieurs revenus en base de données
+     * Enregistre plusieurs revenus en base de données à partir des données parsées.
+     * Utilise une transaction pour garantir l'intégrité des données.
+     *
+     * @param Request $request Requête HTTP contenant les revenus à importer
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function multipleRevenus(Request $request) {
         try {
@@ -371,6 +398,13 @@ class SingletonController extends Controller {
         }
     }
 
+    /**
+     * Affiche la page principale des revenus avec le formulaire d'ajout et la liste
+     * des revenus de l'année sélectionnée.
+     *
+     * @param Request $request Requête HTTP contenant éventuellement l'année à filtrer
+     * @return \Illuminate\Http\Response Vue avec les revenus et les types
+     */
     public function index(Request $request) {
         // Récupération de tous les types de revenus pour le formulaire
         $typeRevenus = TypeRevenu::all();
@@ -387,6 +421,11 @@ class SingletonController extends Controller {
         return view('revenu', compact('typeRevenus', 'revenus', 'selectedYear'));
     }
 
+    /**
+     * Déconnecte l'utilisateur et invalide sa session.
+     *
+     * @return \Illuminate\Http\RedirectResponse Redirection vers la page d'accueil
+     */
     public function logout() {
         Auth::logout();
         // Invalider la session pour plus de sécurité
@@ -398,6 +437,15 @@ class SingletonController extends Controller {
         // Rediriger vers la page d'accueil
         return redirect('/');
     }
+
+    /**
+     * Gère l'authentification des utilisateurs.
+     * En GET : Affiche le formulaire de connexion
+     * En POST : Traite la tentative de connexion
+     *
+     * @param Request $request Requête HTTP contenant les identifiants
+     * @return \Illuminate\Http\Response Vue ou redirection
+     */
     public function login(Request $request) {
         //POST pour l'envoi des données
         if ($request->isMethod('post')) {
@@ -416,6 +464,15 @@ class SingletonController extends Controller {
 
         return view('login');
     }
+
+    /**
+     * Gère l'inscription des nouveaux utilisateurs.
+     * En GET : Affiche le formulaire d'inscription
+     * En POST : Crée le nouvel utilisateur
+     *
+     * @param Request $request Requête HTTP contenant les données d'inscription
+     * @return \Illuminate\Http\Response Vue ou redirection
+     */
     public function register(Request $request) {
         //POST pour l'envoi des données
         if ($request->isMethod('post')) {
@@ -442,6 +499,13 @@ class SingletonController extends Controller {
         return view('register');
     }
 
+    /**
+     * Affiche la liste des revenus avec possibilité de filtrage par période
+     * et calcule les statistiques associées.
+     *
+     * @param Request $request Requête HTTP contenant les filtres éventuels
+     * @return \Illuminate\Http\Response Vue avec les revenus filtrés et les stats
+     */
     public function list(Request $request) {
         try {
             // Règles de base
@@ -556,13 +620,11 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Enregistre un nouveau revenu en base de données.
+     * Gère également la création d'un nouveau type de revenu si nécessaire.
+     *
+     * @param Request $request Requête HTTP contenant les données du revenu
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function store(Request $request) {
         try {
@@ -617,21 +679,11 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id) {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {
-        //
-    }
-
-    /**
-     * Met à jour un revenu existant
+     * Met à jour un revenu existant avec les nouvelles données.
+     *
+     * @param Request $request Requête HTTP contenant les données de mise à jour
+     * @param string $id Identifiant du revenu à modifier
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function update(Request $request, string $id) {
         try {
@@ -665,7 +717,10 @@ class SingletonController extends Controller {
     }
 
     /**
-     * Supprime un revenu
+     * Supprime un revenu existant de la base de données.
+     *
+     * @param string $id Identifiant du revenu à supprimer
+     * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
     public function destroy(string $id) {
         try {
