@@ -384,7 +384,7 @@ class SingletonController extends Controller {
             ->orderBy('date_revenu', 'desc')
             ->get();
 
-        return view('revenu', compact('typeRevenus', 'revenus'));
+        return view('revenu', compact('typeRevenus', 'revenus', 'selectedYear'));
     }
 
     public function logout() {

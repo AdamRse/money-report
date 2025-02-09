@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ajouter un revenu')
+@section('title', 'Gérer les revenus')
 
 @section('content')
     <div class="form-container">
@@ -132,7 +132,7 @@
                 <select name="annee_filtre" id="annee_filtre" class="form-select" onchange="this.form.submit()">
                     @foreach(range(date('Y'), date('Y')-5) as $annee)
                         <option value="{{ $annee }}"
-                                {{ ($selectedYear ?? date('Y')) == $annee ? 'selected' : '' }}>
+                                {{ $selectedYear == $annee ? 'selected' : '' }}>
                             {{ $annee }}
                         </option>
                     @endforeach
