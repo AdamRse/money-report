@@ -124,8 +124,55 @@
                 function toggleAll() {
                     const checkboxes = document.querySelectorAll('.import-checkbox');
                     const isAllChecked = [...checkboxes].every(cb => cb.checked);
+                    const toggleButton = document.querySelector('[onclick="toggleAll()"]');
+
                     checkboxes.forEach(cb => cb.checked = !isAllChecked);
+
+                    // Mise à jour du texte du bouton
+                    toggleButton.textContent = isAllChecked ? 'Tout sélectionner' : 'Tout désélectionner';
                 }
+
+                // Validation du formulaire avant envoi
+                document.getElementById('importForm').addEventListener('submit', function(e) {
+                    // Récupérer toutes les lignes cochées
+                    const checkedRows = document.querySelectorAll('.import-checkbox:checked');
+
+                    // Vérifier si au moins un revenu est sélectionné
+                    if (checkedRows.length === 0) {
+                        e.preventDefault();
+                        alert('Veuillez sélectionner au moins un revenu à importer.');
+                        return;
+                    }
+
+                    // Vérifier chaque ligne cochée
+                    let hasError = false;
+                    checkedRows.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        const select = row.querySelector('.type-select');
+
+                        if (!select.value) {
+                            hasError = true;
+                            select.style.borderColor = '#DC3545';  // Rouge pour indiquer l'erreur
+                            select.style.backgroundColor = '#fff5f5';  // Fond légèrement rouge
+                        } else {
+                            select.style.borderColor = '';  // Réinitialiser le style
+                            select.style.backgroundColor = '';
+                        }
+                    });
+
+                    if (hasError) {
+                        e.preventDefault();
+                        alert('Veuillez sélectionner un type de revenu pour tous les revenus cochés.');
+                    }
+                });
+
+                // Réinitialiser le style des selects quand on change leur valeur
+                document.querySelectorAll('.type-select').forEach(select => {
+                    select.addEventListener('change', function() {
+                        this.style.borderColor = '';
+                        this.style.backgroundColor = '';
+                    });
+                });
             </script>
             @endpush
         @endif

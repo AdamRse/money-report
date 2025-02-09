@@ -4,12 +4,17 @@
 use App\Http\Controllers\SingletonController;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(SingletonController::class)->group(function () {
-    Route::get('/login', 'login')->name('login');
-    Route::post('/login', 'login')->name('login.request');
-    Route::get('/register', 'register')->name('register');
-    Route::post('/register', 'register')->name('register.request');
+// Groupe de routes pour les invités uniquement
+Route::middleware(['guest'])->group(function () {
+    Route::controller(SingletonController::class)->group(function () {
+        Route::get('/login', 'login')->name('login');
+        Route::post('/login', 'login')->name('login.request');
+        Route::get('/register', 'register')->name('register');
+        Route::post('/register', 'register')->name('register.request');
+    });
 });
+
+// Groupe de routes pour les utilisateurs authentifiés uniquement
 Route::middleware(['auth'])->group(function () {
     Route::controller(SingletonController::class)->group(function () {
         Route::get('/', 'list')->name('accueil');
