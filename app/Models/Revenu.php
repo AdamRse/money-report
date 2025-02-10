@@ -1,12 +1,12 @@
 <?php
+// app/Models/Revenu.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Revenu extends Model
-{
+class Revenu extends Model {
     protected $table = 'revenus';
 
     protected $fillable = [
@@ -24,8 +24,7 @@ class Revenu extends Model
     ];
 
     // Relation avec la table type_revenus
-    public function typeRevenu(): BelongsTo
-    {
+    public function typeRevenu(): BelongsTo {
         return $this->belongsTo(TypeRevenu::class, 'type_revenu_id');
     }
 }

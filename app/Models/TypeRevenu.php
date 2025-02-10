@@ -1,4 +1,5 @@
 <?php
+// app/Models/TypeRevenu.php
 
 namespace App\Models;
 
