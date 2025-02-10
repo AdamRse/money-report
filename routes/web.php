@@ -1,18 +1,34 @@
 <?php
 // routes/web.php
 
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\SingletonController;
 use Illuminate\Support\Facades\Route;
 
-// Groupe de routes pour les invités uniquement
+// Utilisateur non authentifié uniquement
 Route::middleware(['guest'])->group(function () {
-    Route::controller(SingletonController::class)->group(function () {
-        Route::get('/login', 'login')->name('login');
+    Route::controller(AuthController::class)->group(function () {
+        Route::get('/login', 'showLoginForm')->name('login');
         Route::post('/login', 'login')->name('login.request');
-        Route::get('/register', 'register')->name('register');
+        Route::get('/register', 'showRegistrationForm')->name('register');
         Route::post('/register', 'register')->name('register.request');
     });
 });
+
+// Utilisateur authentifié uniquement
+Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', 'logout')->name('logout');
+});
+
+// // Groupe de routes pour les invités uniquement
+// Route::middleware(['guest'])->group(function () {
+//     Route::controller(SingletonController::class)->group(function () {
+//         Route::get('/login', 'login')->name('login');
+//         Route::post('/login', 'login')->name('login.request');
+//         Route::get('/register', 'register')->name('register');
+//         Route::post('/register', 'register')->name('register.request');
+//     });
+// });
 
 // Groupe de routes pour les utilisateurs authentifiés uniquement
 Route::middleware(['auth'])->group(function () {
