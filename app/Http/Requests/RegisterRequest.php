@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
-{
+class RegisterRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
@@ -19,8 +17,7 @@ class RegisterRequest extends FormRequest
      *
      * @return array<string, array<string>>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [
             'user' => ['required', 'string', 'max:31'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -33,8 +30,7 @@ class RegisterRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
+    public function messages(): array {
         return [
             'user.required' => 'Le nom d\'utilisateur est requis',
             'user.max' => 'Le nom d\'utilisateur ne peut pas dépasser 31 caractères',

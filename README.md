@@ -3,10 +3,8 @@
 app/
 ├── Http/
 │   ├── Controllers/
-│   │   └── Auth/
-│   │       └── AuthController.php
+│   │   └── AuthController.php
 │   └── Requests/
-│       └── Auth/
-│           ├── LoginRequest.php
-│           └── RegisterRequest.php
+│       ├── LoginRequest.php
+│       └── RegisterRequest.php
 ```

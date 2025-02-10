@@ -1,7 +1,7 @@
 <?php
 // routes/web.php
 
-use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SingletonController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +17,7 @@ Route::middleware(['guest'])->group(function () {
 
 // Utilisateur authentifié uniquement
 Route::middleware(['auth'])->group(function () {
-    Route::post('/logout', 'logout')->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // // Groupe de routes pour les invités uniquement
@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/revenu', 'index')->name('revenu');
         Route::post('/revenu', 'store')->name('revenu.store');
         Route::get('/revenus', 'list')->name('revenus.list');
-        Route::post('/logout', 'logout')->name('logout');
+        // Route::post('/logout', 'logout')->name('logout');
         Route::get('/parse', 'parse')->name('parse');
         Route::post('/parse', 'parse')->name('parse.request');
         Route::post('/multipleRevenus', 'multipleRevenus')->name('multipleRevenus');
