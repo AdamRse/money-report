@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class income_types extends Model {
+class IncomeType extends Model {
     protected $table = 'income_types';
 
     protected $fillable = [

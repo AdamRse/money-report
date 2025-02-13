@@ -69,7 +69,7 @@
                         required
                         class="form-select @error('income_type_id') form-input-error @enderror">
                     <option value="">Sélectionner un type</option>
-                    @foreach($income_typess as $type)
+                    @foreach($incomeTypes as $type)
                         <option value="{{ $type->id }}"
                                 {{ old('income_type_id') == $type->id ? 'selected' : '' }}>
                             {{ $type->nom }}
@@ -225,7 +225,7 @@
                             id="edit_income_type_id"
                             required
                             class="form-select">
-                        @foreach($income_typess as $type)
+                        @foreach($incomeTypes as $type)
                             <option value="{{ $type->id }}">{{ $type->nom }}</option>
                         @endforeach
                     </select>

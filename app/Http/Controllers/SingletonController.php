@@ -4,7 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
-use App\Models\income_types;
+use App\Models\IncomeType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -78,7 +78,7 @@ class SingletonController extends Controller {
         // Affichage du formulaire pour GET
         if ($request->isMethod('get')) {
             // Récupération de tous les types de revenus pour le select
-            $income_types = income_types::all();
+            $income_types = IncomeType::all();
             return view('parse', compact('income_types'));
         }
 
@@ -154,7 +154,7 @@ class SingletonController extends Controller {
                 });
 
                 // Récupération de tous les types de revenus pour le select
-                $income_types = income_types::all();
+                $income_types = IncomeType::all();
 
                 return view('parse', [
                     'revenus' => $incomes,
@@ -202,7 +202,7 @@ class SingletonController extends Controller {
         // GET pour afficher le formulaire
         if ($request->isMethod('get')) {
             // Récupérer tous les types de revenus pour l'affichage dans le tableau
-            $income_types = income_types::all();
+            $income_types = IncomeType::all();
             return view('type-revenu', compact('income_types'));
         }
 
@@ -221,7 +221,7 @@ class SingletonController extends Controller {
                 'description.max' => 'La description ne peut pas dépasser 255 caractères',
             ]);
 
-            income_types::create([
+            IncomeType::create([
                 'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
                 'taxable' => isset($validated['taxable']) ? 1 : 0,
@@ -249,7 +249,7 @@ class SingletonController extends Controller {
      */
     public function updateincome_types(Request $request, $id) {
         try {
-            $income_types = income_types::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             // Validation
             $validated = $request->validate([
@@ -302,7 +302,7 @@ class SingletonController extends Controller {
      */
     public function deleteincome_types(string $id) {
         try {
-            $income_types = income_types::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             // Vérifier si le type est utilisé dans des revenus
             if ($income_types->revenus()->exists()) {
@@ -410,7 +410,7 @@ class SingletonController extends Controller {
      */
     public function index(Request $request) {
         // Récupération de tous les types de revenus pour le formulaire
-        $income_types = income_types::all();
+        $income_types = IncomeType::all();
 
         // Récupération de l'année sélectionnée (par défaut année courante)
         $selectedYear = $request->input('annee_filtre', date('Y'));
@@ -660,7 +660,7 @@ class SingletonController extends Controller {
             ];
 
             if ($validated['income_type_id'] == 0) {
-                $newincome_types = income_types::create([
+                $newincome_types = IncomeType::create([
                     'name' => $validated['nvRevenu'],
                     'description' => $validated['nvRevenuDesc'] ?? null,
                     'taxable' => isset($validated['taxable']) ? 1 : 0,

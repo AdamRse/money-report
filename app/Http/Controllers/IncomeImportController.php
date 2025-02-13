@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IncomeImport\ImportFileRequest;
 use App\Http\Requests\IncomeImport\ImportIncomesRequest;
 use App\Models\Income;
-use App\Models\income_types;
+use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -43,7 +43,7 @@ class IncomeImportController extends Controller {
     public function showForm(ImportFileRequest $request): View|RedirectResponse {
         if (!$request->isMethod('post')) {
             return view('incomes.import', [
-                'income_typess' => income_types::all()
+                'incomeTypes' => IncomeType::all()
             ]);
         }
 
@@ -52,7 +52,7 @@ class IncomeImportController extends Controller {
 
             return view('incomes.import', [
                 'incomes' => $parsedIncomes,
-                'income_typess' => income_types::all(),
+                'incomeTypes' => IncomeType::all(),
                 'parseResults' => true
             ]);
         } catch (\Exception $e) {

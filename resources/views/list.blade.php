@@ -67,7 +67,7 @@
                     @endforeach
                 </div>
             @endif
-            <form action="{{ route('revenus.list') }}" method="GET" class="filters-form" id="filterForm">
+            <form action="{{ route('incomes.list') }}" method="GET" class="filters-form" id="filterForm">
                 <div class="filters-type">
                     <div class="form-group">
                         <label for="filter_type" class="form-label">Type de filtre</label>
@@ -131,7 +131,7 @@
 
                 <div class="filters-actions">
                     <button type="submit" class="btn btn-primary">Appliquer</button>
-                    <a href="{{ route('revenus.list') }}" class="btn btn-secondary">Réinitialiser</a>
+                    <a href="{{ route('incomes.list') }}" class="btn btn-secondary">Réinitialiser</a>
                 </div>
             </form>
         </div>

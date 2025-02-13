@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\income_types\Storeincome_typesRequest;
 use App\Http\Requests\income_types\Updateincome_typesRequest;
-use App\Models\income_types;
+use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -14,8 +14,8 @@ class income_typesController extends Controller {
      * Affiche la liste des types de revenus
      */
     public function index(): View {
-        $income_typess = income_types::all();
-        return view('income-types.index', compact('income_typess'));
+        $incomeTypes = IncomeType::all();
+        return view('income-types.index', compact('incomeTypes'));
     }
 
     /**
@@ -23,7 +23,7 @@ class income_typesController extends Controller {
      */
     public function store(Storeincome_typesRequest $request): RedirectResponse {
         try {
-            income_types::create([
+            IncomeType::create([
                 'name' => $request->validated('name'),
                 'description' => $request->validated('description'),
                 'taxable' => $request->boolean('taxable'),
@@ -46,7 +46,7 @@ class income_typesController extends Controller {
      */
     public function update(Updateincome_typesRequest $request, string $id): RedirectResponse {
         try {
-            $income_types = income_types::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             $income_types->update([
                 'name' => $request->validated('name'),
@@ -71,7 +71,7 @@ class income_typesController extends Controller {
      */
     public function destroy(string $id): RedirectResponse {
         try {
-            $income_types = income_types::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             // Vérifier si le type est utilisé dans des revenus
             if ($income_types->incomes()->exists()) {

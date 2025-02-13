@@ -103,7 +103,7 @@
                                         <select name="revenus[{{ $index }}][income_type_id]"
                                                 class="form-select type-select">
                                             <option value="">Sélectionner un type</option>
-                                            @foreach($income_typess as $type)
+                                            @foreach($incomeTypes as $type)
                                                 <option value="{{ $type->id }}"
                                                     {{ isset($income['income_type_id']) && $income['income_type_id'] == $type->id ? 'selected' : '' }}
                                                     title="{{ $type->description }}">

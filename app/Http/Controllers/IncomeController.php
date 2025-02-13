@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Income\StoreIncomeRequest;
 use App\Http\Requests\Income\UpdateIncomeRequest;
 use App\Models\Income;
-use App\Models\income_types;
+use App\Models\IncomeType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -24,9 +24,9 @@ class IncomeController extends Controller {
             ->orderBy('income_date', 'desc')
             ->get();
 
-        $income_typess = income_types::all();
+        $incomeTypes = IncomeType::all();
 
-        return view('income.index', compact('income_typess', 'incomes', 'selectedYear'));
+        return view('income.index', compact('incomeTypes', 'incomes', 'selectedYear'));
     }
 
     /**
@@ -41,7 +41,7 @@ class IncomeController extends Controller {
 
             // Création d'un nouveau type de revenu si demandé
             if ($validated['income_type_id'] == 0) {
-                $income_types = income_types::create([
+                $income_types = IncomeType::create([
                     'name' => $validated['new_type_name'],
                     'description' => $validated['new_type_description'] ?? null,
                     'taxable' => $validated['taxable'] ?? false,

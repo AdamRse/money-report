@@ -13,8 +13,8 @@
             @endguest
             @auth
                 <li><span>{{ auth()->user()->name }}</span></li>
-                <li><a href="/revenus">Récapitulatif</a></li>
-                <li><a href="/revenu">Revenus</a></li>
+                <li><a href="/incomes">Récapitulatif</a></li>
+                <li><a href="/revenu">incomes</a></li>
                 <li><a href="/parse">Parser un document</a></li>
                 <li><a href="/type-revenu">Types de revenu</a></li>
                 <li>

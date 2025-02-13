@@ -105,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($income_typess as $type)
+                        @foreach($incomeTypes as $type)
                             <tr>
                                 <td>{{ $type->nom }}</td>
                                 <td>{{ $type->description ?: '-' }}</td>

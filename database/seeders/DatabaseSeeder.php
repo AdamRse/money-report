@@ -3,7 +3,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\income_types;
+use App\Models\IncomeType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder {
         ];
 
         foreach ($types as $type) {
-            income_types::create($type);
+            IncomeType::create($type);
         }
     }
 }
