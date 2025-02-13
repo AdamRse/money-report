@@ -74,7 +74,7 @@
                                 <th>Importer</th>
                                 <th>Date</th>
                                 <th>Libellé</th>
-                                <th>Montant</th>
+                                <th>amount</th>
                                 <th>Type de revenu</th>
                             </tr>
                         </thead>
@@ -93,19 +93,19 @@
                                             name="revenus[{{ $index }}][libelle]"
                                             value="{{ $income['libelle'] }}">
                                         <input type="hidden"
-                                            name="revenus[{{ $index }}][montant]"
-                                            value="{{ $income['montant'] }}">
+                                            name="revenus[{{ $index }}][amount]"
+                                            value="{{ $income['amount'] }}">
                                     </td>
                                     <td class="date-cell">{{ $income['date'] }}</td>
                                     <td>{{ $income['libelle'] }}</td>
-                                    <td class="amount-cell">{{ number_format($income['montant'], 2, ',', ' ') }} €</td>
+                                    <td class="amount-cell">{{ number_format($income['amount'], 2, ',', ' ') }} €</td>
                                     <td>
-                                        <select name="revenus[{{ $index }}][type_revenu_id]"
+                                        <select name="revenus[{{ $index }}][income_type_id]"
                                                 class="form-select type-select">
                                             <option value="">Sélectionner un type</option>
-                                            @foreach($incomeTypes as $type)
+                                            @foreach($income_typess as $type)
                                                 <option value="{{ $type->id }}"
-                                                    {{ isset($income['type_revenu_id']) && $income['type_revenu_id'] == $type->id ? 'selected' : '' }}
+                                                    {{ isset($income['income_type_id']) && $income['income_type_id'] == $type->id ? 'selected' : '' }}
                                                     title="{{ $type->description }}">
                                                         {{ $type->nom }}
                                                 </option>

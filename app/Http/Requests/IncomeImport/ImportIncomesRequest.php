@@ -39,9 +39,9 @@ class ImportIncomesRequest extends FormRequest {
             'incomes.array' => 'Format de données invalide',
             'incomes.*.date.required' => 'La date est requise pour tous les revenus',
             'incomes.*.description.required' => 'La description est requise pour tous les revenus',
-            'incomes.*.amount.required' => 'Le montant est requis pour tous les revenus',
-            'incomes.*.amount.numeric' => 'Le montant doit être un nombre',
-            'incomes.*.amount.min' => 'Le montant doit être positif',
+            'incomes.*.amount.required' => 'Le amount est requis pour tous les revenus',
+            'incomes.*.amount.numeric' => 'Le amount doit être un nombre',
+            'incomes.*.amount.min' => 'Le amount doit être positif',
             'incomes.*.income_type_id.required' => 'Le type de revenu est requis pour tous les revenus',
             'incomes.*.income_type_id.exists' => 'Le type de revenu sélectionné n\'existe pas'
         ];

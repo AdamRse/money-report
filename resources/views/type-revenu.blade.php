@@ -33,7 +33,7 @@
 
         <div class="form-section">
             <h2>Ajouter un type de revenu</h2>
-            <form action="{{ route('typeRevenu.store') }}" method="POST" class="form">
+            <form action="{{ route('income_types.store') }}" method="POST" class="form">
                 @csrf
 
                 <div class="form-group">
@@ -105,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($incomeTypes as $type)
+                        @foreach($income_typess as $type)
                             <tr>
                                 <td>{{ $type->nom }}</td>
                                 <td>{{ $type->description ?: '-' }}</td>
@@ -119,7 +119,7 @@
                                     <button class="btn btn-secondary btn-edit" onclick="showEditForm('{{ $type->id }}')">
                                         Modifier
                                     </button>
-                                    <form action="{{ route('typeRevenu.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
+                                    <form action="{{ route('income_types.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">Supprimer</button>
@@ -137,7 +137,7 @@
     <div id="editModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Modifier le type de revenu</h2>
-            <form id="editForm" action="{{ route('typeRevenu.update', '') }}" method="POST" class="form">
+            <form id="editForm" action="{{ route('income_types.update', '') }}" method="POST" class="form">
                 @csrf
                 @method('PUT')
 

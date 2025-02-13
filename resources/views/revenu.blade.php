@@ -35,43 +35,43 @@
             @csrf
 
             <div class="form-group">
-                <label for="montant" class="form-label">Montant</label>
+                <label for="amount" class="form-label">amount</label>
                 <input type="number"
-                       name="montant"
-                       id="montant"
+                       name="amount"
+                       id="amount"
                        step="0.01"
                        min="0"
                        required
-                       value="{{ old('montant') }}"
-                       class="form-input @error('montant') form-input-error @enderror">
-                @error('montant')
+                       value="{{ old('amount') }}"
+                       class="form-input @error('amount') form-input-error @enderror">
+                @error('amount')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group">
-                <label for="date_revenu" class="form-label">Date</label>
+                <label for="income_date" class="form-label">Date</label>
                 <input type="date"
-                       name="date_revenu"
-                       id="date_revenu"
+                       name="income_date"
+                       id="income_date"
                        required
-                       value="{{ old('date_revenu', date('Y-m-d')) }}"
-                       class="form-input @error('date_revenu') form-input-error @enderror">
-                @error('date_revenu')
+                       value="{{ old('income_date', date('Y-m-d')) }}"
+                       class="form-input @error('income_date') form-input-error @enderror">
+                @error('income_date')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group">
-                <label for="type_revenu_id" class="form-label">Type de revenu</label>
-                <select id="select_type_revenu" name="type_revenu_id"
-                        id="type_revenu_id"
+                <label for="income_type_id" class="form-label">Type de revenu</label>
+                <select id="select_type_revenu" name="income_type_id"
+                        id="income_type_id"
                         required
-                        class="form-select @error('type_revenu_id') form-input-error @enderror">
+                        class="form-select @error('income_type_id') form-input-error @enderror">
                     <option value="">Sélectionner un type</option>
-                    @foreach($incomeTypes as $type)
+                    @foreach($income_typess as $type)
                         <option value="{{ $type->id }}"
-                                {{ old('type_revenu_id') == $type->id ? 'selected' : '' }}>
+                                {{ old('income_type_id') == $type->id ? 'selected' : '' }}>
                             {{ $type->nom }}
                         </option>
                     @endforeach
@@ -79,7 +79,7 @@
                         + Autre (ajouter un nouveau type de revenu)
                     </option>
                 </select>
-                @error('type_revenu_id')
+                @error('income_type_id')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
@@ -151,19 +151,19 @@
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
-                            <th>Montant</th>
+                            <th>amount</th>
                             <th>Notes</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($incomes as $income)
-                            <tr data-type-id="{{ $income->type_revenu_id }}">
+                            <tr data-type-id="{{ $income->income_type_id }}">
                                 <td class="date-cell">
-                                    {{ Carbon\Carbon::parse($income->date_revenu)->format('d/m/Y') }}
+                                    {{ Carbon\Carbon::parse($income->income_date)->format('d/m/Y') }}
                                 </td>
-                                <td>{{ $income->typeRevenu->nom }}</td>
-                                <td class="amount-cell">{{ number_format($income->montant, 2, ',', ' ') }} €</td>
+                                <td>{{ $income->income_types->nom }}</td>
+                                <td class="amount-cell">{{ number_format($income->amount, 2, ',', ' ') }} €</td>
                                 <td class="notes-cell">{{ $income->notes ?: '-' }}</td>
                                 <td class="actions-cell">
                                     <button
@@ -200,10 +200,10 @@
                 @method('PUT')
 
                 <div class="form-group">
-                    <label for="edit_montant" class="form-label">Montant</label>
+                    <label for="edit_amount" class="form-label">amount</label>
                     <input type="number"
-                           name="montant"
-                           id="edit_montant"
+                           name="amount"
+                           id="edit_amount"
                            step="0.01"
                            min="0"
                            required
@@ -211,21 +211,21 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="edit_date_revenu" class="form-label">Date</label>
+                    <label for="edit_income_date" class="form-label">Date</label>
                     <input type="date"
-                           name="date_revenu"
-                           id="edit_date_revenu"
+                           name="income_date"
+                           id="edit_income_date"
                            required
                            class="form-input">
                 </div>
 
                 <div class="form-group">
-                    <label for="edit_type_revenu_id" class="form-label">Type de revenu</label>
-                    <select name="type_revenu_id"
-                            id="edit_type_revenu_id"
+                    <label for="edit_income_type_id" class="form-label">Type de revenu</label>
+                    <select name="income_type_id"
+                            id="edit_income_type_id"
                             required
                             class="form-select">
-                        @foreach($incomeTypes as $type)
+                        @foreach($income_typess as $type)
                             <option value="{{ $type->id }}">{{ $type->nom }}</option>
                         @endforeach
                     </select>
@@ -276,15 +276,15 @@
 
             // Récupérer les valeurs
             const date = row.querySelector('.date-cell').textContent.trim().split('/').reverse().join('-');
-            const montant = row.querySelector('.amount-cell').textContent.trim().replace(' €', '').replace(',', '.').trim();
+            const amount = row.querySelector('.amount-cell').textContent.trim().replace(' €', '').replace(',', '.').trim();
             const notes = row.querySelector('.notes-cell').textContent.trim();
             const notes_content = notes === '-' ? '' : notes;
             const type_id = row.getAttribute('data-type-id');
 
             // Remplir le formulaire
-            document.getElementById('edit_montant').value = montant;
-            document.getElementById('edit_date_revenu').value = date;
-            document.getElementById('edit_type_revenu_id').value = type_id;
+            document.getElementById('edit_amount').value = amount;
+            document.getElementById('edit_income_date').value = date;
+            document.getElementById('edit_income_type_id').value = type_id;
             document.getElementById('edit_notes').value = notes_content;
 
             // Mettre à jour l'URL du formulaire

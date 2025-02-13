@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\IncomeImportController;
 use App\Http\Controllers\IncomeReportController;
-use App\Http\Controllers\IncomeTypeController;
+use App\Http\Controllers\income_typesController;
 use Illuminate\Support\Facades\Route;
 
 // Utilisateur non authentifié uniquement
@@ -33,10 +33,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/incomes/{id}', [IncomeController::class, 'destroy'])->name('incomes.destroy');
 
     // Gestion des types de revenus
-    Route::get('/income-types', [IncomeTypeController::class, 'index'])->name('income-types.index');
-    Route::post('/income-types', [IncomeTypeController::class, 'store'])->name('income-types.store');
-    Route::put('/income-types/{id}', [IncomeTypeController::class, 'update'])->name('income-types.update');
-    Route::delete('/income-types/{id}', [IncomeTypeController::class, 'destroy'])->name('income-types.destroy');
+    Route::get('/income-types', [income_typesController::class, 'index'])->name('income-types.index');
+    Route::post('/income-types', [income_typesController::class, 'store'])->name('income-types.store');
+    Route::put('/income-types/{id}', [income_typesController::class, 'update'])->name('income-types.update');
+    Route::delete('/income-types/{id}', [income_typesController::class, 'destroy'])->name('income-types.destroy');
 
     // Import des revenus
     Route::match(['get', 'post'], '/incomes/import', [IncomeImportController::class, 'showForm'])->name('incomes.import');

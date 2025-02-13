@@ -23,8 +23,8 @@ class Income extends Model {
         'income_type_id' => 'integer'
     ];
 
-    // Relation avec la table incomeType
-    public function incomeType(): BelongsTo {
-        return $this->belongsTo(IncomeType::class, 'income_type_id');
+    // Relation avec la table income_types
+    public function income_types(): BelongsTo {
+        return $this->belongsTo(income_types::class, 'income_type_id');
     }
 }

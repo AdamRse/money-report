@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\IncomeType;
+namespace App\Http\Requests\income_types;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateIncomeTypeRequest extends FormRequest {
+class Updateincome_typesRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */

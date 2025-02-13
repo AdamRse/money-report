@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IncomeImport\ImportFileRequest;
 use App\Http\Requests\IncomeImport\ImportIncomesRequest;
 use App\Models\Income;
-use App\Models\IncomeType;
+use App\Models\income_types;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -43,7 +43,7 @@ class IncomeImportController extends Controller {
     public function showForm(ImportFileRequest $request): View|RedirectResponse {
         if (!$request->isMethod('post')) {
             return view('incomes.import', [
-                'incomeTypes' => IncomeType::all()
+                'income_typess' => income_types::all()
             ]);
         }
 
@@ -52,7 +52,7 @@ class IncomeImportController extends Controller {
 
             return view('incomes.import', [
                 'incomes' => $parsedIncomes,
-                'incomeTypes' => IncomeType::all(),
+                'income_typess' => income_types::all(),
                 'parseResults' => true
             ]);
         } catch (\Exception $e) {
@@ -121,7 +121,7 @@ class IncomeImportController extends Controller {
         // Recherche de la ligne d'en-tête
         $headerIndex = -1;
         foreach ($lines as $index => $line) {
-            if (str_contains($line, 'Date') && str_contains($line, 'Montant')) {
+            if (str_contains($line, 'Date') && str_contains($line, 'amount')) {
                 $headerIndex = $index;
                 break;
             }
@@ -148,14 +148,14 @@ class IncomeImportController extends Controller {
             if (floatval($amount) <= 0) continue;
 
             $shouldBeSelected = !$this->shouldExclude($description);
-            $incomeTypeId = $this->detectIncomeType($description);
+            $income_typesId = $this->detectincome_types($description);
 
             $incomes[] = [
                 'date' => $date,
                 'description' => $description,
                 'amount' => floatval($amount),
                 'selected' => $shouldBeSelected,
-                'income_type_id' => $incomeTypeId
+                'income_type_id' => $income_typesId
             ];
         }
 
@@ -176,7 +176,7 @@ class IncomeImportController extends Controller {
     /**
      * Détermine le type de revenu en fonction du libellé
      */
-    private function detectIncomeType(string $description): ?int {
+    private function detectincome_types(string $description): ?int {
         $description = strtolower($description);
         foreach ($this->typePatterns as $pattern => $typeId) {
             if (str_contains($description, strtolower($pattern))) {

@@ -24,7 +24,7 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Type</th>
-                                <th>Montant</th>
+                                <th>amount</th>
                                 <th>Note</th>
                                 <th>taxable</th>
                                 <th>Déclarable</th>
@@ -34,19 +34,19 @@
                             @foreach($incomes as $income)
                                 <tr>
                                     <td class="date-cell">
-                                        {{ Carbon\Carbon::parse($income->date_revenu)->locale('fr')->isoFormat('DD MMMM YYYY') }}
+                                        {{ Carbon\Carbon::parse($income->income_date)->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                     </td>
-                                    <td class="type-cell" title="{{ $income->typeRevenu->description }}">{{ $income->typeRevenu->nom }}</td>
+                                    <td class="type-cell" title="{{ $income->income_types->description }}">{{ $income->income_types->nom }}</td>
 
                                     <td class="amount-cell">
-                                        <b>{{ number_format($income->montant, 2, ',', ' ') }} €</b>
+                                        <b>{{ number_format($income->amount, 2, ',', ' ') }} €</b>
                                     </td>
                                     <td>{{ $income->notes ?: '-' }}</td>
-                                    <td class="{{ $income->typeRevenu->taxable ? 'affirmative' : '' }}">
-                                        {{ $income->typeRevenu->taxable ? "Oui" : "Non" }}
+                                    <td class="{{ $income->income_types->taxable ? 'affirmative' : '' }}">
+                                        {{ $income->income_types->taxable ? "Oui" : "Non" }}
                                     </td>
-                                    <td class="{{ $income->typeRevenu->must_declare ? 'affirmative' : '' }}">
-                                        {{ $income->typeRevenu->must_declare ? "Oui" : "Non" }}
+                                    <td class="{{ $income->income_types->must_declare ? 'affirmative' : '' }}">
+                                        {{ $income->income_types->must_declare ? "Oui" : "Non" }}
                                     </td>
                                 </tr>
                             @endforeach

@@ -1,12 +1,12 @@
 <?php
-// app/Models/IncomeType.php
+// app/Models/income_types.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class IncomeType extends Model {
+class income_types extends Model {
     protected $table = 'income_types';
 
     protected $fillable = [
@@ -17,7 +17,7 @@ class IncomeType extends Model {
     ];
 
     // Relation avec la table revenus
-    public function revenus(): HasMany {
+    public function incomes(): HasMany {
         return $this->hasMany(Income::class, 'income_type_id');
     }
 }

@@ -1,5 +1,5 @@
 <?php
-// database/migrations/2024_12_16_195209_incomeType.php
+// database/migrations/2024_12_16_195209_income_types.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

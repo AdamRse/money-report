@@ -1,29 +1,29 @@
 <?php
-// app/Http/Controllers/IncomeTypeController.php
+// app/Http/Controllers/income_typesController.php
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IncomeType\StoreIncomeTypeRequest;
-use App\Http\Requests\IncomeType\UpdateIncomeTypeRequest;
-use App\Models\IncomeType;
+use App\Http\Requests\income_types\Storeincome_typesRequest;
+use App\Http\Requests\income_types\Updateincome_typesRequest;
+use App\Models\income_types;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class IncomeTypeController extends Controller {
+class income_typesController extends Controller {
     /**
      * Affiche la liste des types de revenus
      */
     public function index(): View {
-        $incomeTypes = IncomeType::all();
-        return view('income-types.index', compact('incomeTypes'));
+        $income_typess = income_types::all();
+        return view('income-types.index', compact('income_typess'));
     }
 
     /**
      * Enregistre un nouveau type de revenu
      */
-    public function store(StoreIncomeTypeRequest $request): RedirectResponse {
+    public function store(Storeincome_typesRequest $request): RedirectResponse {
         try {
-            IncomeType::create([
+            income_types::create([
                 'name' => $request->validated('name'),
                 'description' => $request->validated('description'),
                 'taxable' => $request->boolean('taxable'),
@@ -44,11 +44,11 @@ class IncomeTypeController extends Controller {
     /**
      * Met à jour un type de revenu existant
      */
-    public function update(UpdateIncomeTypeRequest $request, string $id): RedirectResponse {
+    public function update(Updateincome_typesRequest $request, string $id): RedirectResponse {
         try {
-            $incomeType = IncomeType::findOrFail($id);
+            $income_types = income_types::findOrFail($id);
 
-            $incomeType->update([
+            $income_types->update([
                 'name' => $request->validated('name'),
                 'description' => $request->validated('description'),
                 'taxable' => $request->boolean('taxable'),
@@ -71,16 +71,16 @@ class IncomeTypeController extends Controller {
      */
     public function destroy(string $id): RedirectResponse {
         try {
-            $incomeType = IncomeType::findOrFail($id);
+            $income_types = income_types::findOrFail($id);
 
             // Vérifier si le type est utilisé dans des revenus
-            if ($incomeType->incomes()->exists()) {
+            if ($income_types->incomes()->exists()) {
                 return redirect()
                     ->route('income-types.index')
                     ->with('error', 'Impossible de supprimer ce type de revenu car il est utilisé par des revenus existants');
             }
 
-            $incomeType->delete();
+            $income_types->delete();
 
             return redirect()
                 ->route('income-types.index')

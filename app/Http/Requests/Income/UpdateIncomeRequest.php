@@ -21,9 +21,9 @@ class UpdateIncomeRequest extends FormRequest {
 
     public function messages(): array {
         return [
-            'amount.required' => 'Le montant est requis',
-            'amount.numeric' => 'Le montant doit être un nombre',
-            'amount.min' => 'Le montant doit être positif',
+            'amount.required' => 'Le amount est requis',
+            'amount.numeric' => 'Le amount doit être un nombre',
+            'amount.min' => 'Le amount doit être positif',
             'income_date.required' => 'La date est requise',
             'income_date.date' => 'La date doit être valide',
             'income_date.before_or_equal' => 'La date ne peut pas être dans le futur',
