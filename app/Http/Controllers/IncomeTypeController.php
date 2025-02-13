@@ -1,15 +1,15 @@
 <?php
-// app/Http/Controllers/income_typesController.php
+// app/Http/Controllers/IncomeTypeController.php
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\income_types\Storeincome_typesRequest;
-use App\Http\Requests\income_types\Updateincome_typesRequest;
+use App\Http\Requests\IncomeType\StoreIncomeTypeRequest;
+use App\Http\Requests\IncomeType\UpdateIncomeTypeRequest;
 use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class income_typesController extends Controller {
+class incomeTypesController extends Controller {
     /**
      * Affiche la liste des types de revenus
      */
@@ -21,7 +21,7 @@ class income_typesController extends Controller {
     /**
      * Enregistre un nouveau type de revenu
      */
-    public function store(Storeincome_typesRequest $request): RedirectResponse {
+    public function store(StoreIncomeTypeRequest $request): RedirectResponse {
         try {
             IncomeType::create([
                 'name' => $request->validated('name'),
@@ -44,7 +44,7 @@ class income_typesController extends Controller {
     /**
      * Met à jour un type de revenu existant
      */
-    public function update(Updateincome_typesRequest $request, string $id): RedirectResponse {
+    public function update(UpdateIncomeTypeRequest $request, string $id): RedirectResponse {
         try {
             $income_types = IncomeType::findOrFail($id);
 

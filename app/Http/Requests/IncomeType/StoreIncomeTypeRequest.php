@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\income_types;
+namespace App\Http\Requests\IncomeType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Storeincome_typesRequest extends FormRequest {
+class StoreIncomeTypeRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */

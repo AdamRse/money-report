@@ -7,7 +7,7 @@ app/
 │   │   ├── IncomeController.php
 │   │   ├── IncomeImportController.php
 │   │   ├── IncomeReportController.php
-│   │   ├── income_typesController.php
+│   │   ├── incomeTypesController.php
 │   │   └── SingletonController.php # Will be removed
 │   │
 │   ├── Requests/
@@ -18,8 +18,8 @@ app/
 |   |   |   ├── StoreIncomeRequest.php
 |   |   |   └── UpdateIncomeRequest.php
 |   |   ├── income_types/
-|   |   |   ├── Storeincome_typesRequest.php
-|   |   |   └── Updateincome_typesRequest.php
+|   |   |   ├── StoreincomeTypeRequest.php
+|   |   |   └── UpdateIncomeTypeRequest.php
 |   |   ├── IncomeImport/
 |   |   |   ├── ImportFileRequest.php
 |   |   |   └── ImportIncomesRequest.php
@@ -27,7 +27,7 @@ app/
 |   |       └── FilterIncomesRequest.php
 ├── Models/
 |   ├── Income.php
-│   └── income_types.php
+│   └── IncomeTypes.php
 ├── Providers/
 │   └── AppServiceProvider.php
 ├── Services/
