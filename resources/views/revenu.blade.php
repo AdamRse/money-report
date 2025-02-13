@@ -69,7 +69,7 @@
                         required
                         class="form-select @error('type_revenu_id') form-input-error @enderror">
                     <option value="">Sélectionner un type</option>
-                    @foreach($typeRevenus as $type)
+                    @foreach($incomeTypes as $type)
                         <option value="{{ $type->id }}"
                                 {{ old('type_revenu_id') == $type->id ? 'selected' : '' }}>
                             {{ $type->nom }}
@@ -100,12 +100,12 @@
                     @enderror
                 </div>
                 <div class="partCheckbox">
-                    <input type="checkbox" name="imposable" id="imposable" checked="1" value="1" />
-                    <label for="imposable" class="form-label">Revenu imposable</label>
+                    <input type="checkbox" name="taxable" id="taxable" checked="1" value="1" />
+                    <label for="taxable" class="form-label">Revenu taxable</label>
                     <br/>
                     <hr>
-                    <input type="checkbox" name="declarable" id="declarable" checked="1" value="1" />
-                    <label for="declarable" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
+                    <input type="checkbox" name="must_declare" id="must_declare" checked="1" value="1" />
+                    <label for="must_declare" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
             </form>
         </div>
 
-        @if($revenus->isEmpty())
+        @if($incomes->isEmpty())
             <div class="empty-state">
                 <p>Aucun revenu enregistré pour cette année</p>
             </div>
@@ -157,23 +157,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($revenus as $revenu)
-                            <tr data-type-id="{{ $revenu->type_revenu_id }}">
+                        @foreach($incomes as $income)
+                            <tr data-type-id="{{ $income->type_revenu_id }}">
                                 <td class="date-cell">
-                                    {{ Carbon\Carbon::parse($revenu->date_revenu)->format('d/m/Y') }}
+                                    {{ Carbon\Carbon::parse($income->date_revenu)->format('d/m/Y') }}
                                 </td>
-                                <td>{{ $revenu->typeRevenu->nom }}</td>
-                                <td class="amount-cell">{{ number_format($revenu->montant, 2, ',', ' ') }} €</td>
-                                <td class="notes-cell">{{ $revenu->notes ?: '-' }}</td>
+                                <td>{{ $income->typeRevenu->nom }}</td>
+                                <td class="amount-cell">{{ number_format($income->montant, 2, ',', ' ') }} €</td>
+                                <td class="notes-cell">{{ $income->notes ?: '-' }}</td>
                                 <td class="actions-cell">
                                     <button
                                         class="btn btn-secondary btn-edit"
-                                        onclick="showEditForm('{{ $revenu->id }}')"
+                                        onclick="showEditForm('{{ $income->id }}')"
                                     >
                                         Modifier
                                     </button>
                                     <form
-                                        action="{{ route('revenu.destroy', $revenu->id) }}"
+                                        action="{{ route('revenu.destroy', $income->id) }}"
                                         method="POST"
                                         class="inline-form"
                                         onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?');"
@@ -225,7 +225,7 @@
                             id="edit_type_revenu_id"
                             required
                             class="form-select">
-                        @foreach($typeRevenus as $type)
+                        @foreach($incomeTypes as $type)
                             <option value="{{ $type->id }}">{{ $type->nom }}</option>
                         @endforeach
                     </select>

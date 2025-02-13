@@ -21,13 +21,13 @@ class IncomeStatisticsService {
             'count' => $incomes->count(),
             'average' => $incomes->avg('amount'),
             'total_taxable' => $this->calculateTaxableTotal($incomes),
-            'total_must_declare' => $this->calculateDeclarableTotal($incomes),
+            'total_must_declare' => $this->calculatemust_declareTotal($incomes),
             'by_type' => $this->calculateStatsByType($incomes)
         ];
     }
 
     /**
-     * Calcule le total des revenus imposables
+     * Calcule le total des revenus taxables
      */
     private function calculateTaxableTotal(Collection $incomes): float {
         return $incomes->filter(function ($income) {
@@ -38,7 +38,7 @@ class IncomeStatisticsService {
     /**
      * Calcule le total des revenus à déclarer
      */
-    private function calculateDeclarableTotal(Collection $incomes): float {
+    private function calculatemust_declareTotal(Collection $incomes): float {
         return $incomes->filter(function ($income) {
             return $income->incomeType->must_declare;
         })->sum('amount');

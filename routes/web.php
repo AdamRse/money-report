@@ -27,10 +27,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Gestion des revenus (income)
-    Route::get('/income', [IncomeController::class, 'index'])->name('incomes.index');
-    Route::post('/income', [IncomeController::class, 'store'])->name('incomes.store');
-    Route::put('/income/{id}', [IncomeController::class, 'update'])->name('incomes.update');
-    Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('incomes.destroy');
+    Route::get('/incomes', [IncomeController::class, 'index'])->name('incomes.index');
+    Route::post('/incomes', [IncomeController::class, 'store'])->name('incomes.store');
+    Route::put('/incomes/{id}', [IncomeController::class, 'update'])->name('incomes.update');
+    Route::delete('/incomes/{id}', [IncomeController::class, 'destroy'])->name('incomes.destroy');
 
     // Gestion des types de revenus
     Route::get('/income-types', [IncomeTypeController::class, 'index'])->name('income-types.index');

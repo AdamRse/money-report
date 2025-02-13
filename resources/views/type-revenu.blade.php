@@ -44,9 +44,9 @@
                            required
                            maxlength="63"
                            minlength="2"
-                           value="{{ old('nom') }}"
-                           class="form-input @error('nom') form-input-error @enderror">
-                    @error('nom')
+                           value="{{ old('name') }}"
+                           class="form-input @error('name') form-input-error @enderror">
+                    @error('name')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
@@ -65,20 +65,20 @@
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="imposable"
-                               id="imposable"
+                               name="taxable"
+                               id="taxable"
                                value="1"
-                               {{ old('imposable') ? 'checked' : '' }}>
-                        <label for="imposable" class="form-label">Revenu imposable</label>
+                               {{ old('taxable') ? 'checked' : '' }}>
+                        <label for="taxable" class="form-label">Revenu taxable</label>
                     </div>
 
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="declarable"
-                               id="declarable"
+                               name="must_declare"
+                               id="must_declare"
                                value="1"
-                               {{ old('declarable') ? 'checked' : '' }}>
-                        <label for="declarable" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
+                               {{ old('must_declare') ? 'checked' : '' }}>
+                        <label for="must_declare" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
                     </div>
                 </div>
 
@@ -99,21 +99,21 @@
                         <tr>
                             <th>Label</th>
                             <th>Description</th>
-                            <th>Imposable</th>
+                            <th>taxable</th>
                             <th>Déclarable</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($typeRevenus as $type)
+                        @foreach($incomeTypes as $type)
                             <tr>
                                 <td>{{ $type->nom }}</td>
                                 <td>{{ $type->description ?: '-' }}</td>
-                                <td class="{{ $type->imposable ? 'affirmative' : '' }}">
-                                    {{ $type->imposable ? "Oui" : "Non" }}
+                                <td class="{{ $type->taxable ? 'affirmative' : '' }}">
+                                    {{ $type->taxable ? "Oui" : "Non" }}
                                 </td>
-                                <td class="{{ $type->declarable ? 'affirmative' : '' }}">
-                                    {{ $type->declarable ? "Oui" : "Non" }}
+                                <td class="{{ $type->must_declare ? 'affirmative' : '' }}">
+                                    {{ $type->must_declare ? "Oui" : "Non" }}
                                 </td>
                                 <td class="actions-cell">
                                     <button class="btn btn-secondary btn-edit" onclick="showEditForm('{{ $type->id }}')">
@@ -163,18 +163,18 @@
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="imposable"
-                               id="edit_imposable"
+                               name="taxable"
+                               id="edit_taxable"
                                value="1">
-                        <label for="edit_imposable" class="form-label">Revenu imposable</label>
+                        <label for="edit_taxable" class="form-label">Revenu taxable</label>
                     </div>
 
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="declarable"
-                               id="edit_declarable"
+                               name="must_declare"
+                               id="edit_must_declare"
                                value="1">
-                        <label for="edit_declarable" class="form-label">Revenu à déclarer</label>
+                        <label for="edit_must_declare" class="form-label">Revenu à déclarer</label>
                     </div>
                 </div>
 

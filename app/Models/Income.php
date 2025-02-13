@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Income extends Model {
-    protected $table = 'income';
+    protected $table = 'incomes';
 
     protected $fillable = [
         'amount',
         'income_date',
-        'incomeType_id',
+        'income_type_id',
         'notes'
     ];
 
@@ -20,11 +20,11 @@ class Income extends Model {
     protected $casts = [
         'amount' => 'decimal:2',
         'income_date' => 'date',
-        'incomeType_id' => 'integer'
+        'income_type_id' => 'integer'
     ];
 
-    // Relation avec la table type_revenus
-    public function typeRevenu(): BelongsTo {
-        return $this->belongsTo(IncomeType::class, 'incomeType_id');
+    // Relation avec la table incomeType
+    public function incomeType(): BelongsTo {
+        return $this->belongsTo(IncomeType::class, 'income_type_id');
     }
 }

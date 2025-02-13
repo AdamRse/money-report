@@ -52,10 +52,10 @@
         </form>
     </div>
 
-    @if(isset($revenus))
+    @if(isset($incomes))
     <div class="revenus-card">
         <h2>Revenus détectés</h2>
-        @if(empty($revenus))
+        @if(empty($incomes))
             <div class="empty-state">
                 <p>Aucun revenu n'a été détecté dans le fichier</p>
             </div>
@@ -79,33 +79,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($revenus as $index => $revenu)
+                            @foreach($incomes as $index => $income)
                                 <tr>
                                     <td>
                                         <input type="checkbox"
                                             name="revenus[{{ $index }}][selected]"
                                             class="import-checkbox"
-                                            {{ $revenu['selected'] ? 'checked' : '' }}>
+                                            {{ $income['selected'] ? 'checked' : '' }}>
                                         <input type="hidden"
                                             name="revenus[{{ $index }}][date]"
-                                            value="{{ $revenu['date'] }}">
+                                            value="{{ $income['date'] }}">
                                         <input type="hidden"
                                             name="revenus[{{ $index }}][libelle]"
-                                            value="{{ $revenu['libelle'] }}">
+                                            value="{{ $income['libelle'] }}">
                                         <input type="hidden"
                                             name="revenus[{{ $index }}][montant]"
-                                            value="{{ $revenu['montant'] }}">
+                                            value="{{ $income['montant'] }}">
                                     </td>
-                                    <td class="date-cell">{{ $revenu['date'] }}</td>
-                                    <td>{{ $revenu['libelle'] }}</td>
-                                    <td class="amount-cell">{{ number_format($revenu['montant'], 2, ',', ' ') }} €</td>
+                                    <td class="date-cell">{{ $income['date'] }}</td>
+                                    <td>{{ $income['libelle'] }}</td>
+                                    <td class="amount-cell">{{ number_format($income['montant'], 2, ',', ' ') }} €</td>
                                     <td>
                                         <select name="revenus[{{ $index }}][type_revenu_id]"
                                                 class="form-select type-select">
                                             <option value="">Sélectionner un type</option>
-                                            @foreach($typeRevenus as $type)
+                                            @foreach($incomeTypes as $type)
                                                 <option value="{{ $type->id }}"
-                                                    {{ isset($revenu['type_revenu_id']) && $revenu['type_revenu_id'] == $type->id ? 'selected' : '' }}
+                                                    {{ isset($income['type_revenu_id']) && $income['type_revenu_id'] == $type->id ? 'selected' : '' }}
                                                     title="{{ $type->description }}">
                                                         {{ $type->nom }}
                                                 </option>

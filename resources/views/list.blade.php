@@ -9,7 +9,7 @@
         <!-- Liste des revenus -->
         <div class="revenus-card">
             <h2>Détail des revenus</h2>
-            @if($revenus->isEmpty())
+            @if($incomes->isEmpty())
                 <div class="empty-state">
                     @if(isset($periodMessage) && !empty($periodMessage))
                         <p>{{ $periodMessage }}</p>
@@ -26,27 +26,27 @@
                                 <th>Type</th>
                                 <th>Montant</th>
                                 <th>Note</th>
-                                <th>Imposable</th>
+                                <th>taxable</th>
                                 <th>Déclarable</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($revenus as $revenu)
+                            @foreach($incomes as $income)
                                 <tr>
                                     <td class="date-cell">
-                                        {{ Carbon\Carbon::parse($revenu->date_revenu)->locale('fr')->isoFormat('DD MMMM YYYY') }}
+                                        {{ Carbon\Carbon::parse($income->date_revenu)->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                     </td>
-                                    <td class="type-cell" title="{{ $revenu->typeRevenu->description }}">{{ $revenu->typeRevenu->nom }}</td>
+                                    <td class="type-cell" title="{{ $income->typeRevenu->description }}">{{ $income->typeRevenu->nom }}</td>
 
                                     <td class="amount-cell">
-                                        <b>{{ number_format($revenu->montant, 2, ',', ' ') }} €</b>
+                                        <b>{{ number_format($income->montant, 2, ',', ' ') }} €</b>
                                     </td>
-                                    <td>{{ $revenu->notes ?: '-' }}</td>
-                                    <td class="{{ $revenu->typeRevenu->imposable ? 'affirmative' : '' }}">
-                                        {{ $revenu->typeRevenu->imposable ? "Oui" : "Non" }}
+                                    <td>{{ $income->notes ?: '-' }}</td>
+                                    <td class="{{ $income->typeRevenu->taxable ? 'affirmative' : '' }}">
+                                        {{ $income->typeRevenu->taxable ? "Oui" : "Non" }}
                                     </td>
-                                    <td class="{{ $revenu->typeRevenu->declarable ? 'affirmative' : '' }}">
-                                        {{ $revenu->typeRevenu->declarable ? "Oui" : "Non" }}
+                                    <td class="{{ $income->typeRevenu->must_declare ? 'affirmative' : '' }}">
+                                        {{ $income->typeRevenu->must_declare ? "Oui" : "Non" }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -139,12 +139,12 @@
         <!-- Statistiques -->
         <div class="stats-grid">
             <div class="stats-card">
-                <span class="stats-label">Total imposable</span>
-                <span class="stats-value">{{ number_format($stats['total_imposable'], 2) }} €</span>
+                <span class="stats-label">Total taxable</span>
+                <span class="stats-value">{{ number_format($stats['total_taxable'], 2) }} €</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Total déclarables</span>
-                <span class="stats-value">{{ number_format($stats['total_declarable'], 2) }} €</span>
+                <span class="stats-value">{{ number_format($stats['total_must_declare'], 2) }} €</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Total</span>

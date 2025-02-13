@@ -7,17 +7,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::create('income', function (Blueprint $table) {
+        Schema::create('incomes', function (Blueprint $table) {
             $table->id();
             $table->decimal('amount', 10, 2); // Permet des montants jusqu'à 99,999,999.99
             $table->date('income_date');
-            $table->foreignId('incomeType_id')->constrained('incomeType');
+            $table->foreignId('income_type_id')->constrained('income_types');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
 
     public function down() {
-        Schema::dropIfExists('income');
+        Schema::dropIfExists('incomes');
     }
 };
