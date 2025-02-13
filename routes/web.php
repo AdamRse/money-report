@@ -2,14 +2,20 @@
 // routes/web.php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SingletonController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\IncomeImportController;
+use App\Http\Controllers\IncomeReportController;
+use App\Http\Controllers\IncomeTypeController;
 use Illuminate\Support\Facades\Route;
 
 // Utilisateur non authentifié uniquement
 Route::middleware(['guest'])->group(function () {
     Route::controller(AuthController::class)->group(function () {
+        // Connexion
         Route::get('/login', 'showLoginForm')->name('login');
         Route::post('/login', 'login')->name('login.request');
+
+        //Inscription
         Route::get('/register', 'showRegistrationForm')->name('register');
         Route::post('/register', 'register')->name('register.request');
     });
@@ -17,39 +23,26 @@ Route::middleware(['guest'])->group(function () {
 
 // Utilisateur authentifié uniquement
 Route::middleware(['auth'])->group(function () {
+    // Déconnexion
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-});
 
-// // Groupe de routes pour les invités uniquement
-// Route::middleware(['guest'])->group(function () {
-//     Route::controller(SingletonController::class)->group(function () {
-//         Route::get('/login', 'login')->name('login');
-//         Route::post('/login', 'login')->name('login.request');
-//         Route::get('/register', 'register')->name('register');
-//         Route::post('/register', 'register')->name('register.request');
-//     });
-// });
+    // Gestion des revenus (income)
+    Route::get('/income', [IncomeController::class, 'index'])->name('incomes.index');
+    Route::post('/income', [IncomeController::class, 'store'])->name('incomes.store');
+    Route::put('/income/{id}', [IncomeController::class, 'update'])->name('incomes.update');
+    Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('incomes.destroy');
 
-// Groupe de routes pour les utilisateurs authentifiés uniquement
-Route::middleware(['auth'])->group(function () {
-    Route::controller(SingletonController::class)->group(function () {
-        Route::get('/', 'list')->name('accueil');
-        Route::get('/revenu', 'index')->name('revenu');
-        Route::post('/revenu', 'store')->name('revenu.store');
-        Route::get('/revenus', 'list')->name('revenus.list');
-        // Route::post('/logout', 'logout')->name('logout');
-        Route::get('/parse', 'parse')->name('parse');
-        Route::post('/parse', 'parse')->name('parse.request');
-        Route::post('/multipleRevenus', 'multipleRevenus')->name('multipleRevenus');
-        Route::get('/type-revenu', 'typeRevenu')->name('typeRevenu');
-        Route::post('/type-revenu', 'typeRevenu')->name('typeRevenu.store');
-        // Ajout des nouvelles routes pour la modification et suppression
-        Route::put('/type-revenu/{id}', 'updateTypeRevenu')->name('typeRevenu.update');
-        Route::delete('/type-revenu/{id}', 'deleteTypeRevenu')->name('typeRevenu.destroy');
-        // Routes pour les revenus
-        Route::get('/revenu', [SingletonController::class, 'index'])->name('revenu');
-        Route::post('/revenu', [SingletonController::class, 'store'])->name('revenu.store');
-        Route::put('/revenu/{id}', [SingletonController::class, 'update'])->name('revenu.update');
-        Route::delete('/revenu/{id}', [SingletonController::class, 'destroy'])->name('revenu.destroy');
-    });
+    // Gestion des types de revenus
+    Route::get('/income-types', [IncomeTypeController::class, 'index'])->name('income-types.index');
+    Route::post('/income-types', [IncomeTypeController::class, 'store'])->name('income-types.store');
+    Route::put('/income-types/{id}', [IncomeTypeController::class, 'update'])->name('income-types.update');
+    Route::delete('/income-types/{id}', [IncomeTypeController::class, 'destroy'])->name('income-types.destroy');
+
+    // Import des revenus
+    Route::match(['get', 'post'], '/incomes/import', [IncomeImportController::class, 'showForm'])->name('incomes.import');
+    Route::post('/incomes/import/process', [IncomeImportController::class, 'import'])->name('incomes.import.process');
+
+    // Rapports et statistiques
+    Route::get('/', [IncomeReportController::class, 'index'])->name('dashboard');
+    Route::get('/incomes/report', [IncomeReportController::class, 'index'])->name('incomes.report');
 });

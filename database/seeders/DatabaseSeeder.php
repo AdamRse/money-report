@@ -1,10 +1,10 @@
 <?php
+// database/seeders/DatabaseSeeder.php
 
 namespace Database\Seeders;
 
-use App\Models\TypeRevenu;
+use App\Models\IncomeType;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
@@ -14,45 +14,45 @@ class DatabaseSeeder extends Seeder {
     public function run(): void {
         $types = [
             [
-                'nom' => 'Professionnel',
+                'name' => 'Professionnel',
                 'description' => 'Revenus issus d\'activités professionnelles indépendantes',
-                'imposable' => 1,
-                'declarable' => 1,
+                'taxable' => 1,
+                'must_declare' => 1,
             ],
             [
-                'nom' => 'Prestation CAF',
+                'name' => 'Prestation CAF',
                 'description' => 'Aides et allocations diverses',
-                'imposable' => 0,
-                'declarable' => 0,
+                'taxable' => 0,
+                'must_declare' => 0,
             ],
             [
-                'nom' => 'Pole Emploi Formation',
+                'name' => 'Pole Emploi Formation',
                 'description' => 'Rémunération déclarable de pole emploi pour une formation',
-                'imposable' => 0,
-                'declarable' => 1,
+                'taxable' => 0,
+                'must_declare' => 1,
             ],
             [
-                'nom' => 'Salaire',
+                'name' => 'Salaire',
                 'description' => 'Revenus issus d\'un contrat de travail salarié',
-                'imposable' => 1,
-                'declarable' => 1,
+                'taxable' => 1,
+                'must_declare' => 1,
             ],
             [
-                'nom' => 'Chômage',
+                'name' => 'Chômage',
                 'description' => 'Assurance Chômage',
-                'imposable' => 1,
-                'declarable' => 1,
+                'taxable' => 1,
+                'must_declare' => 1,
             ],
             [
-                'nom' => 'Remboursement',
+                'name' => 'Remboursement',
                 'description' => 'Remboursement d\'un achat précédent',
-                'imposable' => 0,
-                'declarable' => 0,
+                'taxable' => 0,
+                'must_declare' => 0,
             ]
         ];
 
         foreach ($types as $type) {
-            TypeRevenu::create($type);
+            IncomeType::create($type);
         }
     }
 }

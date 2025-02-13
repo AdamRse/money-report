@@ -1,7 +1,7 @@
 <?php
-// app/Http/Requests/RegisterRequest.php
+// app/Http/Requests/Auth/RegisterRequest.php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
