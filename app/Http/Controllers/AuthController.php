@@ -59,7 +59,7 @@ class AuthController extends Controller {
         Auth::login($user);
 
         return redirect()
-            ->route('revenu')
+            ->route('incomes')
             ->with('success', 'Inscription réussie');
     }
 
