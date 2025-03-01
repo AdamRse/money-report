@@ -38,19 +38,145 @@ class IncomeImportController extends Controller {
     ];
 
     /**
-     * Affiche le formulaire d'import ou traite le fichier uploadé
+     * Parse le fichier uploadé et retourne les revenus détectés
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return array<int, array<string, mixed>>
+     * @throws \Exception
      */
-    public function showForm(ImportFileRequest $request): View|RedirectResponse {
-        if (!$request->isMethod('post')) {
-            return view('incomes.import', [
-                'incomeTypes' => IncomeType::all()
-            ]);
+    private function parseFile($file): array {
+        $content = file_get_contents($file->path());
+
+        // Détection automatique du délimiteur (plus fiable)
+        $firstLine = strtok($content, "\n");
+        $delimiter = ";"; // Par défaut
+
+        if (substr_count($firstLine, ';') > substr_count($firstLine, ',') && substr_count($firstLine, ';') > substr_count($firstLine, "\t")) {
+            $delimiter = ';';
+        } elseif (substr_count($firstLine, ',') > substr_count($firstLine, ';') && substr_count($firstLine, ',') > substr_count($firstLine, "\t")) {
+            $delimiter = ',';
+        } elseif (substr_count($firstLine, "\t") > 0) {
+            $delimiter = "\t";
         }
 
+        $lines = explode("\n", $content);
+
+        // Afficher les premières lignes pour le débogage
+        // echo "Premières lignes du fichier:";
+        // var_dump(array_slice($lines, 0, 5));
+
+        // Recherche de la ligne d'en-tête avec plus de flexibilité
+        $headerIndex = -1;
+        $dateKeywords = ['date', 'jour', 'day'];
+        $amountKeywords = ['amount', 'montant', 'somme', 'valeur', 'crédit'];
+
+        foreach ($lines as $index => $line) {
+            $line = strtolower($line); // Convertir en minuscules pour recherche insensible à la casse
+
+            $hasDateKeyword = false;
+            foreach ($dateKeywords as $keyword) {
+                if (str_contains($line, strtolower($keyword))) {
+                    $hasDateKeyword = true;
+                    break;
+                }
+            }
+
+            $hasAmountKeyword = false;
+            foreach ($amountKeywords as $keyword) {
+                if (str_contains($line, strtolower($keyword))) {
+                    $hasAmountKeyword = true;
+                    break;
+                }
+            }
+
+            if ($hasDateKeyword && $hasAmountKeyword) {
+                $headerIndex = $index;
+                break;
+            }
+        }
+
+        // Si aucun en-tête reconnu, utiliser la première ligne
+        if ($headerIndex === -1) {
+            // On peut soit utiliser la première ligne comme en-tête
+            $headerIndex = 0;
+
+            // Ou déclencher une exception
+            // throw new \Exception("Format de fichier invalide : impossible de trouver l'en-tête des colonnes");
+        }
+
+        $incomes = [];
+
+        // Traitement des lignes après l'en-tête
+        for ($i = $headerIndex + 1; $i < count($lines); $i++) {
+            $line = trim($lines[$i]);
+            if (empty($line)) continue;
+
+            $columns = str_getcsv($line, $delimiter);
+            if (count($columns) < 3) continue;
+
+            $date = trim($columns[0]);
+            $description = trim($columns[1], " \t\n\r\0\x0B\"");
+            $amount = str_replace(',', '.', trim($columns[2]));
+
+            // Vérifier si le montant est un nombre valide
+            if (!is_numeric($amount) || floatval($amount) <= 0) continue;
+
+            $shouldBeSelected = !$this->shouldExclude($description);
+            $income_typesId = $this->detectincome_types($description);
+
+            $incomes[] = [
+                'date' => $date,
+                'description' => $description,
+                'amount' => floatval($amount),
+                'selected' => $shouldBeSelected,
+                'income_type_id' => $income_typesId
+            ];
+        }
+
+        usort($incomes, fn($a, $b) => strtotime($b['date']) - strtotime($a['date']));
+
+        return $incomes;
+    }
+
+    /**
+     * Vérifie si un libellé doit être exclu
+     */
+    private function shouldExclude(string $description): bool {
+        $description = strtolower($description);
+        return collect($this->excludePatterns)
+            ->contains(fn($pattern) => str_contains($description, strtolower($pattern)));
+    }
+
+    /**
+     * Détermine le type de revenu en fonction du libellé
+     */
+    private function detectincome_types(string $description): ?int {
+        $description = strtolower($description);
+        foreach ($this->typePatterns as $pattern => $typeId) {
+            if (str_contains($description, strtolower($pattern))) {
+                return $typeId;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Affiche le formulaire d'import
+     */
+    public function showForm(): View {
+        return view('parse', [
+            'incomeTypes' => IncomeType::all()
+        ]);
+    }
+
+    /**
+     * Traite le fichier uploadé et affiche les résultats
+     */
+    public function processFile(ImportFileRequest $request): View|RedirectResponse {
         try {
             $parsedIncomes = $this->parseFile($request->file('bankFile'));
 
-            return view('incomes.import', [
+            return view('parse', [
                 'incomes' => $parsedIncomes,
                 'incomeTypes' => IncomeType::all(),
                 'parseResults' => true
@@ -104,85 +230,5 @@ class IncomeImportController extends Controller {
                 ->route('incomes.import')
                 ->with('error', 'Erreur lors de l\'import des revenus : ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Parse le fichier uploadé et retourne les revenus détectés
-     *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return array<int, array<string, mixed>>
-     * @throws \Exception
-     */
-    private function parseFile($file): array {
-        $content = file_get_contents($file->path());
-        $delimiter = str_contains($file->getClientOriginalName(), '.tsv') ? "\t" : ";";
-        $lines = explode("\n", $content);
-
-        // Recherche de la ligne d'en-tête
-        $headerIndex = -1;
-        foreach ($lines as $index => $line) {
-            if (str_contains($line, 'Date') && str_contains($line, 'amount')) {
-                $headerIndex = $index;
-                break;
-            }
-        }
-
-        if ($headerIndex === -1) {
-            throw new \Exception("Format de fichier invalide : impossible de trouver l'en-tête des colonnes");
-        }
-
-        $incomes = [];
-
-        // Traitement des lignes après l'en-tête
-        for ($i = $headerIndex + 1; $i < count($lines); $i++) {
-            $line = trim($lines[$i]);
-            if (empty($line)) continue;
-
-            $columns = str_getcsv($line, $delimiter);
-            if (count($columns) < 3) continue;
-
-            $date = trim($columns[0]);
-            $description = trim($columns[1], " \t\n\r\0\x0B\"");
-            $amount = str_replace(',', '.', trim($columns[2]));
-
-            if (floatval($amount) <= 0) continue;
-
-            $shouldBeSelected = !$this->shouldExclude($description);
-            $income_typesId = $this->detectincome_types($description);
-
-            $incomes[] = [
-                'date' => $date,
-                'description' => $description,
-                'amount' => floatval($amount),
-                'selected' => $shouldBeSelected,
-                'income_type_id' => $income_typesId
-            ];
-        }
-
-        usort($incomes, fn($a, $b) => strtotime($b['date']) - strtotime($a['date']));
-
-        return $incomes;
-    }
-
-    /**
-     * Vérifie si un libellé doit être exclu
-     */
-    private function shouldExclude(string $description): bool {
-        $description = strtolower($description);
-        return collect($this->excludePatterns)
-            ->contains(fn($pattern) => str_contains($description, strtolower($pattern)));
-    }
-
-    /**
-     * Détermine le type de revenu en fonction du libellé
-     */
-    private function detectincome_types(string $description): ?int {
-        $description = strtolower($description);
-        foreach ($this->typePatterns as $pattern => $typeId) {
-            if (str_contains($description, strtolower($pattern))) {
-                return $typeId;
-            }
-        }
-        return null;
     }
 }

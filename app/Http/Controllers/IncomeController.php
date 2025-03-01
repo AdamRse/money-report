@@ -26,7 +26,7 @@ class IncomeController extends Controller {
 
         $incomeTypes = IncomeType::all();
 
-        return view('income.index', compact('incomeTypes', 'incomes', 'selectedYear'));
+        return view('revenu', compact('incomeTypes', 'incomes', 'selectedYear'));
     }
 
     /**

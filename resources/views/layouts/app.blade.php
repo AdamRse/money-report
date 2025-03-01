@@ -8,15 +8,15 @@
     <nav>
         <ul>
             @guest
-                <li><a href="/login">Connexion</a></li>
-                <li><a href="/register">Inscription</a></li>
+                <li><a href="{{ route('login') }}">Connexion</a></li>
+                <li><a href="{{ route('register') }}">Inscription</a></li>
             @endguest
             @auth
                 <li><span>{{ auth()->user()->name }}</span></li>
-                <li><a href="/incomes">Récapitulatif</a></li>
-                <li><a href="/revenu">incomes</a></li>
-                <li><a href="/parse">Parser un document</a></li>
-                <li><a href="/type-revenu">Types de revenu</a></li>
+                <li><a href="{{ route('incomes.report') }}">Récapitulatif</a></li>
+                <li><a href="{{ route('incomes.index') }}">Revenus</a></li>
+                <li><a href="{{ route('incomes.import') }}">Parser un document</a></li>
+                <li><a href="{{ route('income-types.index') }}">Types de revenu</a></li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

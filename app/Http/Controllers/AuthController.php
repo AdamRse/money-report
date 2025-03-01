@@ -29,7 +29,7 @@ class AuthController extends Controller {
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('revenu');
+            return redirect()->intended(route('incomes.index'));
         }
 
         return back()
@@ -59,7 +59,7 @@ class AuthController extends Controller {
         Auth::login($user);
 
         return redirect()
-            ->route('incomes')
+            ->route('incomes.index')
             ->with('success', 'Inscription réussie');
     }
 

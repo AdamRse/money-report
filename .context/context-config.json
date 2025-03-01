@@ -1,5 +1,6 @@
 {
     "files_to_collect": [
+        ".context/**/*",
         "app/**/*.php",
         "config/app.php",
         "database/**/*.php",
@@ -16,6 +17,7 @@
         "database/migrations/*jobs_table.php",
         "app/Http/Controllers/Controller.php",
         "resources/views/welcome.blade.php",
-        "resources/views/components/**/*"
+        "resources/views/components/**/*",
+        "app/Http/Controllers/SingletonController.php"
     ]
 }

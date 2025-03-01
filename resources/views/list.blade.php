@@ -67,7 +67,7 @@
                     @endforeach
                 </div>
             @endif
-            <form action="{{ route('incomes.list') }}" method="GET" class="filters-form" id="filterForm">
+            <form action="{{ route('incomes.report') }}" method="GET" class="filters-form" id="filterForm">
                 <div class="filters-type">
                     <div class="form-group">
                         <label for="filter_type" class="form-label">Type de filtre</label>
@@ -131,7 +131,7 @@
 
                 <div class="filters-actions">
                     <button type="submit" class="btn btn-primary">Appliquer</button>
-                    <a href="{{ route('incomes.list') }}" class="btn btn-secondary">Réinitialiser</a>
+                    <a href="{{ route('incomes.report') }}" class="btn btn-secondary">Réinitialiser</a>
                 </div>
             </form>
         </div>
@@ -140,23 +140,23 @@
         <div class="stats-grid">
             <div class="stats-card">
                 <span class="stats-label">Total taxable</span>
-                <span class="stats-value">{{ number_format($stats['total_taxable'], 2) }} €</span>
+                <span class="stats-value">{{ number_format($statistics['total_taxable'], 2) }} €</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Total déclarables</span>
-                <span class="stats-value">{{ number_format($stats['total_must_declare'], 2) }} €</span>
+                <span class="stats-value">{{ number_format($statistics['total_must_declare'], 2) }} €</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Total</span>
-                <span class="stats-value">{{ number_format($stats['total'], 2, ',', ' ') }} €</span>
+                <span class="stats-value">{{ number_format($statistics['total'], 2, ',', ' ') }} €</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Nombre de revenus</span>
-                <span class="stats-value">{{ $stats['count'] }}</span>
+                <span class="stats-value">{{ $statistics['count'] }}</span>
             </div>
             <div class="stats-card">
                 <span class="stats-label">Moyenne par revenu</span>
-                <span class="stats-value">{{ number_format($stats['average'], 2, ',', ' ') }} €</span>
+                <span class="stats-value">{{ number_format($statistics['average'], 2, ',', ' ') }} €</span>
             </div>
         </div>
 

@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <form action="{{ route('revenu.store') }}" method="POST" class="form">
+        <form action="{{ route('incomes.store') }}" method="POST" class="form">
             @csrf
 
             <div class="form-group">
@@ -128,7 +128,7 @@
     <div class="revenus-card">
         <div class="revenus-header">
             <h2>Liste des revenus</h2>
-            <form method="GET" action="{{ route('revenu') }}" class="form-group">
+            <form method="GET" action="{{ route('incomes.index') }}" class="form-group">
                 <select name="annee_filtre" id="annee_filtre" class="form-select" onchange="this.form.submit()">
                     @foreach(range(date('Y'), date('Y')-5) as $annee)
                         <option value="{{ $annee }}"
@@ -173,7 +173,7 @@
                                         Modifier
                                     </button>
                                     <form
-                                        action="{{ route('revenu.destroy', $income->id) }}"
+                                        action="{{ route('incomes.destroy', $income->id) }}"
                                         method="POST"
                                         class="inline-form"
                                         onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?');"
@@ -195,7 +195,7 @@
     <div id="editModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Modifier le revenu</h2>
-            <form id="editForm" action="{{ route('revenu.update', '') }}" method="POST" class="form">
+            <form id="editForm" action="{{ route('incomes.update', '') }}" method="POST" class="form">
                 @csrf
                 @method('PUT')
 

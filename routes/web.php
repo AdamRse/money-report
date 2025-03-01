@@ -39,8 +39,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/income-types/{id}', [incomeTypesController::class, 'destroy'])->name('income-types.destroy');
 
     // Import des revenus
-    Route::match(['get', 'post'], '/incomes/import', [IncomeImportController::class, 'showForm'])->name('incomes.import');
+    Route::get('/incomes/import', [IncomeImportController::class, 'showForm'])->name('incomes.import');
+    Route::post('/incomes/import', [IncomeImportController::class, 'processFile'])->name('incomes.import.parse');
     Route::post('/incomes/import/process', [IncomeImportController::class, 'import'])->name('incomes.import.process');
+    //Route::match(['get', 'post'], '/incomes/import', [IncomeImportController::class, 'showForm'])->name('incomes.import');
 
     // Rapports et statistiques
     Route::get('/', [IncomeReportController::class, 'index'])->name('dashboard');
