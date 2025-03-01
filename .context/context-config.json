@@ -1,0 +1,21 @@
+{
+    "files_to_collect": [
+        "app/**/*.php",
+        "config/app.php",
+        "database/**/*.php",
+        "public/style.css",
+        "routes/web.php",
+        "resources/views/**/*.php",
+        "bootstrap/app.php",
+        "bootstrap/providers.php",
+        "README.md",
+        "package.json"
+    ],
+    "files_to_ignore": [
+        "database/migrations/*cache_table.php",
+        "database/migrations/*jobs_table.php",
+        "app/Http/Controllers/Controller.php",
+        "resources/views/welcome.blade.php",
+        "resources/views/components/**/*"
+    ]
+}

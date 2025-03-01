@@ -1,0 +1,19 @@
+Je créé une application sous laravel qui sera destinée à être déployée sur mon serveur.
+Pour l'instant je la code en local.
+J'utilise laravel 11 et php 8.3.
+L'application a pour but d'enregistrer mes revenus, avec une date et un type associé.
+Le type de revenu me permet de savoir quelles sont les modalités pour le déclarer, afin de faire ma fiche d'impôt, ou tout autre demande de revenu.
+Le projet s'appelle money report, et utilisera tout de même un système d'authentification pour pas que mes données soient accessible.
+L'application est française et est destinée à être utilisée dans le cadre Français.
+J'utilise laravel breeze, et l'interface sera géré via laravel avec des .blade.
+L'application est déjà fonctionnelle dans une version 1.0, qui ne prend pas en compte beaucoup de bonne pratiques, le code est en cours de refactorisation.
+Mon objectif est de tout re-factoriser avec les princippes SOLID dans une version 2.0 en ajoutant des fonctionnalités au passage.
+Le but de la version 2.0 est d'en faire une version open source et une vitrine pour mon portfolio de développeur web.
+Je dois donc mettre l'accent sur les bonnes pratiques SOLID pour la re-factorisation.
+Je ne suis pas encore tout à fait au point, alors tu m'aideras à prendre des décisions, avec des suggestions quand nécessaire, pour respecter cet objectif.
+
+Le code que tu fourniras si besoin, doit être commenté en Français en respectant les princippes SOLID. Tu peux ne donner que des blocs de code si besoin, mais tu dois spécifier où les appliquer dans le fichier.
+Si le fichier n'est pas trop long (moins de 100 lignes), tu écriras le fichier complet pour éviter la confusion d'un copier-coller au mauvais endroit.
+Si tu écris un bloc de code, tu dois l'écrire en entier, tu ne peux ignorer le code qu'en dehors d'un bloc de code si le fichier est trop long.
+
+Si tu as besoin de plus de fichier de context, tu peux le demmander, mais attention à ne pas polluer le contexte avec des demmandes de gros fichiers qui ne possèdent que peu d'information pertinente.
