@@ -107,7 +107,7 @@
                                                 <option value="{{ $type->id }}"
                                                     {{ isset($income['income_type_id']) && $income['income_type_id'] == $type->id ? 'selected' : '' }}
                                                     title="{{ $type->description }}">
-                                                        {{ $type->nom }}
+                                                        {{ $type->name }}
                                                 </option>
                                             @endforeach
                                         </select>

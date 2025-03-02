@@ -36,7 +36,7 @@
                                     <td class="date-cell">
                                         {{ Carbon\Carbon::parse($income->income_date)->locale('fr')->isoFormat('DD MMMM YYYY') }}
                                     </td>
-                                    <td class="type-cell" title="{{ $income->income_types->description }}">{{ $income->income_types->nom }}</td>
+                                    <td class="type-cell" title="{{ $income->income_types->description }}">{{ $income->income_types->name }}</td>
 
                                     <td class="amount-cell">
                                         <b>{{ number_format($income->amount, 2, ',', ' ') }} €</b>

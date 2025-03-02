@@ -72,7 +72,7 @@
                     @foreach($incomeTypes as $type)
                         <option value="{{ $type->id }}"
                                 {{ old('income_type_id') == $type->id ? 'selected' : '' }}>
-                            {{ $type->nom }}
+                            {{ $type->name }}
                         </option>
                     @endforeach
                     <option value="0">
@@ -226,7 +226,7 @@
                             required
                             class="form-select">
                         @foreach($incomeTypes as $type)
-                            <option value="{{ $type->id }}">{{ $type->nom }}</option>
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
                         @endforeach
                     </select>
                 </div>
