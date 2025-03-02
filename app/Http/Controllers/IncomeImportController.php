@@ -9,6 +9,7 @@ use App\Models\Income;
 use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class IncomeImportController extends Controller {
@@ -193,14 +194,20 @@ class IncomeImportController extends Controller {
      */
     public function import(ImportIncomesRequest $request): RedirectResponse {
         try {
-            $selectedIncomes = collect($request->validated('incomes'))
-                ->filter(fn($income) => isset($income['selected']))
+            // Récupérer toutes les données validées
+            $allIncomes = $request->validated('incomes');
+
+            // Filtrer les revenus qui ont la clé 'selected'
+            $selectedIncomes = collect($allIncomes)
+                ->filter(function ($income) {
+                    return isset($income['selected']) && !empty($income['income_type_id']);
+                })
                 ->values();
 
             if ($selectedIncomes->isEmpty()) {
                 return redirect()
                     ->route('incomes.import')
-                    ->with('error', 'Aucun revenu sélectionné pour l\'import');
+                    ->with('error', 'Aucun revenu sélectionné avec un type valide pour l\'import');
             }
 
             DB::beginTransaction();

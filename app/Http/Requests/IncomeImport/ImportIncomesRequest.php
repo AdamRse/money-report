@@ -3,6 +3,7 @@
 namespace App\Http\Requests\IncomeImport;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class ImportIncomesRequest extends FormRequest {
     /**
@@ -23,8 +24,12 @@ class ImportIncomesRequest extends FormRequest {
             'incomes.*.date' => ['required', 'string'],
             'incomes.*.description' => ['required', 'string'],
             'incomes.*.amount' => ['required', 'numeric', 'min:0'],
-            'incomes.*.income_type_id' => ['required', 'exists:income_types,id'],
-            'incomes.*.selected' => ['sometimes', 'boolean']
+            'incomes.*.income_type_id' => [
+                'exclude_unless:incomes.*.selected,on',
+                'required',
+                'exists:income_types,id'
+            ],
+            'incomes.*.selected' => ['sometimes']
         ];
     }
 
