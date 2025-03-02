@@ -7,7 +7,7 @@ app/
 │   │   ├── IncomeController.php
 │   │   ├── IncomeImportController.php
 │   │   ├── IncomeReportController.php
-│   │   ├── incomeTypesController.php
+│   │   ├── IncomeTypeController.php
 │   │   └── SingletonController.php # Will be removed
 │   │
 │   ├── Requests/

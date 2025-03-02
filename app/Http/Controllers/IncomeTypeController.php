@@ -9,13 +9,13 @@ use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class incomeTypesController extends Controller {
+class IncomeTypeController extends Controller {
     /**
      * Affiche la liste des types de revenus
      */
     public function index(): View {
         $incomeTypes = IncomeType::all();
-        return view('income-types.index', compact('incomeTypes'));
+        return view('type-revenu', compact('incomeTypes'));
     }
 
     /**
