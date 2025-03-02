@@ -22,7 +22,7 @@ class LoginRequest extends FormRequest {
         return [
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'remember' => ['sometimes', 'boolean']
+            'remember' => ['sometimes', 'accepted'] //Boolean ne fonctionnera pas
         ];
     }
 

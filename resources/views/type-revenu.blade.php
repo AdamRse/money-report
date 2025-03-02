@@ -107,7 +107,7 @@
                     <tbody>
                         @foreach($incomeTypes as $type)
                             <tr>
-                                <td>{{ $type->nom }}</td>
+                                <td>{{ $type->name }}</td>
                                 <td>{{ $type->description ?: '-' }}</td>
                                 <td class="{{ $type->taxable ? 'affirmative' : '' }}">
                                     {{ $type->taxable ? "Oui" : "Non" }}

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller {
     /**
      * Affiche le formulaire de connexion
@@ -21,13 +23,18 @@ class AuthController extends Controller {
         return view('login');
     }
 
+
     /**
      * Gère la tentative de connexion
      */
     public function login(LoginRequest $request): RedirectResponse {
-        $credentials = $request->validated();
+        // Séparation des identifiants et de l'option "remember me"
+        $credentials = $request->only(['email', 'password']);
+        $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        Log::info('Tentative de connexion avec les identifiants:', ['email' => $credentials['email']]);
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('incomes.index'));
         }

@@ -10,15 +10,13 @@ use Illuminate\Support\Facades\Route;
 
 // Utilisateur non authentifié uniquement
 Route::middleware(['guest'])->group(function () {
-    Route::controller(AuthController::class)->group(function () {
-        // Connexion
-        Route::get('/login', 'showLoginForm')->name('login');
-        Route::post('/login', 'login')->name('login.request');
+    // Connexion
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.request');
 
-        //Inscription
-        Route::get('/register', 'showRegistrationForm')->name('register');
-        Route::post('/register', 'register')->name('register.request');
-    });
+    //Inscription
+    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.request');
 });
 
 // Utilisateur authentifié uniquement
