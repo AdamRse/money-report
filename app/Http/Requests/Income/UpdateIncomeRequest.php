@@ -1,5 +1,4 @@
 <?php
-// app/Http/Requests/Income/UpdateIncomeRequest.php
 
 namespace App\Http\Requests\Income;
 

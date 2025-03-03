@@ -1,5 +1,4 @@
 <?php
-// app/Models/Income.php
 
 namespace App\Models;
 

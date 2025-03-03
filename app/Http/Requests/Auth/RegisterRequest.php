@@ -1,5 +1,4 @@
 <?php
-// app/Http/Requests/Auth/RegisterRequest.php
 
 namespace App\Http\Requests\Auth;
 

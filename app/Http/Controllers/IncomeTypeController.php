@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/IncomeTypeController.php
 
 namespace App\Http\Controllers;
 

@@ -1,5 +1,4 @@
 <?php
-// app/Models/income_types.php
 
 namespace App\Models;
 
