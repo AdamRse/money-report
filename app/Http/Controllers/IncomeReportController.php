@@ -30,7 +30,7 @@ class IncomeReportController extends Controller {
         // Calcul des statistiques
         $statistics = $this->statisticsService->calculateStatistics($incomes);
 
-        return view('reports.income-report', [
+        return view('income-report.index', [
             'incomes' => $incomes,
             'statistics' => $statistics,
             'periodMessage' => $periodMessage

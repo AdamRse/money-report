@@ -92,6 +92,22 @@
         </form>
     </section>
 
+    <!-- Tableau détaillé des revenus -->
+    @if($incomes->isNotEmpty())
+    <section class="revenus-card">
+        <h2>Détail des revenus</h2>
+        @include('components.tables.incomes', ['incomes' => $incomes, 'showActions' => false, 'showTaxInfo' => true])
+    </section>
+    @else
+    <div class="empty-state">
+        @if(isset($periodMessage) && !empty($periodMessage))
+            <p>{{ $periodMessage }}</p>
+        @else
+            <p>Aucun revenu enregistré</p>
+        @endif
+    </div>
+    @endif
+
     <!-- Tableau de bord statistique -->
     <section class="dashboard-grid">
         <!-- Tuiles statistiques principales -->
@@ -157,22 +173,6 @@
         </section>
         @endif
     </section>
-
-    <!-- Tableau détaillé des revenus -->
-    @if($incomes->isNotEmpty())
-    <section class="revenus-card">
-        <h2>Détail des revenus</h2>
-        @include('components.tables.incomes', ['incomes' => $incomes, 'showActions' => false, 'showTaxInfo' => true])
-    </section>
-    @else
-    <div class="empty-state">
-        @if(isset($periodMessage) && !empty($periodMessage))
-            <p>{{ $periodMessage }}</p>
-        @else
-            <p>Aucun revenu enregistré</p>
-        @endif
-    </div>
-    @endif
 </div>
 
 @push('scripts')
