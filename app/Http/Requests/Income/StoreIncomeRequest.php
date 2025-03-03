@@ -23,8 +23,8 @@ class StoreIncomeRequest extends FormRequest {
             // Pour la création d'un nouveau type de revenu
             'new_type_name' => ['required_if:income_type_id,0', 'string', 'between:2,63'],
             'new_type_description' => ['nullable', 'string', 'max:255'],
-            'taxable' => ['nullable', 'accepted'],
-            'must_declare' => ['nullable', 'accepted']
+            'taxable' => ['sometimes', 'boolean'],
+            'must_declare' => ['sometimes', 'boolean']
         ];
     }
 
