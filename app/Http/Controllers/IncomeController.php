@@ -6,12 +6,20 @@ use App\Http\Requests\Income\StoreIncomeRequest;
 use App\Http\Requests\Income\UpdateIncomeRequest;
 use App\Models\Income;
 use App\Models\IncomeType;
+use App\Services\IncomeDuplicateCheckerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class IncomeController extends Controller {
+
+    // Injecter le service dans le constructeur
+    protected IncomeDuplicateCheckerService $duplicateChecker;
+
+    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+        $this->duplicateChecker = $duplicateChecker;
+    }
     /**
      * Affiche la liste des revenus pour l'année sélectionnée
      */

@@ -6,12 +6,16 @@ use App\Http\Requests\IncomeImport\ImportFileRequest;
 use App\Http\Requests\IncomeImport\ImportIncomesRequest;
 use App\Models\Income;
 use App\Models\IncomeType;
+use App\Services\IncomeDuplicateCheckerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class IncomeImportController extends Controller {
+    // Injecter le service dans le constructeur
+    protected IncomeDuplicateCheckerService $duplicateChecker;
+
     /**
      * Patterns à détecter dans les libellés pour exclusion (les résultats restent affichés mais décochés)
      * @var array<string>
@@ -36,6 +40,10 @@ class IncomeImportController extends Controller {
         'SALAIRE' => 4,
         'CHOMAGE' => 5
     ];
+
+    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+        $this->duplicateChecker = $duplicateChecker;
+    }
 
     /**
      * Parse le fichier uploadé et retourne les revenus détectés
