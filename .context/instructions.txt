@@ -6,11 +6,10 @@ Le type de revenu me permet de savoir quelles sont les modalités pour le décla
 Le projet s'appelle money report, et utilisera tout de même un système d'authentification pour pas que mes données soient accessible.
 L'application est française et est destinée à être utilisée dans le cadre Français.
 J'utilise laravel breeze, et l'interface sera géré via laravel avec des .blade.
-L'application est déjà fonctionnelle dans une version 1.0, qui ne prend pas en compte beaucoup de bonne pratiques, le code est en cours de refactorisation.
-Mon objectif est de tout re-factoriser avec les princippes SOLID dans une version 2.0 en ajoutant des fonctionnalités au passage.
-Le but de la version 2.0 est d'en faire une version open source et une vitrine pour mon portfolio de développeur web.
-Je dois donc mettre l'accent sur les bonnes pratiques SOLID pour la re-factorisation.
-Je ne suis pas encore tout à fait au point, alors tu m'aideras à prendre des décisions, avec des suggestions quand nécessaire, pour respecter cet objectif.
+
+Le but de l'application est d'en faire une version en production pour moi même sur mon serveur debian, en une version open source et une vitrine pour mon portfolio de développeur web.
+L'application me sert aussi d'exercice pour apprendre les principes SOLID, et doit respecter les bonnes pratiques les plus récentes.
+Je ne suis pas encore tout à fait au point sur les principes SOLID, alors tu m'aideras à prendre des décisions, avec des suggestions quand nécessaire, pour respecter cet objectif.
 
 Le code que tu fourniras si besoin, doit être écrit en Anglais, mais commenté en Français en respectant les princippes SOLID. Tu peux ne donner que des blocs de code si besoin, mais tu dois spécifier où les appliquer dans le fichier.
 Si le fichier n'est pas trop long (moins de 100 lignes), tu écriras le fichier complet pour éviter la confusion d'un copier-coller au mauvais endroit.
