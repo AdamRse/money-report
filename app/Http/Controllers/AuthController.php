@@ -19,7 +19,7 @@ class AuthController extends Controller {
      * Affiche le formulaire de connexion
      */
     public function showLoginForm(): View {
-        return view('login');
+        return view('auth.login');
     }
 
 
@@ -47,7 +47,7 @@ class AuthController extends Controller {
      * Affiche le formulaire d'inscription
      */
     public function showRegistrationForm(): View {
-        return view('register');
+        return view('auth.register');
     }
 
     /**

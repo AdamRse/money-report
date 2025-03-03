@@ -164,7 +164,7 @@ class IncomeImportController extends Controller {
      * Affiche le formulaire d'import
      */
     public function showForm(): View {
-        return view('parse', [
+        return view('imports.index', [
             'incomeTypes' => IncomeType::all()
         ]);
     }
@@ -176,7 +176,7 @@ class IncomeImportController extends Controller {
         try {
             $parsedIncomes = $this->parseFile($request->file('bankFile'));
 
-            return view('parse', [
+            return view('imports.index', [
                 'incomes' => $parsedIncomes,
                 'incomeTypes' => IncomeType::all(),
                 'parseResults' => true

@@ -14,7 +14,7 @@ class IncomeTypeController extends Controller {
      */
     public function index(): View {
         $incomeTypes = IncomeType::all();
-        return view('type-revenu', compact('incomeTypes'));
+        return view('income-types.index', compact('incomeTypes'));
     }
 
     /**
