@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <form action="{{ route('parse.request') }}" method="POST" enctype="multipart/form-data" class="form">
+        <form action="{{ route('incomes.import.parse') }}" method="POST" enctype="multipart/form-data" class="form">
             @csrf
 
             <div class="form-group">
@@ -52,15 +52,15 @@
         </form>
     </div>
 
-    @if(isset($revenus))
+    @if(isset($incomes))
     <div class="revenus-card">
         <h2>Revenus détectés</h2>
-        @if(empty($revenus))
+        @if(empty($incomes))
             <div class="empty-state">
                 <p>Aucun revenu n'a été détecté dans le fichier</p>
             </div>
         @else
-            <form action="{{ route('multipleRevenus') }}" method="POST" id="importForm">
+            <form action="{{ route('incomes.import.process') }}" method="POST" id="importForm">
                 @csrf
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="toggleAll()">Tout sélectionner</button>
@@ -74,40 +74,40 @@
                                 <th>Importer</th>
                                 <th>Date</th>
                                 <th>Libellé</th>
-                                <th>Montant</th>
+                                <th>amount</th>
                                 <th>Type de revenu</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($revenus as $index => $revenu)
+                            @foreach($incomes as $index => $income)
                                 <tr>
                                     <td>
                                         <input type="checkbox"
-                                            name="revenus[{{ $index }}][selected]"
+                                            name="incomes[{{ $index }}][selected]"
                                             class="import-checkbox"
-                                            {{ $revenu['selected'] ? 'checked' : '' }}>
+                                            {{ $income['selected'] ? 'checked' : '' }}>
                                         <input type="hidden"
-                                            name="revenus[{{ $index }}][date]"
-                                            value="{{ $revenu['date'] }}">
+                                            name="incomes[{{ $index }}][date]"
+                                            value="{{ $income['date'] }}">
                                         <input type="hidden"
-                                            name="revenus[{{ $index }}][libelle]"
-                                            value="{{ $revenu['libelle'] }}">
+                                            name="incomes[{{ $index }}][description]"
+                                            value="{{ $income['description'] }}">
                                         <input type="hidden"
-                                            name="revenus[{{ $index }}][montant]"
-                                            value="{{ $revenu['montant'] }}">
+                                            name="incomes[{{ $index }}][amount]"
+                                            value="{{ $income['amount'] }}">
                                     </td>
-                                    <td class="date-cell">{{ $revenu['date'] }}</td>
-                                    <td>{{ $revenu['libelle'] }}</td>
-                                    <td class="amount-cell">{{ number_format($revenu['montant'], 2, ',', ' ') }} €</td>
+                                    <td class="date-cell">{{ $income['date'] }}</td>
+                                    <td>{{ $income['description'] }}</td>
+                                    <td class="amount-cell">{{ number_format($income['amount'], 2, ',', ' ') }} €</td>
                                     <td>
-                                        <select name="revenus[{{ $index }}][type_revenu_id]"
+                                        <select name="incomes[{{ $index }}][income_type_id]"
                                                 class="form-select type-select">
                                             <option value="">Sélectionner un type</option>
-                                            @foreach($typeRevenus as $type)
+                                            @foreach($incomeTypes as $type)
                                                 <option value="{{ $type->id }}"
-                                                    {{ isset($revenu['type_revenu_id']) && $revenu['type_revenu_id'] == $type->id ? 'selected' : '' }}
+                                                    {{ isset($income['income_type_id']) && $income['income_type_id'] == $type->id ? 'selected' : '' }}
                                                     title="{{ $type->description }}">
-                                                        {{ $type->nom }}
+                                                        {{ $type->name }}
                                                 </option>
                                             @endforeach
                                         </select>

@@ -1,9 +1,10 @@
 <?php
+// app/Http/Controllers/SingletonController.php
 
 namespace App\Http\Controllers;
 
-use App\Models\Revenu;
-use App\Models\TypeRevenu;
+use App\Models\Income;
+use App\Models\IncomeType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class SingletonController extends Controller {
      * Détermine le type de revenu en fonction du libellé
      * Retourne null si aucun pattern ne correspond
      */
-    private function detectTypeRevenu(string $libelle): ?int {
+    private function detectincome_types(string $libelle): ?int {
         $libelle = strtolower($libelle);
         foreach ($this->typePatterns as $pattern => $typeId) {
             if (str_contains($libelle, strtolower($pattern))) {
@@ -77,8 +78,8 @@ class SingletonController extends Controller {
         // Affichage du formulaire pour GET
         if ($request->isMethod('get')) {
             // Récupération de tous les types de revenus pour le select
-            $typeRevenus = TypeRevenu::all();
-            return view('parse', compact('typeRevenus'));
+            $income_types = IncomeType::all();
+            return view('parse', compact('income_types'));
         }
 
         // Traitement du POST
@@ -102,7 +103,7 @@ class SingletonController extends Controller {
                 // Recherche de la ligne d'en-tête
                 $headerIndex = -1;
                 foreach ($lines as $index => $line) {
-                    if (str_contains($line, 'Date') && str_contains($line, 'Montant')) {
+                    if (str_contains($line, 'Date') && str_contains($line, 'amount')) {
                         $headerIndex = $index;
                         break;
                     }
@@ -113,7 +114,7 @@ class SingletonController extends Controller {
                 }
 
                 // Initialisation du tableau des revenus
-                $revenus = [];
+                $incomes = [];
 
                 // Traitement des lignes après l'en-tête
                 for ($i = $headerIndex + 1; $i < count($lines); $i++) {
@@ -127,52 +128,52 @@ class SingletonController extends Controller {
                     // Extraction des données
                     $date = trim($columns[0]);
                     $libelle = trim($columns[1], " \t\n\r\0\x0B\""); // Nettoyage des guillemets et espaces
-                    $montant = str_replace(',', '.', trim($columns[2])); // Conversion virgule en point
+                    $amount = str_replace(',', '.', trim($columns[2])); // Conversion virgule en point
 
-                    // Ne garder que les montants positifs
-                    if (floatval($montant) <= 0) continue;
+                    // Ne garder que les amounts positifs
+                    if (floatval($amount) <= 0) continue;
 
                     // Détermine si la ligne doit être exclue en fonction des patterns
                     $shouldBeSelected = !$this->shouldExclude($libelle);
 
                     // Détection du type de revenu
-                    $typeRevenuId = $this->detectTypeRevenu($libelle);
+                    $income_typesId = $this->detectincome_types($libelle);
 
-                    $revenus[] = [
+                    $incomes[] = [
                         'date' => $date,
                         'libelle' => $libelle,
-                        'montant' => floatval($montant),
+                        'amount' => floatval($amount),
                         'selected' => $shouldBeSelected,
-                        'type_revenu_id' => $typeRevenuId
+                        'income_type_id' => $income_typesId
                     ];
                 }
 
                 // Tri des revenus par date décroissante
-                usort($revenus, function ($a, $b) {
+                usort($incomes, function ($a, $b) {
                     return strtotime($b['date']) - strtotime($a['date']);
                 });
 
                 // Récupération de tous les types de revenus pour le select
-                $typeRevenus = TypeRevenu::all();
+                $income_types = IncomeType::all();
 
                 return view('parse', [
-                    'revenus' => $revenus,
-                    'typeRevenus' => $typeRevenus,
+                    'revenus' => $incomes,
+                    'income_types' => $income_types,
                     'parseResults' => true
                 ]);
             }
             // Si des revenus sont soumis pour import
             elseif ($request->has('revenus')) {
                 $selectedRevenus = collect($request->input('revenus'))
-                    ->filter(function ($revenu) {
-                        return isset($revenu['selected']);
+                    ->filter(function ($income) {
+                        return isset($income['selected']);
                     })
-                    ->map(function ($revenu) {
+                    ->map(function ($income) {
                         return [
-                            'date' => $revenu['date'],
-                            'libelle' => $revenu['libelle'],
-                            'montant' => $revenu['montant'],
-                            'type_revenu_id' => $revenu['type_revenu_id']
+                            'date' => $income['date'],
+                            'libelle' => $income['libelle'],
+                            'amount' => $income['amount'],
+                            'income_type_id' => $income['income_type_id']
                         ];
                     });
 
@@ -197,42 +198,42 @@ class SingletonController extends Controller {
      * @param Request $request Requête HTTP avec les données du type de revenu
      * @return \Illuminate\Http\Response Vue ou redirection avec message
      */
-    public function typeRevenu(Request $request) {
+    public function income_types(Request $request) {
         // GET pour afficher le formulaire
         if ($request->isMethod('get')) {
             // Récupérer tous les types de revenus pour l'affichage dans le tableau
-            $typeRevenus = TypeRevenu::all();
-            return view('type-revenu', compact('typeRevenus'));
+            $income_types = IncomeType::all();
+            return view('type-revenu', compact('income_types'));
         }
 
         // Le reste de la méthode reste inchangé pour le POST
         try {
             $validated = $request->validate([
-                'nom' => 'required|string|min:2|max:63|unique:type_revenus,nom',
+                'name' => 'required|string|min:2|max:63|unique:income_types,name',
                 'description' => 'nullable|string|max:255',
-                'imposable' => 'sometimes|boolean',
-                'declarable' => 'sometimes|boolean',
+                'taxable' => 'sometimes|boolean',
+                'must_declare' => 'sometimes|boolean',
             ], [
-                'nom.required' => 'Le nom du type de revenu est obligatoire',
-                'nom.min' => 'Le nom doit faire au moins 2 caractères',
-                'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
-                'nom.unique' => 'Ce type de revenu existe déjà',
+                'name.required' => 'Le nom du type de revenu est obligatoire',
+                'name.min' => 'Le nom doit faire au moins 2 caractères',
+                'name.max' => 'Le nom ne peut pas dépasser 63 caractères',
+                'name.unique' => 'Ce type de revenu existe déjà',
                 'description.max' => 'La description ne peut pas dépasser 255 caractères',
             ]);
 
-            TypeRevenu::create([
-                'nom' => $validated['nom'],
+            IncomeType::create([
+                'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
-                'imposable' => isset($validated['imposable']) ? 1 : 0,
-                'declarable' => isset($validated['declarable']) ? 1 : 0,
+                'taxable' => isset($validated['taxable']) ? 1 : 0,
+                'must_declare' => isset($validated['must_declare']) ? 1 : 0,
             ]);
 
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('success', 'Type de revenu créé avec succès');
         } catch (\Exception $e) {
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('error', 'Une erreur est survenue lors de la création du type de revenu : ' . $e->getMessage())
                 ->withInput();
         }
@@ -246,48 +247,48 @@ class SingletonController extends Controller {
      * @param string $id Identifiant du type de revenu à modifier
      * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
-    public function updateTypeRevenu(Request $request, $id) {
+    public function updateincome_types(Request $request, $id) {
         try {
-            $typeRevenu = TypeRevenu::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             // Validation
             $validated = $request->validate([
-                'nom' => [
+                'name' => [
                     'required',
                     'string',
                     'min:2',
                     'max:63',
-                    Rule::unique('type_revenus')->ignore($typeRevenu->id),
+                    Rule::unique('income_types')->ignore($income_types->id),
                 ],
                 'description' => 'nullable|string|max:255',
-                'imposable' => 'sometimes|boolean',
-                'declarable' => 'sometimes|boolean',
+                'taxable' => 'sometimes|boolean',
+                'must_declare' => 'sometimes|boolean',
             ], [
-                'nom.required' => 'Le nom du type de revenu est obligatoire',
-                'nom.min' => 'Le nom doit faire au moins 2 caractères',
-                'nom.max' => 'Le nom ne peut pas dépasser 63 caractères',
-                'nom.unique' => 'Ce type de revenu existe déjà',
+                'name.required' => 'Le nom du type de revenu est obligatoire',
+                'name.min' => 'Le nom doit faire au moins 2 caractères',
+                'name.max' => 'Le nom ne peut pas dépasser 63 caractères',
+                'name.unique' => 'Ce type de revenu existe déjà',
                 'description.max' => 'La description ne peut pas dépasser 255 caractères',
             ]);
 
             // Mise à jour
-            $typeRevenu->update([
-                'nom' => $validated['nom'],
+            $income_types->update([
+                'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
-                'imposable' => isset($validated['imposable']) ? 1 : 0,
-                'declarable' => isset($validated['declarable']) ? 1 : 0,
+                'taxable' => isset($validated['taxable']) ? 1 : 0,
+                'must_declare' => isset($validated['must_declare']) ? 1 : 0,
             ]);
 
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('success', 'Type de revenu modifié avec succès');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('error', 'Type de revenu non trouvé');
         } catch (\Exception $e) {
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('error', 'Une erreur est survenue lors de la modification : ' . $e->getMessage())
                 ->withInput();
         }
@@ -299,29 +300,29 @@ class SingletonController extends Controller {
      * @param string $id Identifiant du type de revenu à supprimer
      * @return \Illuminate\Http\RedirectResponse Redirection avec message de succès ou d'erreur
      */
-    public function deleteTypeRevenu(string $id) {
+    public function deleteincome_types(string $id) {
         try {
-            $typeRevenu = TypeRevenu::findOrFail($id);
+            $income_types = IncomeType::findOrFail($id);
 
             // Vérifier si le type est utilisé dans des revenus
-            if ($typeRevenu->revenus()->exists()) {
+            if ($income_types->revenus()->exists()) {
                 return redirect()
-                    ->route('typeRevenu')
+                    ->route('income_types')
                     ->with('error', 'Impossible de supprimer ce type de revenu car il est utilisé par des revenus existants');
             }
 
-            $typeRevenu->delete();
+            $income_types->delete();
 
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('success', 'Type de revenu supprimé avec succès');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('error', 'Type de revenu non trouvé');
         } catch (\Exception $e) {
             return redirect()
-                ->route('typeRevenu')
+                ->route('income_types')
                 ->with('error', 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
         }
     }
@@ -336,26 +337,26 @@ class SingletonController extends Controller {
     public function multipleRevenus(Request $request) {
         try {
             // Filtrer d'abord pour ne garder que les revenus sélectionnés
-            $revenusToImport = collect($request->revenus)
-                ->filter(function ($revenu) {
-                    return isset($revenu['selected']);
+            $incomesToImport = collect($request->revenus)
+                ->filter(function ($income) {
+                    return isset($income['selected']);
                 })
                 ->values() // Réindexe le tableau pour la validation
                 ->toArray();
 
             // Si aucun revenu sélectionné
-            if (empty($revenusToImport)) {
+            if (empty($incomesToImport)) {
                 return redirect()
                     ->route('parse')
                     ->with('error', 'Aucun revenu sélectionné pour l\'import');
             }
 
             // Validation uniquement des revenus sélectionnés
-            $validator = validator($revenusToImport, [
+            $validator = validator($incomesToImport, [
                 '*.date' => 'required|string', // On validera le format plus tard
                 '*.libelle' => 'required|string',
-                '*.montant' => 'required|numeric|min:0',
-                '*.type_revenu_id' => 'required|exists:type_revenus,id'
+                '*.amount' => 'required|numeric|min:0',
+                '*.income_type_id' => 'required|exists:income_types,id'
             ]);
 
             if ($validator->fails()) {
@@ -367,19 +368,19 @@ class SingletonController extends Controller {
             // Utilisation d'une transaction pour assurer l'intégrité des données
             DB::beginTransaction();
             try {
-                foreach ($revenusToImport as $revenuData) {
+                foreach ($incomesToImport as $incomeData) {
                     // Conversion de la date du format FR au format SQL
-                    $date = \DateTime::createFromFormat('d/m/Y', $revenuData['date']);
+                    $date = \DateTime::createFromFormat('d/m/Y', $incomeData['date']);
                     if (!$date) {
-                        throw new \Exception('Format de date invalide : ' . $revenuData['date']);
+                        throw new \Exception('Format de date invalide : ' . $incomeData['date']);
                     }
 
                     // Création du revenu
-                    Revenu::create([
-                        'date_revenu' => $date->format('Y-m-d'),
-                        'montant' => $revenuData['montant'],
-                        'type_revenu_id' => $revenuData['type_revenu_id'],
-                        'notes' => $revenuData['libelle'] // On utilise le libellé comme note
+                    Income::create([
+                        'income_date' => $date->format('Y-m-d'),
+                        'amount' => $incomeData['amount'],
+                        'income_type_id' => $incomeData['income_type_id'],
+                        'notes' => $incomeData['libelle'] // On utilise le libellé comme note
                     ]);
                 }
 
@@ -388,7 +389,7 @@ class SingletonController extends Controller {
                 // Succès : redirection vers la liste des revenus
                 return redirect()
                     ->route('revenus.list')
-                    ->with('success', count($revenusToImport) . ' revenus ont été importés avec succès');
+                    ->with('success', count($incomesToImport) . ' revenus ont été importés avec succès');
             } catch (\Exception $e) {
                 DB::rollBack();
                 throw $e;
@@ -409,18 +410,18 @@ class SingletonController extends Controller {
      */
     public function index(Request $request) {
         // Récupération de tous les types de revenus pour le formulaire
-        $typeRevenus = TypeRevenu::all();
+        $income_types = IncomeType::all();
 
         // Récupération de l'année sélectionnée (par défaut année courante)
         $selectedYear = $request->input('annee_filtre', date('Y'));
 
         // Récupération des revenus de l'année sélectionnée
-        $revenus = Revenu::with('typeRevenu')
-            ->whereYear('date_revenu', $selectedYear)
-            ->orderBy('date_revenu', 'desc')
+        $incomes = Income::with('income_types')
+            ->whereYear('income_date', $selectedYear)
+            ->orderBy('income_date', 'desc')
             ->get();
 
-        return view('revenu', compact('typeRevenus', 'revenus', 'selectedYear'));
+        return view('revenu', compact('income_types', 'revenus', 'selectedYear'));
     }
 
     /**
@@ -558,28 +559,28 @@ class SingletonController extends Controller {
             }
 
             // Construction de la requête de base
-            $query = Revenu::with('typeRevenu')
-                ->orderBy('date_revenu', 'desc');
+            $query = Income::with('income_types')
+                ->orderBy('income_date', 'desc');
 
             // Application des filtres
             if ($request->filled('filter_type')) {
                 if ($request->filter_type === 'period') {
-                    $query->whereBetween('date_revenu', [
+                    $query->whereBetween('income_date', [
                         $request->start_date,
                         $request->end_date
                     ]);
                 } elseif ($request->filter_type === 'month') {
-                    $query->whereYear('date_revenu', $request->year_number)
-                        ->whereMonth('date_revenu', $request->month_number);
+                    $query->whereYear('income_date', $request->year_number)
+                        ->whereMonth('income_date', $request->month_number);
                 }
             }
 
             // Récupération des revenus
-            $revenus = $query->get();
+            $incomes = $query->get();
 
             // Préparation du message pour période vide
             $periodMessage = '';
-            if ($revenus->isEmpty() && $request->filled('filter_type')) {
+            if ($incomes->isEmpty() && $request->filled('filter_type')) {
                 if ($request->filter_type === 'period') {
                     $debut = Carbon::parse($request->start_date)->format('d/m/Y');
                     $fin = Carbon::parse($request->end_date)->format('d/m/Y');
@@ -595,19 +596,19 @@ class SingletonController extends Controller {
 
             // Calcul des statistiques
             $stats = [
-                'total' => $revenus->sum('montant'),
-                'count' => $revenus->count(),
-                'average' => $revenus->avg('montant'),
-                'total_imposable' => $revenus->filter(function ($revenu) {
-                    return $revenu->typeRevenu->imposable;
-                })->sum('montant'),
-                'total_declarable' => $revenus->filter(function ($revenu) {
-                    return $revenu->typeRevenu->declarable;
-                })->sum('montant'),
-                'by_type' => $revenus->groupBy('typeRevenu.nom')
+                'total' => $incomes->sum('amount'),
+                'count' => $incomes->count(),
+                'average' => $incomes->avg('amount'),
+                'total_taxable' => $incomes->filter(function ($income) {
+                    return $income->income_types->taxable;
+                })->sum('amount'),
+                'total_must_declare' => $incomes->filter(function ($income) {
+                    return $income->income_types->must_declare;
+                })->sum('amount'),
+                'by_type' => $incomes->groupBy('income_types.name')
                     ->map(function ($group) {
                         return [
-                            'total' => $group->sum('montant'),
+                            'total' => $group->sum('amount'),
                             'count' => $group->count(),
                         ];
                     }),
@@ -631,18 +632,18 @@ class SingletonController extends Controller {
     public function store(Request $request) {
         try {
             $validated = $request->validate([
-                'montant' => 'required|numeric|min:0',
-                'date_revenu' => 'required|date',
-                'type_revenu_id' => [
+                'amount' => 'required|numeric|min:0',
+                'income_date' => 'required|date',
+                'income_type_id' => [
                     'required',
                     'integer',
-                    Rule::when($request->type_revenu_id != 0, ['exists:type_revenus,id'])
+                    Rule::when($request->income_type_id != 0, ['exists:income_types,id'])
                 ],
                 'notes' => 'nullable|string|max:1000',
-                'nvRevenu' => 'nullable|required_if:type_revenu_id,0|string|between:2,63',
+                'nvRevenu' => 'nullable|required_if:income_type_id,0|string|between:2,63',
                 'nvRevenuDesc' => 'nullable|string|max:255',
-                'imposable' => 'nullable|boolean',
-                'declarable' => 'nullable|boolean'
+                'taxable' => 'nullable|boolean',
+                'must_declare' => 'nullable|boolean'
             ]);
         } catch (\Exception $e) {
             return redirect()->back()
@@ -652,24 +653,24 @@ class SingletonController extends Controller {
 
         try {
             $createRevenu = [
-                'montant' => $validated['montant'],
-                'date_revenu' => $validated['date_revenu'],
-                'type_revenu_id' => $validated['type_revenu_id'],
+                'amount' => $validated['amount'],
+                'income_date' => $validated['income_date'],
+                'income_type_id' => $validated['income_type_id'],
                 'notes' => $validated['notes'] ?? null
             ];
 
-            if ($validated['type_revenu_id'] == 0) {
-                $newTypeRevenu = TypeRevenu::create([
-                    'nom' => $validated['nvRevenu'],
+            if ($validated['income_type_id'] == 0) {
+                $newincome_types = IncomeType::create([
+                    'name' => $validated['nvRevenu'],
                     'description' => $validated['nvRevenuDesc'] ?? null,
-                    'imposable' => isset($validated['imposable']) ? 1 : 0,
-                    'declarable' => isset($validated['declarable']) ? 1 : 0
+                    'taxable' => isset($validated['taxable']) ? 1 : 0,
+                    'must_declare' => isset($validated['must_declare']) ? 1 : 0
                 ]);
-                $createRevenu['type_revenu_id'] = $newTypeRevenu->id;
+                $createRevenu['income_type_id'] = $newincome_types->id;
             }
 
             // Création du revenu
-            Revenu::create($createRevenu);
+            Income::create($createRevenu);
 
             return redirect()->route('revenu')
                 ->with('success', 'Le revenu a été enregistré avec succès');
@@ -691,17 +692,17 @@ class SingletonController extends Controller {
         try {
             // Validation des données
             $validated = $request->validate([
-                'montant' => 'required|numeric|min:0',
-                'date_revenu' => 'required|date',
-                'type_revenu_id' => 'required|exists:type_revenus,id',
+                'amount' => 'required|numeric|min:0',
+                'income_date' => 'required|date',
+                'income_type_id' => 'required|exists:income_types,id',
                 'notes' => 'nullable|string|max:1000'
             ]);
 
             // Récupération du revenu
-            $revenu = Revenu::findOrFail($id);
+            $income = Income::findOrFail($id);
 
             // Mise à jour
-            $revenu->update($validated);
+            $income->update($validated);
 
             return redirect()
                 ->route('revenu')
@@ -726,8 +727,8 @@ class SingletonController extends Controller {
      */
     public function destroy(string $id) {
         try {
-            $revenu = Revenu::findOrFail($id);
-            $revenu->delete();
+            $income = Income::findOrFail($id);
+            $income->delete();
 
             return redirect()
                 ->route('revenu')

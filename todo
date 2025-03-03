@@ -1,1 +1,2 @@
--
+- Parser le fichier, les données ne s'envoient pas
+    - avec un problème d'affichage dans le select des types de revenus

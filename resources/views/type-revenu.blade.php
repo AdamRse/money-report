@@ -33,20 +33,20 @@
 
         <div class="form-section">
             <h2>Ajouter un type de revenu</h2>
-            <form action="{{ route('typeRevenu.store') }}" method="POST" class="form">
+            <form action="{{ route('income-types.store') }}" method="POST" class="form">
                 @csrf
 
                 <div class="form-group">
-                    <label for="nom" class="form-label">Label</label>
+                    <label for="name" class="form-label">Label</label>
                     <input type="text"
-                           name="nom"
-                           id="nom"
+                           name="name"
+                           id="name"
                            required
                            maxlength="63"
                            minlength="2"
-                           value="{{ old('nom') }}"
-                           class="form-input @error('nom') form-input-error @enderror">
-                    @error('nom')
+                           value="{{ old('name') }}"
+                           class="form-input @error('name') form-input-error @enderror">
+                    @error('name')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
@@ -65,26 +65,26 @@
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="imposable"
-                               id="imposable"
+                               name="taxable"
+                               id="taxable"
                                value="1"
-                               {{ old('imposable') ? 'checked' : '' }}>
-                        <label for="imposable" class="form-label">Revenu imposable</label>
+                               {{ old('taxable') ? 'checked' : '' }}>
+                        <label for="taxable" class="form-label">Revenu taxable</label>
                     </div>
 
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="declarable"
-                               id="declarable"
+                               name="must_declare"
+                               id="must_declare"
                                value="1"
-                               {{ old('declarable') ? 'checked' : '' }}>
-                        <label for="declarable" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
+                               {{ old('must_declare') ? 'checked' : '' }}>
+                        <label for="must_declare" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    <a href="{{ route('accueil') }}" class="btn btn-secondary">Annuler</a>
+                    <a href="{{ route('dashboard') }}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>
         </div>
@@ -99,27 +99,27 @@
                         <tr>
                             <th>Label</th>
                             <th>Description</th>
-                            <th>Imposable</th>
+                            <th>taxable</th>
                             <th>Déclarable</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($typeRevenus as $type)
+                        @foreach($incomeTypes as $type)
                             <tr>
-                                <td>{{ $type->nom }}</td>
+                                <td>{{ $type->name }}</td>
                                 <td>{{ $type->description ?: '-' }}</td>
-                                <td class="{{ $type->imposable ? 'affirmative' : '' }}">
-                                    {{ $type->imposable ? "Oui" : "Non" }}
+                                <td class="{{ $type->taxable ? 'affirmative' : '' }}">
+                                    {{ $type->taxable ? "Oui" : "Non" }}
                                 </td>
-                                <td class="{{ $type->declarable ? 'affirmative' : '' }}">
-                                    {{ $type->declarable ? "Oui" : "Non" }}
+                                <td class="{{ $type->must_declare ? 'affirmative' : '' }}">
+                                    {{ $type->must_declare ? "Oui" : "Non" }}
                                 </td>
                                 <td class="actions-cell">
                                     <button class="btn btn-secondary btn-edit" onclick="showEditForm('{{ $type->id }}')">
                                         Modifier
                                     </button>
-                                    <form action="{{ route('typeRevenu.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
+                                    <form action="{{ route('income-types.destroy', $type->id) }}" method="POST" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de revenu ?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">Supprimer</button>
@@ -137,15 +137,15 @@
     <div id="editModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>Modifier le type de revenu</h2>
-            <form id="editForm" action="{{ route('typeRevenu.update', '') }}" method="POST" class="form">
+            <form id="editForm" action="{{ route('income-types.update', '') }}" method="POST" class="form">
                 @csrf
                 @method('PUT')
 
                 <div class="form-group">
-                    <label for="edit_nom" class="form-label">Label</label>
+                    <label for="edit_name" class="form-label">Label</label>
                     <input type="text"
-                           name="nom"
-                           id="edit_nom"
+                           name="name"
+                           id="edit_name"
                            required
                            maxlength="63"
                            minlength="2"
@@ -163,18 +163,18 @@
                 <div class="form-group">
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="imposable"
-                               id="edit_imposable"
+                               name="taxable"
+                               id="edit_taxable"
                                value="1">
-                        <label for="edit_imposable" class="form-label">Revenu imposable</label>
+                        <label for="edit_taxable" class="form-label">Revenu taxable</label>
                     </div>
 
                     <div class="checkbox-group">
                         <input type="checkbox"
-                               name="declarable"
-                               id="edit_declarable"
+                               name="must_declare"
+                               id="edit_must_declare"
                                value="1">
-                        <label for="edit_declarable" class="form-label">Revenu à déclarer</label>
+                        <label for="edit_must_declare" class="form-label">Revenu à déclarer</label>
                     </div>
                 </div>
 
