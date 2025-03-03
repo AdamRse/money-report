@@ -162,7 +162,7 @@
                                 <td class="date-cell">
                                     {{ Carbon\Carbon::parse($income->income_date)->format('d/m/Y') }}
                                 </td>
-                                <td>{{ $income->income_types->nom }}</td>
+                                <td>{{ $income->income_types->name }}</td>
                                 <td class="amount-cell">{{ number_format($income->amount, 2, ',', ' ') }} €</td>
                                 <td class="notes-cell">{{ $income->notes ?: '-' }}</td>
                                 <td class="actions-cell">

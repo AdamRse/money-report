@@ -37,10 +37,10 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="nom" class="form-label">Label</label>
+                    <label for="name" class="form-label">Label</label>
                     <input type="text"
-                           name="nom"
-                           id="nom"
+                           name="name"
+                           id="name"
                            required
                            maxlength="63"
                            minlength="2"
@@ -142,10 +142,10 @@
                 @method('PUT')
 
                 <div class="form-group">
-                    <label for="edit_nom" class="form-label">Label</label>
+                    <label for="edit_name" class="form-label">Label</label>
                     <input type="text"
-                           name="nom"
-                           id="edit_nom"
+                           name="name"
+                           id="edit_name"
                            required
                            maxlength="63"
                            minlength="2"
