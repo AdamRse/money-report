@@ -17,7 +17,7 @@
         "database/migrations/*jobs_table.php",
         "app/Http/Controllers/Controller.php",
         "resources/views/welcome.blade.php",
-        "resources/views/components/icons/**/*",
+        "resources/views/components/icons/*",
         "app/Http/Controllers/SingletonController.php"
     ]
 }
