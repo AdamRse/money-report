@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class IncomeController extends Controller {
 
@@ -41,6 +42,7 @@ class IncomeController extends Controller {
      * Peut également créer un nouveau type de revenu si nécessaire
      */
     public function store(StoreIncomeRequest $request): RedirectResponse {
+        Log::info('Store un revenu : ', ['request' => $request->all()]);
         try {
             DB::beginTransaction();
 

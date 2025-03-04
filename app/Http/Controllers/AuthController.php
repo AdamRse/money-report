@@ -31,8 +31,6 @@ class AuthController extends Controller {
         $credentials = $request->only(['email', 'password']);
         $remember = $request->boolean('remember');
 
-        Log::info('Tentative de connexion avec les identifiants:', ['email' => $credentials['email']]);
-
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('incomes.index'));

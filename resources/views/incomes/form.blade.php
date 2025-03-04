@@ -31,8 +31,7 @@
 
     <div class="form-group">
         <label for="income_type_id" class="form-label">Type de revenu</label>
-        <select id="select_type_revenu" name="income_type_id"
-                id="income_type_id"
+        <select id="income_type_id" name="income_type_id"
                 required
                 class="form-select @error('income_type_id') form-input-error @enderror">
             <option value="">Sélectionner un type</option>
@@ -67,11 +66,11 @@
             @enderror
         </div>
         <div class="partCheckbox">
-            <input type="checkbox" name="taxable" id="taxable" checked="1" value="1" />
+            <input type="checkbox" name="taxable" id="taxable" value="1" />
             <label for="taxable" class="form-label">Revenu taxable</label>
             <br/>
             <hr>
-            <input type="checkbox" name="must_declare" id="must_declare" checked="1" value="1" />
+            <input type="checkbox" name="must_declare" id="must_declare" value="1" />
             <label for="must_declare" class="form-label">Revenu à déclarer (caf, pole emploi)</label>
         </div>
     </div>
@@ -92,7 +91,7 @@
 
 @push('scripts')
 <script>
-    const selectNvRvn = document.querySelector("#select_type_revenu");
+    const selectNvRvn = document.querySelector("#income_type_id");
     const divNvRvn = document.querySelector(".form-group.new_type_name");
     const inew_type_name = document.querySelector("#new_type_name");
 
