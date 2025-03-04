@@ -545,6 +545,35 @@ footer {
     max-width: 300px;
     background-color: #fff;
 }
+.warning-duplicate {
+    background-color: #fff3cd;
+}
+
+.danger-duplicate {
+    background-color: #f8d7da;
+}
+
+.warning-duplicate td, .danger-duplicate td {
+    position: relative;
+}
+
+.warning-duplicate td:first-child::before {
+    content: "⚠️ Doublon possible";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 0.8rem;
+    color: #856404;
+}
+
+.danger-duplicate td:first-child::before {
+    content: "❌ Doublon probable";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 0.8rem;
+    color: #721c24;
+}
 
 /* Ajustement de la largeur des colonnes */
 .revenus-table td:nth-child(3) {

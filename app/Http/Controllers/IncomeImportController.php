@@ -132,12 +132,38 @@ class IncomeImportController extends Controller {
             $shouldBeSelected = !$this->shouldExclude($description);
             $income_typesId = $this->detectincome_types($description);
 
+            // Détection des doublons
+            $duplicate_level = 0;
+            $duplicates = $this->duplicateChecker->checkDuplicate(floatval($amount), $date);
+
+            if (!empty($duplicates)) {
+                // Niveau 1: Même montant et même date (déjà vérifié par checkDuplicate)
+                $duplicate_level = 1;
+
+                // Niveau 2: Vérifier si le libellé est similaire à un des doublons
+                foreach ($duplicates as $duplicate) {
+                    if (
+                        !empty($duplicate['notes']) && !empty($description) &&
+                        (stripos($duplicate['notes'], $description) !== false ||
+                            stripos($description, $duplicate['notes']) !== false)
+                    ) {
+                        $duplicate_level = 2;
+                        break;
+                    }
+                }
+
+                if ($duplicate_level > 0) {
+                    $shouldBeSelected = false;
+                }
+            }
+
             $incomes[] = [
                 'date' => $date,
                 'description' => $description,
                 'amount' => floatval($amount),
                 'selected' => $shouldBeSelected,
-                'income_type_id' => $income_typesId
+                'income_type_id' => $income_typesId,
+                'duplicate' => $duplicate_level
             ];
         }
 

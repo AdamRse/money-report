@@ -12,6 +12,10 @@
                 <button type="submit" class="btn btn-primary">Importer les revenus sélectionnés</button>
             </div>
 
+            <div class="duplicate-legend">
+                <p><span class="warning-badge">⚠️</span> Doublon possible détecté.</p>
+                <p><span class="danger-badge">❌</span> Doublon probable détecté</p>
+            </div>
             <div class="table-container">
                 <table class="revenus-table">
                     <thead>
@@ -25,7 +29,7 @@
                     </thead>
                     <tbody>
                         @foreach($incomes as $index => $income)
-                            <tr>
+                            <tr class="{{ $income['duplicate'] == 1 ? 'warning-duplicate' : ($income['duplicate'] == 2 ? 'danger-duplicate' : '') }}">
                                 <td>
                                     <input type="checkbox"
                                         name="incomes[{{ $index }}][selected]"
@@ -40,6 +44,9 @@
                                     <input type="hidden"
                                         name="incomes[{{ $index }}][amount]"
                                         value="{{ $income['amount'] }}">
+                                    <input type="hidden"
+                                        name="incomes[{{ $index }}][duplicate]"
+                                        value="{{ $income['duplicate'] }}">
                                 </td>
                                 <td class="date-cell">{{ $income['date'] }}</td>
                                 <td>{{ $income['description'] }}</td>

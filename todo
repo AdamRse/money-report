@@ -1,1 +1,7 @@
+- Refaire IncomeImportController::parseDate() qui utilise IncomeDuplicateCheckerService::checkDuplicate() au niveau de la date passée.
+- checkDuplicate() devrait forcer à recevoir un ojet Carbon, sinon c'ets le bordel dans l'utilisation des dates.
+    - Un autre service (ou autre) devrait permettre de prendre une string de date en entrée, et de donner un objet Carbon en sortie
 
+Idée optionelle :
+- Dans app/Services/IncomeDuplicateCheckerService.php, j'ai utilisé arbitrairement le format de date :
+    Il faudrait donc laisser l'utilisateur choisir le format de date par défaut sur son profil, ou détecter le format de date sur le CSV
