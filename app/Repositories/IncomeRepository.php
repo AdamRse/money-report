@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class IncomeDuplicateCheckerService {
-
+class IncomeRepository {
     /**
      * Vérifie si un revenu avec le même montant et la même date existe déjà
      *
      * @param Income $income Le revenu à vérifier
      * @return array Un tableau des revenus correspondants, vide si aucun doublon
      */
-    public function getDuplicateLevel(Income $income): array { // [A FAIRE] : doit se servir de IncomeRepository::findDuplicates() pour déterminer s'il y a un doublon, et quel est le niveau de suspicion du doublon
-        return [];
+    public function findDuplicates(Income $income): array {
+        return Income::where('amount', $income->amount)
+            ->whereDate('income_date', $income->income_date)
+            ->get()
+            ->toArray();
     }
 }

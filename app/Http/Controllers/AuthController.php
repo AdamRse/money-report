@@ -33,7 +33,7 @@ class AuthController extends Controller {
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('incomes.index'));
+            return redirect()->intended(route('incomes.report'));
         }
 
         return back()

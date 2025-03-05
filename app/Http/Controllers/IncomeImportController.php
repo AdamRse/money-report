@@ -6,6 +6,7 @@ use App\Http\Requests\IncomeImport\ImportFileRequest;
 use App\Http\Requests\IncomeImport\ImportIncomesRequest;
 use App\Models\Income;
 use App\Models\IncomeType;
+use App\Services\DateParserService;
 use App\Services\IncomeDuplicateCheckerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Illuminate\View\View;
 class IncomeImportController extends Controller {
     // Injecter le service dans le constructeur
     protected IncomeDuplicateCheckerService $duplicateChecker;
+    protected DateParserService $dateParser;
 
     /**
      * Patterns à détecter dans les libellés pour exclusion (les résultats restent affichés mais décochés)
@@ -41,8 +43,9 @@ class IncomeImportController extends Controller {
         'CHOMAGE' => 5
     ];
 
-    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+    public function __construct(IncomeDuplicateCheckerService $duplicateChecker, DateParserService $dateParser) {
         $this->duplicateChecker = $duplicateChecker;
+        $this->dateParser = $dateParser;
     }
 
     /**
@@ -132,29 +135,17 @@ class IncomeImportController extends Controller {
             $shouldBeSelected = !$this->shouldExclude($description);
             $income_typesId = $this->detectincome_types($description);
 
+            $Model_Income = Income::make([
+                'amount' => $amount,
+                'income_date' => $this->dateParser->parse($date),
+                'income_type_id' => $income_typesId,
+                'notes' => $description
+            ]);
+
             // Détection des doublons
-            $duplicate_level = 0;
-            $duplicates = $this->duplicateChecker->checkDuplicate(floatval($amount), $date);
-
-            if (!empty($duplicates)) {
-                // Niveau 1: Même montant et même date (déjà vérifié par checkDuplicate)
-                $duplicate_level = 1;
-
-                // Niveau 2: Vérifier si le libellé est similaire à un des doublons
-                foreach ($duplicates as $duplicate) {
-                    if (
-                        !empty($duplicate['notes']) && !empty($description) &&
-                        (stripos($duplicate['notes'], $description) !== false ||
-                            stripos($description, $duplicate['notes']) !== false)
-                    ) {
-                        $duplicate_level = 2;
-                        break;
-                    }
-                }
-
-                if ($duplicate_level > 0) {
-                    $shouldBeSelected = false;
-                }
+            $duplicate_level = $this->duplicateChecker->getDuplicateLevel($Model_Income);
+            if ($duplicate_level > 0) {
+                $shouldBeSelected = false;
             }
 
             $incomes[] = [
