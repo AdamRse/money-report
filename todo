@@ -1,2 +1,4 @@
 A FAIRE
 IncomeDuplicateCheckerService::getDuplicateLevel() et DateParserService::parse()
+
+Essayer dump() et info() pour débugger dans la console, au lieu des logs

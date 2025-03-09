@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class DateParserService {
@@ -13,7 +14,9 @@ class DateParserService {
      * @return Carbon
      * @throws InvalidArgumentException Si la date est invalide
      */
-    public function parse($date): Carbon { // [A FAIRE] : la fonction doit prendre une string et renvoyer un objet Carbon
+    public function parse($date) { // [A FAIRE] : la fonction doit prendre une string et renvoyer un objet Carbon
+        Log::info('Demande de parsing de la date');
+        info('Demande de parsing de la date');
         if ($date instanceof Carbon) {
             return $date;
         }
@@ -21,7 +24,8 @@ class DateParserService {
         try {
             return Carbon::parse($date);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException("Format de date invalide: {$date}");
+            Log::info('Carbon::parse error : ', $e->getMessage());
+            dump('Carbon::parse error : ', $e->getMessage());
         }
     }
 
