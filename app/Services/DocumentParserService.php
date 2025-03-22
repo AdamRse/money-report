@@ -49,6 +49,18 @@ class DocumentParserService {
     ];
 
     /**
+     * Parse un document pour retourner un tableau de revenus avec des données supplémentaires.
+     * La méthode identifie le type de document en apelle le bon parseur.
+     * @param string $file : Le contenu du fichier
+     * @return array : les revenus (Income) identifiées par le parseur (modèle Income augenté). Peut être un tableau vide.
+     */
+    public function parseDocument(string $file): array {
+        //On détermine quel type de document on doit parser. Si un nouveau type de document, créer une nouvelle méthode.
+        //Pour l'instant on ne supporte que le document de la banque postale, CSV ou TSV
+        return $this->LaBanquePostaleParser($file);
+    }
+
+    /**
      * Vérifie si un libellé doit être exclu
      */
     private function shouldExclude(string $description): bool {
@@ -68,12 +80,6 @@ class DocumentParserService {
             }
         }
         return null;
-    }
-
-    public function parseDocument(string $file): array {
-        //On détermine quel type de document on doit parser. Si un nouveau type de document, créer une nouvelle méthode.
-        //Pour l'instant on ne supporte que le document de la banque postale, CSV ou TSV
-        return $this->LaBanquePostaleParser($file);
     }
 
     private function LaBanquePostaleParser(string $file): array {

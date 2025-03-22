@@ -13,7 +13,7 @@ class IncomeRepository {
      * @param Income $income Le revenu à vérifier
      * @return array Un tableau des revenus correspondants, vide si aucun doublon
      */
-    public function findDuplicates(Income $income): array {
+    public static function findDuplicates(Income $income): array {
         return Income::where('amount', $income->amount)
             ->whereDate('income_date', $income->income_date)
             ->get()

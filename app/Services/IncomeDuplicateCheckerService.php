@@ -5,16 +5,32 @@ namespace App\Services;
 use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\IncomeRepository;
+use Ramsey\Uuid\Type\Integer;
 
 class IncomeDuplicateCheckerService {
 
     /**
      * Vérifie si un revenu avec le même montant et la même date existe déjà
      *
-     * @param Income $income Le revenu à vérifier
-     * @return array Un tableau des revenus correspondants, vide si aucun doublon
+     * @param Income $income : Le revenu à vérifier
+     * @return int : plus le chiffre est élevé, plus la suspicion de boublon est forte.
+     *      0 = aucun doublon certifié
+     *      1 = Doublon potentiel (même montant et même date)
+     *      2 = Doublon probable
+     *      3 = doublon très probable
+     *      4 = doublon certain
      */
-    public function getDuplicateLevel(Income $income): array { // [A FAIRE] : doit se servir de IncomeRepository::findDuplicates() pour déterminer s'il y a un doublon, et quel est le niveau de suspicion du doublon
-        return [];
+    public function getDuplicateLevel(Income $income): int {
+        $duplicates = IncomeRepository::findDuplicates($income);
+        $sus = 0;
+        if (!empty($duplicates[0])) {
+            $sus++;
+            if ($duplicates[0]->notes == $income->notes)
+                $sus++;
+            if ($duplicates[0]->created_at->diffInSeconds($income->created_at) < 2)
+                $sus += 2;
+        }
+        return $sus;
     }
 }
