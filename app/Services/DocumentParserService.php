@@ -2,26 +2,24 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\DocumentParserServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Income;
 use App\Services\IncomeDuplicateCheckerService;
 
-class DocumentParserService {
+class DocumentParserService implements DocumentParserServiceInterface {
+
+    /**
+     * Services utilisés
+     */
     protected IncomeDuplicateCheckerService $duplicateChecker;
+
+    /**
+     * Liste des erreurs rencontrées au cours du processus, pour éviter les imbrication de try
+     * @var array<string>
+     */
     public array $_errors = [];
-
-    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
-        $this->duplicateChecker = $duplicateChecker;
-    }
-
-    public function errorDisplayHTML(): string {
-        $rt = "<div><ul>";
-        foreach ($this->_errors as $error) {
-            $rt .= "<li>$error</li>";
-        }
-        return "</ul></div>" . $rt;
-    }
 
     /**
      * Patterns à détecter dans les libellés pour exclusion (les résultats restent affichés mais décochés)
@@ -47,6 +45,22 @@ class DocumentParserService {
         'SALAIRE' => 4,
         'CHOMAGE' => 5
     ];
+
+    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+        $this->duplicateChecker = $duplicateChecker;
+    }
+
+    /**
+     * Affiche les erreurs rencontrées lord du processus dans un format html
+     * @return string
+     */
+    public function errorDisplayHTML(): string {
+        $rt = "<div><ul>";
+        foreach ($this->_errors as $error) {
+            $rt .= "<li>$error</li>";
+        }
+        return "</ul></div>" . $rt;
+    }
 
     /**
      * Parse un document pour retourner un tableau de revenus avec des données supplémentaires.
