@@ -3,17 +3,13 @@
 namespace App\Services;
 
 use App\Interfaces\Services\DocumentParserServiceInterface;
+use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Income;
 use App\Services\IncomeDuplicateCheckerService;
 
 class DocumentParserService implements DocumentParserServiceInterface {
-
-    /**
-     * Services utilisés
-     */
-    protected IncomeDuplicateCheckerService $duplicateChecker;
 
     /**
      * Liste des erreurs rencontrées au cours du processus, pour éviter les imbrication de try
@@ -46,7 +42,12 @@ class DocumentParserService implements DocumentParserServiceInterface {
         'CHOMAGE' => 5
     ];
 
-    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+    /**
+     * Services utilisés
+     */
+    protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
+
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker) {
         $this->duplicateChecker = $duplicateChecker;
     }
 

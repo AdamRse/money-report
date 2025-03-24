@@ -2,11 +2,9 @@
 
 namespace App\Interfaces\Services;
 
-use App\Services\IncomeDuplicateCheckerService;
-
 interface DocumentParserServiceInterface {
 
-    public function __construct(IncomeDuplicateCheckerService $duplicateChecker);
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker);
 
     public function errorDisplayHTML(): string;
 

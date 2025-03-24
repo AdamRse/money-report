@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeReport\FilterIncomesRequest;
+use App\Interfaces\Services\IncomeStatisticsServiceInterface;
 use App\Models\Income;
-use App\Services\IncomeStatisticsService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 
 class IncomeReportController extends Controller {
-    public function __construct(
-        private IncomeStatisticsService $statisticsService
-    ) {
+
+    private IncomeStatisticsServiceInterface $statisticsService;
+
+    public function __construct(private IncomeStatisticsServiceInterface $statistics) {
+        $this->statisticsService = $statistics;
     }
 
     /**

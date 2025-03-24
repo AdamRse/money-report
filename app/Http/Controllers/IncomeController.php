@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Income\StoreIncomeRequest;
 use App\Http\Requests\Income\UpdateIncomeRequest;
+use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
 use App\Services\IncomeDuplicateCheckerService;
@@ -16,9 +17,9 @@ use Illuminate\Support\Facades\Log;
 class IncomeController extends Controller {
 
     // Injecter le service dans le constructeur
-    protected IncomeDuplicateCheckerService $duplicateChecker;
+    protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
 
-    public function __construct(IncomeDuplicateCheckerService $duplicateChecker) {
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker) {
         $this->duplicateChecker = $duplicateChecker;
     }
     /**

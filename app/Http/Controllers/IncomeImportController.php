@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeImport\ImportFileRequest;
 use App\Http\Requests\IncomeImport\ImportIncomesRequest;
+use App\Interfaces\Services\DateParserServiceInterface;
+use App\Interfaces\Services\DocumentParserServiceInterface;
+use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
-use App\Services\DateParserService;
-use App\Services\DocumentParserService;
-use App\Services\IncomeDuplicateCheckerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,11 +17,11 @@ use Illuminate\View\View;
 class IncomeImportController extends Controller {
 
     //services
-    protected IncomeDuplicateCheckerService $duplicateChecker;
-    protected DateParserService $dateParser;
-    protected DocumentParserService $documentParser;
+    protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
+    protected DateParserServiceInterface $dateParser;
+    protected DocumentParserServiceInterface $documentParser;
 
-    public function __construct(DocumentParserService $documentParser, IncomeDuplicateCheckerService $duplicateChecker, DateParserService $dateParser) {
+    public function __construct(DocumentParserServiceInterface $documentParser, IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser) {
         $this->duplicateChecker = $duplicateChecker;
         $this->dateParser = $dateParser;
         $this->documentParser = $documentParser;

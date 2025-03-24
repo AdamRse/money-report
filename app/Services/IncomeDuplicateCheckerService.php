@@ -4,10 +4,8 @@ namespace App\Services;
 
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\IncomeRepository;
-use Ramsey\Uuid\Type\Integer;
 
 class IncomeDuplicateCheckerService implements IncomeDuplicateCheckerServiceInterface {
 
