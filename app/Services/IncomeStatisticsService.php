@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\IncomeStatisticsServiceInterface;
 use App\Models\Income;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
-class IncomeStatisticsService {
+class IncomeStatisticsService implements IncomeStatisticsServiceInterface {
     /**
      * Calcule les statistiques pour une collection de revenus
      */

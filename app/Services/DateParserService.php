@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\DateParserServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use PhpParser\Node\Stmt\Foreach_;
 
-class DateParserService {
+class DateParserService implements DateParserServiceInterface {
 
     protected $_patternDateStrong = '/[0-9]{1,4}([-\/])([0-3?][0-9])[-\/]([0-9]{2,4})/';
     protected $_patternDateSoft = '/[0-9]{1,4}([-\/])([0-3?][0-9])[-\/]([0-9]{2,4})/';

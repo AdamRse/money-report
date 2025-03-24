@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\Repositories\IncomeRepositoryInterface;
 use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class IncomeRepository {
+class IncomeRepository implements IncomeRepositoryInterface {
     /**
      * Vérifie si un revenu avec le même montant et la même date existe déjà
      *
