@@ -40,7 +40,8 @@ class IncomeImportController extends Controller {
      * Traite le fichier uploadé et affiche les résultats
      */
     public function processFile(ImportFileRequest $request): View|RedirectResponse {
-        $parsedIncomes = $this->documentParser->parseDocument($request->file('bankFile'));
+        $parsedIncomes = $this->documentParser->parseDocument($request->file('bankFile')->get());
+
         if (!empty($parsedIncomes)) {
             return view('imports.index', [
                 'incomes' => $parsedIncomes,

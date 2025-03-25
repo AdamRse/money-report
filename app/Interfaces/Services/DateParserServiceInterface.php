@@ -11,4 +11,8 @@ interface DateParserServiceInterface {
     public function arrayDateParsableWithCurrentLocale(array $arrayDate): bool;
 
     public function isDateParsable(string $date): false|Carbon;
+
+    public function setLocaleForDocument(string $document): bool;
+
+    public function resetLocale(): void;
 }

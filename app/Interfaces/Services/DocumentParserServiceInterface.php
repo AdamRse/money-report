@@ -4,7 +4,7 @@ namespace App\Interfaces\Services;
 
 interface DocumentParserServiceInterface {
 
-    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker);
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser);
 
     public function errorDisplayHTML(): string;
 

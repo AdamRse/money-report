@@ -1,4 +1,4 @@
 A FAIRE
-IncomeDuplicateCheckerService::getDuplicateLevel() et DateParserService::parse()
-
-Essayer dump() et info() pour débugger dans la console, au lieu des logs
+DateParserService doit déterminer le format de la date.
+Il doit falloir faire une fonction qui trouve le format de date approprié dans un document et dans un array
+pourquoi pas n'envoyer à tester que la colonne identifiée comme la colonne de la date dans le fichier

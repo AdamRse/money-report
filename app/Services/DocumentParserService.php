@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Interfaces\Services\DateParserServiceInterface;
 use App\Interfaces\Services\DocumentParserServiceInterface;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use Carbon\Carbon;
@@ -46,9 +47,11 @@ class DocumentParserService implements DocumentParserServiceInterface {
      * Services utilisés
      */
     protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
+    protected DateParserServiceInterface $dateParser;
 
-    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker) {
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser) {
         $this->duplicateChecker = $duplicateChecker;
+        $this->dateParser = $dateParser;
     }
 
     /**
@@ -63,16 +66,9 @@ class DocumentParserService implements DocumentParserServiceInterface {
         return "</ul></div>" . $rt;
     }
 
-    /**
-     * Parse un document pour retourner un tableau de revenus avec des données supplémentaires.
-     * La méthode identifie le type de document en apelle le bon parseur.
-     * @param string $file : Le contenu du fichier
-     * @return array : les revenus (Income) identifiées par le parseur (modèle Income augenté). Peut être un tableau vide.
-     */
-    public function parseDocument(string $file): array {
-        //On détermine quel type de document on doit parser. Si un nouveau type de document, créer une nouvelle méthode.
-        //Pour l'instant on ne supporte que le document de la banque postale, CSV ou TSV
-        return $this->LaBanquePostaleParser($file);
+    private function addError(string $error) {
+        if (!empty($error))
+            $this->_errors[] = $error;
     }
 
     /**
@@ -87,7 +83,7 @@ class DocumentParserService implements DocumentParserServiceInterface {
     /**
      * Détermine le type de revenu en fonction du libellé
      */
-    private function detectincome_types(string $description): ?int {
+    private function detectIncome_types(string $description): ?int {
         $description = strtolower($description);
         foreach ($this->typePatterns as $pattern => $typeId) {
             if (str_contains($description, strtolower($pattern))) {
@@ -173,7 +169,7 @@ class DocumentParserService implements DocumentParserServiceInterface {
             if (!is_numeric($amount) || floatval($amount) <= 0) continue;
 
             $shouldBeSelected = !$this->shouldExclude($description);
-            $income_typesId = $this->detectincome_types($description);
+            $income_typesId = $this->detectIncome_types($description);
 
             $Model_Income = Income::make([ // Make permet de créer un modèle Income sans l'enregistrer en BDD, on l'utilise pour encapsuler la donnée
                 'amount' => $amount,
@@ -201,5 +197,23 @@ class DocumentParserService implements DocumentParserServiceInterface {
         usort($incomes, fn($a, $b) => strtotime($b['date']) - strtotime($a['date']));
 
         return $incomes;
+    }
+
+    /**
+     * Parse un document pour retourner un tableau de revenus avec des données supplémentaires.
+     * La méthode identifie le type de document en apelle le bon parseur.
+     * @param string $file : Le contenu du fichier
+     * @return array : les revenus (Income) identifiées par le parseur (modèle Income augenté). Peut être un tableau vide.
+     */
+    public function parseDocument(string $file): array {
+        //On détermine quel type de document on doit parser. Si un nouveau type de document, créer une nouvelle méthode.
+        //Pour l'instant on ne supporte que le document de la banque postale, CSV ou TSV
+        $documentData = [];
+        if ($this->dateParser->setLocaleForDocument($file)) {
+            $documentData = $this->LaBanquePostaleParser($file);
+            $this->dateParser->resetLocale();
+        } else
+            $this->addError("Impossible de trouver le format correct pour la date du document."); // Suspicion : la regex avec laquelle on trouve les dates du document ne trouve pas que des dates
+        return $documentData;
     }
 }
