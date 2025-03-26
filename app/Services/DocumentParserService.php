@@ -9,14 +9,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Income;
 use App\Services\IncomeDuplicateCheckerService;
+use App\Traits\ErrorManagementTrait;
 
 class DocumentParserService implements DocumentParserServiceInterface {
 
-    /**
-     * Liste des erreurs rencontrées au cours du processus, pour éviter les imbrication de try
-     * @var array<string>
-     */
-    public array $_errors = [];
+    use ErrorManagementTrait;
 
     /**
      * Patterns à détecter dans les libellés pour exclusion (les résultats restent affichés mais décochés)
@@ -52,23 +49,6 @@ class DocumentParserService implements DocumentParserServiceInterface {
     public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser) {
         $this->duplicateChecker = $duplicateChecker;
         $this->dateParser = $dateParser;
-    }
-
-    /**
-     * Affiche les erreurs rencontrées lord du processus dans un format html
-     * @return string
-     */
-    public function errorDisplayHTML(): string {
-        $rt = "<div><ul>";
-        foreach ($this->_errors as $error) {
-            $rt .= "<li>$error</li>";
-        }
-        return "</ul></div>" . $rt;
-    }
-
-    private function addError(string $error) {
-        if (!empty($error))
-            $this->_errors[] = $error;
     }
 
     /**

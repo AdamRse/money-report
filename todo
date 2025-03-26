@@ -2,3 +2,7 @@ A FAIRE
 DateParserService doit déterminer le format de la date.
 Il doit falloir faire une fonction qui trouve le format de date approprié dans un document et dans un array
 pourquoi pas n'envoyer à tester que la colonne identifiée comme la colonne de la date dans le fichier
+
+On va faire :
+- Une interface pour chaque type de document à parser
+- Un service qui implémente cette interface pour chaque type de document à parser
