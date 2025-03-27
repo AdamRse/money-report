@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Factories\BankParserFactory;
+use App\Interfaces\Factories\BankParserFactoryInterface;
 use App\Interfaces\Repositories\IncomeRepositoryInterface;
 use App\Interfaces\Services\DateParserServiceInterface;
 use App\Interfaces\Services\DocumentParserServiceInterface;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind(IncomeDuplicateCheckerServiceInterface::class, IncomeDuplicateCheckerService::class);
         $this->app->bind(DocumentParserServiceInterface::class, DocumentParserService::class);
         $this->app->bind(IncomeStatisticsServiceInterface::class, IncomeStatisticsService::class);
+        $this->app->bind(BankParserFactoryInterface::class, BankParserFactory::class);
     }
 
     /**
