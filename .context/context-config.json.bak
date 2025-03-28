@@ -1,10 +1,16 @@
 {
     "files_to_collect": [
-        "app/Providers/*.php",
-        "app/Services/DocumentParserService.php",
-        "app/Factories/BankParserFactory.php",
-        "app/Services/BankParsers/*",
-        "app/Abstract/BankParserAbstract.php"
+        ".context/**/*",
+        "app/**/*.php",
+        "config/app.php",
+        "database/**/*.php",
+        "public/style.css",
+        "routes/web.php",
+        "resources/views/**/*.php",
+        "bootstrap/app.php",
+        "bootstrap/providers.php",
+        "README.md",
+        "package.json"
     ],
     "files_to_ignore": [
         "database/migrations/*cache_table.php",

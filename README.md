@@ -37,7 +37,7 @@ app/
 - Ajouter la classe dans `app/Services/BankParser` qui doit hériter de `BankParserAbstract` (`app/Abstract/BankParserAbstract.php`)
 - Ajouter cette nouvelle classe aux options de `BankParserFactory` (`app/Factories/BankParserFactory.php`)
 > [!IMPORTANT]
-> Le fichier doit avoir le même nom que la classe, sensible à la case (sans l'extension).
+> Le fichier doit respecter la convention de nommage PSR-4 (Même nom que la classe).
 > Par exemple la classe `MaNouvelleBanqueParser` doit se trouver dans le fichier `app/Services/BankParser/MaNouvelleBanqueParser.php`.
 > La prise en compte se faisant automatiquement, veiller à vider le cache pour une prise en compte immédiate.
 

@@ -69,4 +69,6 @@ abstract class BankParserAbstract implements BankParserInterface{
         return null;
     }
 
+    abstract public function isParsable(string $document): bool;
+
 }

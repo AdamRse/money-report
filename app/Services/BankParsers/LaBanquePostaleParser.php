@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Services\BankParser;
+namespace App\Services\BankParsers;
 
 use App\Abstract\BankParserAbstract;
 use App\Models\Income;
 
 class LaBanquePostaleParser extends BankParserAbstract{
+
+    public function isParsable(string $document): bool{
+        //A coder
+        return true;
+    }
 
     public function parse(string $document): array|false{
         // Détection automatique du délimiteur (plus fiable)

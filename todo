@@ -1,8 +1,6 @@
 A FAIRE
-DateParserService doit déterminer le format de la date.
-Il doit falloir faire une fonction qui trouve le format de date approprié dans un document et dans un array
-pourquoi pas n'envoyer à tester que la colonne identifiée comme la colonne de la date dans le fichier
+Changement de stratégie, la factory doit instancier tous les parsers, et tester leur isParsable().
+Elle renvoie ensuite la bonne instance.
 
-On va faire :
-- Une interface pour chaque type de document à parser
-- Un service qui implémente cette interface pour chaque type de document à parser
+Pour celà il faudra sans doute revoir le Container dans Factory, on doit pouvoir utiliser
+BankParserFactoryProvider pour instancier, on a juste besoin de la liste des parseurs

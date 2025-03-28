@@ -11,8 +11,18 @@ Le but de l'application est d'en faire une version en production pour moi même 
 L'application me sert aussi d'exercice pour apprendre les principes SOLID, et doit respecter les bonnes pratiques les plus récentes.
 Je ne suis pas encore tout à fait au point sur les principes SOLID, alors tu m'aideras à prendre des décisions, avec des suggestions quand nécessaire, pour respecter cet objectif.
 
-Le code que tu fourniras si besoin, doit être écrit en Anglais, mais commenté en Français en respectant les princippes SOLID. Tu peux ne donner que des blocs de code si besoin, mais tu dois spécifier où les appliquer dans le fichier.
+Le code que tu fourniras si besoin, doit être écrit en Anglais, mais commenté en Français en respectant les principes SOLID. Tu peux ne donner que des blocs de code si besoin, mais tu dois spécifier où les appliquer dans le fichier.
 Si le fichier n'est pas trop long (moins de 100 lignes), tu écriras le fichier complet pour éviter la confusion d'un copier-coller au mauvais endroit.
 Si tu écris un bloc de code, tu dois l'écrire en entier, tu ne peux ignorer le code qu'en dehors d'un bloc de code si le fichier est trop long.
 
-Si tu as besoin de plus de fichier de context, tu peux le demmander, mais attention à ne pas polluer le contexte avec des demmandes de gros fichiers qui ne possèdent que peu d'information pertinente.
+Si tu as besoin de plus de fichier de contexte, tu peux le demander, mais attention à ne pas polluer le contexte avec des demandes de gros fichiers qui ne possèdent que peu d'information pertinente.
+
+----
+Etape actuelle du projet : je cherche à créer une factory pour sélectionner un bank parser dédié au parsage du document d'une banque spécifique, je suis obligé de procéder ainsi car chaque document de chaque banque ne peut pas être parsé de la même façon.
+J'utilise donc une factory pour me sélectionner le bon parseur de banque, et le retourner dans DocumentParserService, qui pourra utiliser le parseur de la même façon quelque soit la banque (principe polymorphisme).
+
+J'ai eu l'idée de créer un provider spécialisé dans le "bankParsers", c'est à dire les classes qui sont capable de parser le document spécifique à une banque.
+
+Je voudrais que le provider spécialisé dans les "bankParsers" (nommé BankParserFactoryProvider), collecte automatiquement tous les bank parsers qui sont dans le répertoire "app/Services/BankParser/", comme par exemple LaBanquePostaleParser (app/Services/BankParser/LaBanquePostaleParser.php).
+
+Je t'ai mis les fichiers principaux en contexte, je n'ai pas mis les interfaces mais considères qu'elles sont déjà dans le projet.

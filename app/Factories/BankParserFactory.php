@@ -1,5 +1,4 @@
 <?php
-// File location in project : app/Factories/BankParserFactory.php
 
 namespace App\Factories;
 
@@ -22,8 +21,7 @@ class BankParserFactory implements BankParserFactoryInterface
      */
     protected array $parsers;
 
-    public function __construct(Container $app)
-    {
+    public function __construct(Container $app){
         $this->app = $app;
         $this->parsers = $app->make('bank.parsers');
     }
@@ -38,15 +36,7 @@ class BankParserFactory implements BankParserFactoryInterface
     {
         // Logique de détection de la banque basée sur le contenu du document
         // Pour l'instant, on utilise LaBanquePostale par défaut si disponible
-
-        // Exemple simple de détection basée sur le contenu du document
-        foreach ($this->parsers as $bankName => $parserClass) {
-            // Ici, tu peux implémenter une logique de détection plus sophistiquée
-            // en fonction des spécificités de chaque banque
-            if ($bankName === 'LaBanquePostale' || str_contains($document, $bankName)) {
-                return $this->app->make($parserClass);
-            }
-        }
+        return $this->app->make("LaBanquePostaleParser");
 
         // Si aucun parseur n'est trouvé, renvoie une erreur
         $this->errorAdd("Aucun parseur bancaire compatible n'a été trouvé pour ce document");

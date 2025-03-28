@@ -4,35 +4,21 @@ namespace App\Providers;
 
 use App\Abstract\BankParserAbstract;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
-class BankParserFactoryProvider extends ServiceProvider
-{
-    /**
-     * Indique que le provider doit être chargé en différé
-     *
-     * @var bool
-     */
-    protected $defer = true;
+class BankParserFactoryProvider extends ServiceProvider implements DeferrableProvider{
 
-    /**
-     * Register services.
-     */
-    public function register(): void
-    {
+    public function register(): void{
         $this->app->singleton('bank.parsers', function ($app) {
             return $this->discoverBankParsers();
         });
     }
 
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
-    {
+    public function boot(): void{
         //
     }
 
@@ -42,12 +28,10 @@ class BankParserFactoryProvider extends ServiceProvider
      *
      * @return array<string, string> Liste des parseurs disponibles (clé = nom de la banque, valeur = nom de classe complet)
      */
-    protected function discoverBankParsers(): array
-    {
-        // Cache pendant 1 heure, en production on pourrait augmenter cette durée
-        return Cache::remember('bank.parsers.list', 3600, function () {
+    protected function discoverBankParsers(): array{
+        return Cache::remember('bank.parsers.list', env("NEW_BANK_PARSER_CACHE_DURATION", 43200), function () {
             $parsers = [];
-            $path = app_path('Services/BankParser');
+            $path = app_path('Services/BankParsers');
 
             if (!File::isDirectory($path)) {
                 return $parsers;
@@ -56,16 +40,13 @@ class BankParserFactoryProvider extends ServiceProvider
             // Parcours tous les fichiers PHP du répertoire
             foreach (File::files($path) as $file) {
                 if ($file->getExtension() === 'php') {
-                    $className = 'App\\Services\\BankParser\\' . $file->getFilenameWithoutExtension();
+                    $className = 'App\\Services\\BankParsers\\' . $file->getFilenameWithoutExtension();
 
                     // Vérifie que la classe existe et qu'elle hérite de BankParserAbstract
                     if (class_exists($className)) {
                         $reflection = new ReflectionClass($className);
-                        if ($reflection->isSubclassOf(BankParserAbstract::class) && !$reflection->isAbstract()) {
-                            // Extrait le nom de la banque à partir du nom du fichier (ex: LaBanquePostaleParser -> LaBanquePostale)
-                            $bankName = Str::replaceLast('Parser', '', $file->getFilenameWithoutExtension());
-                            $parsers[$bankName] = $className;
-                        }
+                        if ($reflection->isSubclassOf(BankParserAbstract::class) && !$reflection->isAbstract())
+                            $parsers[$className] = $className;
                     }
                 }
             }

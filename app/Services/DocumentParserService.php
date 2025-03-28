@@ -42,6 +42,9 @@ class DocumentParserService implements DocumentParserServiceInterface {
             return [];
         }
         else{
+            /**
+             * @var ErrorManagementTrait
+             */
             if($this->bankParserFactory->isError())
                 $this->errorAdd($this->bankParserFactory->errorGetArray());
             else
