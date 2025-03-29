@@ -22,7 +22,6 @@ class BankParserFactory implements BankParserFactoryInterface
     protected array $parsers;
 
     public function __construct(Container $app){
-        $this->app = $app;
         $this->parsers = $app->make('bank.parsers');
     }
 
@@ -32,11 +31,20 @@ class BankParserFactory implements BankParserFactoryInterface
      * @param string $document Le contenu du document à analyser
      * @return BankParserAbstract|false Le parseur approprié ou false si aucun ne correspond
      */
-    public function getBankParser(string $document): BankParserAbstract|false
-    {
+    public function getBankParser(string $document): BankParserAbstract|false {
         // Logique de détection de la banque basée sur le contenu du document
         // Pour l'instant, on utilise LaBanquePostale par défaut si disponible
-        return $this->app->make("LaBanquePostaleParser");
+        foreach ($this->parsers as $parserClass){
+            if ($parserClass::isParsable($document)){
+                try{
+                    return $this->app->make($parserClass);
+                }
+                catch(\Exception $e){
+                    $this->errorAdd("Erreur lors de la création du parseur {$parserClass}: " . $e->getMessage());
+                    break;
+                }
+            }
+        }
 
         // Si aucun parseur n'est trouvé, renvoie une erreur
         $this->errorAdd("Aucun parseur bancaire compatible n'a été trouvé pour ce document");

@@ -7,7 +7,7 @@ use App\Models\Income;
 
 class LaBanquePostaleParser extends BankParserAbstract{
 
-    public function isParsable(string $document): bool{
+    public static function isParsable(string $document): bool{
         //A coder
         return true;
     }

@@ -1,5 +1,6 @@
 {
     "files_to_collect": [
+        ".context/instructions.txt",
         "app/Providers/*.php",
         "app/Services/DocumentParserService.php",
         "app/Factories/BankParserFactory.php",
