@@ -1,6 +1,0 @@
-A FAIRE
-Changement de stratégie, la factory doit instancier tous les parsers, et tester leur isParsable().
-Elle renvoie ensuite la bonne instance.
-
-Pour celà il faudra sans doute revoir le Container dans Factory, on doit pouvoir utiliser
-BankParserFactoryProvider pour instancier, on a juste besoin de la liste des parseurs

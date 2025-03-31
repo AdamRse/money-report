@@ -8,76 +8,41 @@ use App\Models\Income;
 class LaBanquePostaleParser extends BankParserAbstract{
 
     public static function isParsable(string $document): bool{
-        //A coder
-        return true;
+        $lignes = explode("\n", $document, 8);
+        if(
+            str_contains($lignes[0], "Numéro Compte") &&
+            str_contains($lignes[1], "Type") &&
+            str_contains($lignes[2], "Compte tenu en") &&
+            str_contains($lignes[3], "Date")
+        )
+            return true;
+        else
+            return false;
     }
 
     public function parse(string $document): array|false{
-        // Détection automatique du délimiteur (plus fiable)
-        $firstLine = strtok($document, "\n");
-        $delimiter = ";"; // Par défaut
-
-        if (substr_count($firstLine, ';') > substr_count($firstLine, ',') && substr_count($firstLine, ';') > substr_count($firstLine, "\t")) {
-            $delimiter = ';';
-        } elseif (substr_count($firstLine, ',') > substr_count($firstLine, ';') && substr_count($firstLine, ',') > substr_count($firstLine, "\t")) {
-            $delimiter = ',';
-        } elseif (substr_count($firstLine, "\t") > 0) {
-            $delimiter = "\t";
+        if(empty($document)){
+            if(empty($this->_document)){
+                $this->errorAdd("Parseur de la banque postale : Aucun document passé pour trouver un délimiteur.");
+                return false;
+            }
+            $document = $this->_document;
+        }
+        $this->findDelimiterInHead("", true);
+        if(empty($this->_delimiter)){
+            $this->errorAdd("Parseur de la banque postale : Impossible de trouver le délimiteur.");
+            return false;
         }
 
         $lines = explode("\n", $document);
-
-        // Afficher les premières lignes pour le débogage
-        // echo "Premières lignes du fichier:";
-        // var_dump(array_slice($lines, 0, 5));
-
-        // Recherche de la ligne d'en-tête avec plus de flexibilité
-        $headerIndex = -1;
-        $dateKeywords = ['date', 'jour', 'day'];
-        $amountKeywords = ['amount', 'montant', 'somme', 'valeur', 'crédit'];
-
-        foreach ($lines as $index => $line) {
-            $line = strtolower($line); // Convertir en minuscules pour recherche insensible à la casse
-
-            $hasDateKeyword = false;
-            foreach ($dateKeywords as $keyword) {
-                if (str_contains($line, strtolower($keyword))) {
-                    $hasDateKeyword = true;
-                    break;
-                }
-            }
-
-            $hasAmountKeyword = false;
-            foreach ($amountKeywords as $keyword) {
-                if (str_contains($line, strtolower($keyword))) {
-                    $hasAmountKeyword = true;
-                    break;
-                }
-            }
-
-            if ($hasDateKeyword && $hasAmountKeyword) {
-                $headerIndex = $index;
-                break;
-            }
-        }
-
-        // Si aucun en-tête reconnu, utiliser la première ligne
-        if ($headerIndex === -1) {
-            // On peut soit utiliser la première ligne comme en-tête
-            $headerIndex = 0;
-
-            // Ou déclencher une exception
-            // throw new \Exception("Format de fichier invalide : impossible de trouver l'en-tête des colonnes");
-        }
-
         $incomes = [];
 
         // Traitement des lignes après l'en-tête
-        for ($i = $headerIndex + 1; $i < count($lines); $i++) {
+        for ($i = 6; $i < count($lines); $i++) {
             $line = trim($lines[$i]);
             if (empty($line)) continue;
 
-            $columns = str_getcsv($line, $delimiter);
+            $columns = str_getcsv($line, $this->_delimiter);
             if (count($columns) < 3) continue;
 
             $date = trim($columns[0]);
