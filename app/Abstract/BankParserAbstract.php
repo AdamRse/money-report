@@ -39,10 +39,10 @@ abstract class BankParserAbstract implements BankParserInterface{
         'CHOMAGE' => 5
     ];
 
+    public string $_delimiter;
+    public string $_document;
     protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
     protected DateParserServiceInterface $dateParser;
-    protected string $_delimiter;
-    protected string $_document;
     protected array $_delimiterList = [';', "\t", ',', '|', ':'];
 
     public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser) {
@@ -50,7 +50,7 @@ abstract class BankParserAbstract implements BankParserInterface{
         $this->dateParser = $dateParser;
     }
 
-    protected function findDelimiterInHead(string $document = "", bool $allowDeepSearch = false): static{
+    public function findDelimiterInHead(string $document = "", bool $allowDeepSearch = false): static{
         if(empty($document)){
             if(empty($this->_document)){
                 $this->errorAdd("Parseur abstrait : Aucun document passé pour trouver un délimiteur.");
@@ -94,7 +94,7 @@ abstract class BankParserAbstract implements BankParserInterface{
      * $nbHints : nombre de fois où on a trouvé le même nombre de colonnes avec le même délimiteur considéré comme un indice suffisant.
      *              Si false, alors on vérifie tout le document pout tous le slimiters
      */
-    protected function findDelimiterDeep(string $document, int|false $nbHints = false): static{
+    public function findDelimiterDeep(string $document, int|false $nbHints = false): static{
         $hints=[];
         $sizeDelimiterArray = sizeof($this->_delimiterList);
         $bestHint=[];
@@ -162,6 +162,6 @@ abstract class BankParserAbstract implements BankParserInterface{
         return null;
     }
 
-    abstract public static function isParsable(string $document): bool;
+    abstract public static function isParsable(string $document, string $filename): bool;
 
 }

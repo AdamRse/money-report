@@ -35,16 +35,13 @@ class DocumentParserService implements DocumentParserServiceInterface {
      * @param string $file : Le contenu du fichier
      * @return array : les revenus (Income) identifiées par le parseur (modèle Income augenté). Peut être un tableau vide.
      */
-    public function parseDocument(string $file): array|false {
-        $bankParser = $this->bankParserFactory->getBankParser($file);
+    public function parseDocument(string $file, string $filename): array|false {
+        $bankParser = $this->bankParserFactory->getBankParser($file, $filename);
         if($bankParser){
-            //[A FAIRE] Exploiter $bankParser, c'est un objet qui se trouve dans app/Services/BankParser
-            return [];
+            $bankParser->_document = $file;
+            return $bankParser->findDelimiterInHead()->parse();
         }
         else{
-            /**
-             * @var ErrorManagementTrait
-             */
             if($this->bankParserFactory->isError())
                 $this->errorAdd($this->bankParserFactory->errorGetArray());
             else

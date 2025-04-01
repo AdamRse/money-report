@@ -31,11 +31,11 @@ class BankParserFactory implements BankParserFactoryInterface
      * @param string $document Le contenu du document à analyser
      * @return BankParserAbstract|false Le parseur approprié ou false si aucun ne correspond
      */
-    public function getBankParser(string $document): BankParserAbstract|false {
+    public function getBankParser(string $document, string $filename): BankParserAbstract|false {
         // Logique de détection de la banque basée sur le contenu du document
         // Pour l'instant, on utilise LaBanquePostale par défaut si disponible
         foreach ($this->parsers as $parserClass){
-            if ($parserClass::isParsable($document)){
+            if ($parserClass::isParsable($document, $filename)){
                 try{
                     return $this->app->make($parserClass);
                 }

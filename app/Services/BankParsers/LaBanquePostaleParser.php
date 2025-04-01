@@ -4,10 +4,13 @@ namespace App\Services\BankParsers;
 
 use App\Abstract\BankParserAbstract;
 use App\Models\Income;
+use App\Traits\ErrorManagementTrait;
 
 class LaBanquePostaleParser extends BankParserAbstract{
 
-    public static function isParsable(string $document): bool{
+    use ErrorManagementTrait;
+
+    public static function isParsable(string $document, string $filename): bool{
         $lignes = explode("\n", $document, 8);
         if(
             str_contains($lignes[0], "Numéro Compte") &&
@@ -20,7 +23,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
             return false;
     }
 
-    public function parse(string $document): array|false{
+    public function parse(string $document = ""): array|false{
         if(empty($document)){
             if(empty($this->_document)){
                 $this->errorAdd("Parseur de la banque postale : Aucun document passé pour trouver un délimiteur.");

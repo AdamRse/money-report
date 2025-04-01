@@ -10,5 +10,5 @@ interface DocumentParserServiceInterface {
 
     public function errorDisplayHTML(): string;
 
-    public function parseDocument(string $file): array|false;
+    public function parseDocument(string $file, string $filename): array|false;
 }
