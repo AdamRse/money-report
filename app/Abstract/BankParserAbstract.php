@@ -65,7 +65,7 @@ abstract class BankParserAbstract implements BankParserInterface{
         for ($i=0; $i < $sizeDelimiterArray; $i++) {
             $occurences=substr_count($firstLine, $this->_delimiter[$i]);
             if(empty($bestHint["occurrences"])){
-                $bestHint[["delimiter" => $this->_delimiter[$i], "occurrences" => $occurences]];
+                $bestHint=["delimiter" => $this->_delimiter[$i], "occurrences" => $occurences];
             }
             else{
                 if($bestHint["occurrences"]<$occurences)
