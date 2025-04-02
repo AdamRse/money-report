@@ -37,6 +37,7 @@ class DocumentParserService implements DocumentParserServiceInterface {
      */
     public function parseDocument(string $file, string $filename): array|false {
         $bankParser = $this->bankParserFactory->getBankParser($file, $filename);
+        dd($bankParser);
         if($bankParser){
             $bankParser->_document = $file;
             return $bankParser->findDelimiterInHead()->parse();

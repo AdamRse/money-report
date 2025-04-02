@@ -40,13 +40,13 @@ class BankParserFactoryProvider extends ServiceProvider implements DeferrablePro
             // Parcours tous les fichiers PHP du répertoire
             foreach (File::files($path) as $file) {
                 if ($file->getExtension() === 'php') {
-                    $className = 'App\\Services\\BankParsers\\' . $file->getFilenameWithoutExtension();
+                    $className = '\\App\\Services\\BankParsers\\' . $file->getFilenameWithoutExtension();
 
                     // Vérifie que la classe existe et qu'elle hérite de BankParserAbstract
                     if (class_exists($className)) {
                         $reflection = new ReflectionClass($className);
                         if ($reflection->isSubclassOf(BankParserAbstract::class) && !$reflection->isAbstract())
-                            $parsers[$className] = $className;
+                            $parsers[] = $className;
                     }
                 }
             }

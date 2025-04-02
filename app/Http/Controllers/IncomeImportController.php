@@ -40,8 +40,8 @@ class IncomeImportController extends Controller {
      * Traite le fichier uploadé et affiche les résultats
      */
     public function processFile(ImportFileRequest $request): View|RedirectResponse {
-        $file = $request->file('bankFile');
-        $parsedIncomes = $this->documentParser->parseDocument($file->get(), $file->getClientOriginalName());
+        $file = $request->getEncodedFile('bankFile');
+        $parsedIncomes = $this->documentParser->parseDocument($file["content"], $file["name"]);
 
         if (!empty($parsedIncomes)) {
             return view('imports.index', [
@@ -51,9 +51,9 @@ class IncomeImportController extends Controller {
             ]);
         }
 
-        $messageError = (empty($this->documentParser->_errors))
-            ? "Aucun revenu détecté dans le document."
-            : 'Erreur lors du parsing : ' . $this->documentParser->errorDisplayHTML();
+        $messageError = ($this->documentParser->isError())
+            ? 'Erreur lors du parsing : ' . $this->documentParser->errorDisplayHTML()
+            : "Aucun revenu détecté dans le document.";
 
         return redirect()
             ->route('incomes.import')

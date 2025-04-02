@@ -12,6 +12,10 @@ class LaBanquePostaleParser extends BankParserAbstract{
 
     public static function isParsable(string $document, string $filename): bool{
         $lignes = explode("\n", $document, 8);
+        dump(str_contains($lignes[0], "Numéro Compte"),
+        str_contains($lignes[1], "Type"),
+        str_contains($lignes[2], "Compte tenu en"),
+        str_contains($lignes[3], "Date"));
         if(
             str_contains($lignes[0], "Numéro Compte") &&
             str_contains($lignes[1], "Type") &&

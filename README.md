@@ -40,6 +40,9 @@ app/
 > Le fichier doit respecter la convention de nommage PSR-4 (Même nom que la classe).
 > Par exemple la classe `MaNouvelleBanqueParser` doit se trouver dans le fichier `app/Services/BankParser/MaNouvelleBanqueParser.php`.
 > La prise en compte se faisant automatiquement, veiller à vider le cache pour une prise en compte immédiate.
+## Vider le cache des bank parsers :
+`php artisan bank-parsers:clear-cache`
+La commande est dans le répertoire `app/Console/Commands/ClearBankParsersCache.php`
 
 
 # Erreurs

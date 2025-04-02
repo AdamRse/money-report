@@ -40,11 +40,15 @@ class BankParserFactory implements BankParserFactoryInterface
                     return $this->app->make($parserClass);
                 }
                 catch(\Exception $e){
+                    dump("Exception :", $e);
                     $this->errorAdd("Erreur lors de la création du parseur {$parserClass}: " . $e->getMessage());
                     break;
                 }
             }
+            else
+                dump("faux");
         }
+        dump("Fin de la boucle on retourne false");
 
         // Si aucun parseur n'est trouvé, renvoie une erreur
         $this->errorAdd("Aucun parseur bancaire compatible n'a été trouvé pour ce document");
