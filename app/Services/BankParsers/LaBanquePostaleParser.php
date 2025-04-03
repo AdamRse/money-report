@@ -5,6 +5,7 @@ namespace App\Services\BankParsers;
 use App\Abstract\BankParserAbstract;
 use App\Models\Income;
 use App\Traits\ErrorManagementTrait;
+use Carbon\Carbon;
 
 class LaBanquePostaleParser extends BankParserAbstract{
 
@@ -12,10 +13,6 @@ class LaBanquePostaleParser extends BankParserAbstract{
 
     public static function isParsable(string $document, string $filename): bool{
         $lignes = explode("\n", $document, 8);
-        dump(str_contains($lignes[0], "Numéro Compte"),
-        str_contains($lignes[1], "Type"),
-        str_contains($lignes[2], "Compte tenu en"),
-        str_contains($lignes[3], "Date"));
         if(
             str_contains($lignes[0], "Numéro Compte") &&
             str_contains($lignes[1], "Type") &&
@@ -43,6 +40,15 @@ class LaBanquePostaleParser extends BankParserAbstract{
 
         $lines = explode("\n", $document);
         $incomes = [];
+        $allDates = [];
+
+        //On cherche le format de date
+        foreach($lines as $line){
+            $firstFow = str_getcsv($line, $this->_delimiter)[0] ?? false;
+            if($firstFow && $date = $this->dateParser->returnDateFromString($firstFow) )
+                $allDates[]=$date;
+        }
+        $carbonDateFormat = $this->dateParser->findDateFormat($allDates);
 
         // Traitement des lignes après l'en-tête
         for ($i = 6; $i < count($lines); $i++) {
@@ -64,7 +70,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
 
             $Model_Income = Income::make([ // Make permet de créer un modèle Income sans l'enregistrer en BDD, on l'utilise pour encapsuler la donnée
                 'amount' => $amount,
-                'income_date' => $date,
+                'income_date' => Carbon::createFromFormat($carbonDateFormat, $date),
                 'income_type_id' => $income_typesId,
                 'notes' => $description
             ]);

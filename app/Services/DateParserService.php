@@ -20,6 +20,14 @@ class DateParserService implements DateParserServiceInterface{
         $this->_defaultLocale = Carbon::getLocale();
     }
 
+    public function returnDateFromString(string $str, bool $strongPattern = false):string|false{
+        $pattern = $strongPattern ? $this->_patternDateStrong : $this->_patternDateSoft;
+        if(preg_match($pattern, $str, $match)){
+            return $match[0] ?? false;
+        }
+        return false;
+    }
+
     public function findDateFormat(array|string $find):string|false{
         return (is_string($find)) ? $this->findDateFormatDocument($find) : $this->findDateFormatArray($find);
     }
@@ -104,8 +112,6 @@ class DateParserService implements DateParserServiceInterface{
     }
 
     public function documentParsableWithCurrentLocale(string $document): bool{
-        info("---------------------------------------------");
-        info("Test avec la locale '" . Carbon::getLocale() . "'");
         if (preg_match_all($this->_patternDateSoft, $document, $matches)){
             info(sizeof($matches[0]) . " dates à tester");
             info($matches[0]);

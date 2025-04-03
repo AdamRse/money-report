@@ -63,13 +63,13 @@ abstract class BankParserAbstract implements BankParserInterface{
 
         $sizeDelimiterArray = sizeof($this->_delimiterList);
         for ($i=0; $i < $sizeDelimiterArray; $i++) {
-            $occurences=substr_count($firstLine, $this->_delimiter[$i]);
+            $occurences=substr_count($firstLine, $this->_delimiterList[$i]);
             if(empty($bestHint["occurrences"])){
-                $bestHint=["delimiter" => $this->_delimiter[$i], "occurrences" => $occurences];
+                $bestHint=["delimiter" => $this->_delimiterList[$i], "occurrences" => $occurences];
             }
             else{
                 if($bestHint["occurrences"]<$occurences)
-                    $bestHint=["delimiter" => $this->_delimiter[$i], "occurrences" => $occurences];
+                    $bestHint=["delimiter" => $this->_delimiterList[$i], "occurrences" => $occurences];
             }
         }
 
@@ -105,11 +105,11 @@ abstract class BankParserAbstract implements BankParserInterface{
                 if(trim($line)=="")
                     continue;
 
-                $rows = substr_count($line, $this->_delimiter[$i]);
+                $rows = substr_count($line, $this->_delimiterList[$i]);
                 if(isset($hints[$i][$rows])){
                     $hints[$i][$rows]++;
                     if($nbHints && $hints[$i][$rows] >= $nbHints){//On considère que $nbHints lignes avec le même nombre de colonnes est un indice suffisant
-                        $bestHint = ["delimiter" => $this->_delimiter[$i]];
+                        $bestHint = ["delimiter" => $this->_delimiterList[$i]];
                         break 2;
                     }
                 }
@@ -118,10 +118,10 @@ abstract class BankParserAbstract implements BankParserInterface{
 
                 if(isset($bestHint["delimiter"])){
                     if($bestHint["occurrences"]<$hints[$i][$rows])
-                        $bestHint=["delimiter" => $this->_delimiter[$i], "occurrences" => $hints[$i][$rows]];
+                        $bestHint=["delimiter" => $this->_delimiterList[$i], "occurrences" => $hints[$i][$rows]];
                 }
                 else
-                    $bestHint=["delimiter" => $this->_delimiter[$i], "occurrences" => $hints[$i][$rows]];
+                    $bestHint=["delimiter" => $this->_delimiterList[$i], "occurrences" => $hints[$i][$rows]];
             }
         }
 

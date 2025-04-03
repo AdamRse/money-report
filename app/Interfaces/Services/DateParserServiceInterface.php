@@ -6,6 +6,8 @@ use Carbon\Carbon;
 
 interface DateParserServiceInterface {
 
+    public function returnDateFromString(string $str, bool $strongPattern = false):string|false;
+
     public function findDateFormat(array|string $find):string|false;
 
     public function documentParsableWithCurrentLocale(string $document): bool;
