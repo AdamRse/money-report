@@ -25,9 +25,9 @@ class IncomeDuplicateCheckerService implements IncomeDuplicateCheckerServiceInte
         $sus = 0;
         if (!empty($duplicates[0])) {
             $sus++;
-            if ($duplicates[0]->notes == $income->notes)
+            if($duplicates[0]->notes == $income->notes)
                 $sus++;
-            if ($duplicates[0]->created_at->diffInSeconds($income->created_at) < 2)
+            if($duplicates[0]->created_at->diffInSeconds($income->created_at) < 3)
                 $sus += 2;
         }
         return $sus;
