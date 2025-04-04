@@ -42,7 +42,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
         $incomes = [];
         $allDates = [];
 
-        //On cherche le format de date
+        //On cherche le format de date dans tout le document
         foreach($lines as $line){
             $firstFow = str_getcsv($line, $this->_delimiter)[0] ?? false;
             if($firstFow && $date = $this->dateParser->returnDateFromString($firstFow) )
