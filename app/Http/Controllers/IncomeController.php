@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Income\StoreIncomeRequest;
 use App\Http\Requests\Income\UpdateIncomeRequest;
+use App\Interfaces\Repositories\IncomeRepositoryInterface;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
-use App\Services\IncomeDuplicateCheckerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -18,21 +18,18 @@ class IncomeController extends Controller {
 
     // Injecter le service dans le constructeur
     protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
+    protected IncomeRepositoryInterface $incomeRepository;
 
-    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker) {
+    public function __construct(IncomeDuplicateCheckerServiceInterface $duplicateChecker, IncomeRepositoryInterface $incomeRepository) {
         $this->duplicateChecker = $duplicateChecker;
+        $this->incomeRepository = $incomeRepository;
     }
     /**
      * Affiche la liste des revenus pour l'année sélectionnée
      */
     public function index(Request $request): View {
         $selectedYear = $request->input('year_filter', date('Y'));
-
-        $incomes = Income::with('income_types')
-            ->whereYear('income_date', $selectedYear)
-            ->orderBy('income_date', 'desc')
-            ->get();
-
+        $incomes = $this->incomeRepository->getUserIncomesByYear($selectedYear);
         $incomeTypes = IncomeType::all();
 
         return view('incomes.index', compact('incomeTypes', 'incomes', 'selectedYear'));

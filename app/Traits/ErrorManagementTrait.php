@@ -10,7 +10,7 @@ trait ErrorManagementTrait
      */
     protected array $_errors = [];
 
-    protected function errorAdd(string|array $error):void {
+    public function errorAdd(string|array $error):void {
         if (!empty($error)){
             if(is_array($error))
                 $this->_errors = array_merge($this->_errors, $error);
