@@ -11,19 +11,23 @@ class Income extends Model {
     protected $fillable = [
         'amount',
         'income_date',
+        'user_id',
         'income_type_id',
         'notes'
     ];
 
-    // Définition des cast pour convertir automatiquement les types
     protected $casts = [
         'amount' => 'decimal:2',
+        'user_id' => 'integer',
         'income_date' => 'date',
         'income_type_id' => 'integer'
     ];
 
-    // Relation avec la table income_types
-    public function income_types(): BelongsTo {
-        return $this->belongsTo(IncomeType::class, 'income_type_id');
+    // Relations
+    public function incomeType(): BelongsTo {
+        return $this->belongsTo(IncomeType::class);
+    }
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
     }
 }

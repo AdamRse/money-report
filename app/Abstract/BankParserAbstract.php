@@ -152,7 +152,7 @@ abstract class BankParserAbstract implements BankParserInterface{
     /**
      * Détermine le type de revenu en fonction du libellé
      */
-    protected function detectIncome_types(string $description): ?int {
+    protected function detectIncomeType(string $description): ?int {
         $description = strtolower($description);
         foreach ($this->typePatterns as $pattern => $typeId) {
             if (str_contains($description, strtolower($pattern))) {

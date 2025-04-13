@@ -66,7 +66,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
             if (!is_numeric($amount) || floatval($amount) <= 0) continue;
 
             $shouldBeSelected = !$this->shouldExclude($description);
-            $income_typesId = $this->detectIncome_types($description);
+            $income_typesId = $this->detectIncomeType($description);
 
             $Model_Income = Income::make([ // Make permet de créer un modèle Income sans l'enregistrer en BDD, on l'utilise pour encapsuler la donnée
                 'amount' => $amount,
