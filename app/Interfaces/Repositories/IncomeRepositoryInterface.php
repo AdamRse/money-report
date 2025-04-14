@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface IncomeRepositoryInterface extends ErrorManagementInterface{
     public function getUserIncomesByYear(null|string $year = null):Collection|false;
     public function getUserIncomesByDateRange(Carbon|string $dateStart, Carbon|string $dateEnd);
-    public static function findDuplicates(Income $income):Collection;
+    public function findDuplicates(Income $income):Collection|false;
 
     // /**
     //  * Trait ErrorManagementTrait

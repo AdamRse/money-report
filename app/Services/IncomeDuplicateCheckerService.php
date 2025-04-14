@@ -2,12 +2,19 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\IncomeRepositoryInterface;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\IncomeRepository;
 
 class IncomeDuplicateCheckerService implements IncomeDuplicateCheckerServiceInterface {
+
+    protected IncomeRepositoryInterface $incomeRepository;
+
+    public function __construct(IncomeRepositoryInterface $incomeRepository){
+        $this->incomeRepository = $incomeRepository;
+    }
 
     /**
      * Vérifie si un revenu avec le même montant et la même date existe déjà
@@ -21,7 +28,7 @@ class IncomeDuplicateCheckerService implements IncomeDuplicateCheckerServiceInte
      *      4 = doublon certain
      */
     public function getDuplicateLevel(Income $income): int {
-        $duplicates = IncomeRepository::findDuplicates($income);
+        $duplicates = $this->incomeRepository->findDuplicates($income);
         $sus = 0;
         if (!empty($duplicates[0])) {
             $sus++;

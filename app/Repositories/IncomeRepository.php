@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Traits\ErrorManagementTrait;
+use Exception;
 
 class IncomeRepository implements IncomeRepositoryInterface {
 
@@ -25,7 +26,13 @@ class IncomeRepository implements IncomeRepositoryInterface {
             ->where('user_id', $idUser)
             ->whereYear('income_date', $year);
 
-        return $query->orderBy('income_date', 'desc')->get();
+        try{
+            return $query->orderBy('income_date', 'desc')->get();
+        }
+        catch(Exception $e){
+            $this->errorAdd("La requête a échouée : ".$e->getMessage());
+            return false;
+        }
     }
     public function getUserIncomesByDateRange(Carbon|string $dateStart, Carbon|string $dateEnd){
     }
@@ -36,9 +43,15 @@ class IncomeRepository implements IncomeRepositoryInterface {
      * @param Income $income Le revenu à vérifier
      * @return array Un tableau des revenus correspondants, vide si aucun doublon
      */
-    public static function findDuplicates(Income $income):Collection{
-        return Income::where('amount', $income->amount)
+    public function findDuplicates(Income $income):Collection|false{
+        try{
+            return Income::where('amount', $income->amount)
             ->whereDate('income_date', $income->income_date)
             ->get();
+        }
+        catch(Exception $e){
+            $this->errorAdd("La requête a échouée : ".$e->getMessage());
+            return false;
+        }
     }
 }
