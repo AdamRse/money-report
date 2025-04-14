@@ -30,8 +30,10 @@ class IncomeController extends Controller {
     public function index(Request $request): View {
         $selectedYear = $request->input('year_filter', date('Y'));
         $incomes = $this->incomeRepository->getUserIncomesByYear($selectedYear);
-        $incomeTypes = IncomeType::all();
+        if($this->incomeRepository->isError())
+            return view('error.index', ["title" => "La requête retourne une erreur.", "message" => $this->incomeRepository->errorDisplayHTML()]);
 
+        $incomeTypes = IncomeType::all();
         return view('incomes.index', compact('incomeTypes', 'incomes', 'selectedYear'));
     }
 
