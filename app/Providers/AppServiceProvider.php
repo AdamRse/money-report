@@ -5,12 +5,14 @@ namespace App\Providers;
 use App\Factories\BankParserFactory;
 use App\Interfaces\Factories\BankParserFactoryInterface;
 use App\Interfaces\Repositories\IncomeRepositoryInterface;
+use App\Interfaces\Repositories\IncomeTypeRepositoryInterface;
 use App\Interfaces\Services\DateParserServiceInterface;
 use App\Interfaces\Services\DocumentParserServiceInterface;
 use App\Interfaces\Services\FileEncodingServiceInterface;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Interfaces\Services\IncomeStatisticsServiceInterface;
 use App\Repositories\IncomeRepository;
+use App\Repositories\IncomeTypeRepository;
 use App\Services\DateParserService;
 use App\Services\DocumentParserService;
 use App\Services\FileEncodingService;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind(IncomeStatisticsServiceInterface::class, IncomeStatisticsService::class);
         $this->app->bind(BankParserFactoryInterface::class, BankParserFactory::class);
         $this->app->bind(FileEncodingServiceInterface::class, FileEncodingService::class);
+        $this->app->bind(IncomeTypeRepositoryInterface::class, IncomeTypeRepository::class);
     }
 
     /**
