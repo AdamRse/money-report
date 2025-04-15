@@ -45,7 +45,7 @@ class IncomeRepository implements IncomeRepositoryInterface {
 
     public function getUserIncomesByYear(null|string $year = null):Collection|false{
         $year = $year ? trim($year) : date('Y');
-        if(preg_match("/^[0-9]{4}$/", $year)){
+        if(!preg_match("/^[0-9]{4}$/", $year)){
             $this->errorAdd("L'année passée est incorrecte (4 chiffres attendus), format donné : $year");
             return false;
         }
