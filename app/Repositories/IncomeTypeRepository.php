@@ -75,4 +75,20 @@ class IncomeTypeRepository implements IncomeTypeRepositoryInterface{
             return false;
         }
     }
+
+    public function delete(int|string|IncomeType $incomeType):bool{
+        try{
+            if($incomeType instanceof IncomeType == false){
+                if(!$incomeType = IncomeType::find($incomeType)){
+                    $this->errorAdd("Impossible de supprimer le type de revenu, introuvable en base de données.");
+                    return false;
+                }
+            }
+            return $incomeType->deleteOrFail();
+        }
+        catch(Exception $e){
+            $this->errorAdd("Impossible de supprimer le type de revenu, la base de données renvoie une erreur : ".$e->getMessage());
+            return false;
+        }
+    }
 }

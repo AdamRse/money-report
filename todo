@@ -1,2 +1,4 @@
+Ajout des droits (champ users) pour un user, et les gérer dans les repositories
+
 //Optimisation
 les requêtes avec with() peuvent être changées en requêtes jointes pour optimiser le nombre de requêtes (with() en fait 2)

@@ -74,6 +74,22 @@ class IncomeRepository implements IncomeRepositoryInterface {
         }
     }
 
+    public function delete(int|string|Income $income):bool{
+        try{
+            if($income instanceof Income == false){
+                if(!$income = Income::find($income)){
+                    $this->errorAdd("Impossible de supprimer le revenu, introuvable en base de données.");
+                    return false;
+                }
+            }
+            return $income->deleteOrFail();
+        }
+        catch(Exception $e){
+            $this->errorAdd("Impossible de supprimer le revenu, la base de données renvoie une erreur : ".$e->getMessage());
+            return false;
+        }
+    }
+
     public function getUserIncomesByYear(null|string $year = null):Collection|false{
         $year = $year ? trim($year) : date('Y');
         if(!preg_match("/^[0-9]{4}$/", $year)){
