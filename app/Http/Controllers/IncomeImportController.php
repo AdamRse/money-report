@@ -10,6 +10,7 @@ use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -92,6 +93,7 @@ class IncomeImportController extends Controller {
                 Income::create([
                     'income_date' => $date->format('Y-m-d'),
                     'amount' => $incomeData['amount'],
+                    'user_id' => Auth::id(),
                     'income_type_id' => $incomeData['income_type_id'],
                     'notes' => $incomeData['description']
                 ]);

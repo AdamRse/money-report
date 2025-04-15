@@ -6,6 +6,7 @@ use App\Abstract\BankParserAbstract;
 use App\Models\Income;
 use App\Traits\ErrorManagementTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LaBanquePostaleParser extends BankParserAbstract{
 
@@ -70,6 +71,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
 
             $Model_Income = Income::make([ // Make permet de créer un modèle Income sans l'enregistrer en BDD, on l'utilise pour encapsuler la donnée
                 'amount' => $amount,
+                'user_id' => Auth::id(),
                 'income_date' => Carbon::createFromFormat($carbonDateFormat, $date),
                 'income_type_id' => $incomeTypeId,
                 'notes' => $description
