@@ -16,10 +16,15 @@ class IncomeRepository implements IncomeRepositoryInterface {
 
     public function selectId($id):Income|false{
         try{
-            return Income::find($id);
+            if($income = Income::find($id))
+                return $income;
+            else{
+                $this->errorAdd("Revenu introuvable avec l'identifiant $id");
+                return false;
+            }
         }
         catch(Exception $e){
-            $this->errorAdd("Le revenu n'a pas été trouvé : ".$e->getMessage());
+            $this->errorAdd("La requête SQL Revenu n'a pu aboutir : ".$e->getMessage());
             return false;
         }
     }
@@ -42,6 +47,31 @@ class IncomeRepository implements IncomeRepositoryInterface {
         }
         else
             return $this->selectId(empty($income['id'])) ?: false;
+    }
+
+    public function update(array|Income $income):bool{
+        if(is_array($income))
+            $income = Income::make($income);
+        if(empty($income->id)){
+            $this->errorAdd("Aucun identifiant de revenu donné.");
+            return false;
+        }
+        try{
+            if(!$DBIncome = Income::find($income->id)){
+                if($DBIncome->fill($income->toArray())->isDirty())//Pas besoin de sauvegarder si aucun changements. isDirty se charche de faire la différence sans requête supplémentaire
+                    return $DBIncome->saveOrFail();
+                else
+                    return true;
+            }
+            else{
+                $this->errorAdd("L'identifiant du revenu donné ne correspond pas.");
+                return false;
+            }
+        }
+        catch(Exception $e){
+            $this->errorAdd("La requête SQL modification revenu a échouée avec le message suivant : ".$e->getMessage());
+            return false;
+        }
     }
 
     public function getUserIncomesByYear(null|string $year = null):Collection|false{
