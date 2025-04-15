@@ -16,7 +16,7 @@ class IncomeType extends Model {
     ];
 
     // Relation avec la table revenus
-    public function incomes(): HasMany {
-        return $this->hasMany(Income::class, 'income_type_id');
+    public function income(): HasMany {
+        return $this->hasMany(Income::class);
     }
 }

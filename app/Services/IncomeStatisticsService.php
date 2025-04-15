@@ -31,7 +31,7 @@ class IncomeStatisticsService implements IncomeStatisticsServiceInterface {
      */
     private function calculateTaxableTotal(Collection $incomes): float {
         return $incomes->filter(function ($income) {
-            return $income->income_types->taxable;
+            return $income->incomeType->taxable;
         })->sum('amount');
     }
 
@@ -40,7 +40,7 @@ class IncomeStatisticsService implements IncomeStatisticsServiceInterface {
      */
     private function calculatemust_declareTotal(Collection $incomes): float {
         return $incomes->filter(function ($income) {
-            return $income->income_types->must_declare;
+            return $income->incomeType->must_declare;
         })->sum('amount');
     }
 
@@ -48,7 +48,7 @@ class IncomeStatisticsService implements IncomeStatisticsServiceInterface {
      * Calcule les statistiques par type de revenu
      */
     private function calculateStatsByType(Collection $incomes): SupportCollection {
-        return $incomes->groupBy('income_types.name')
+        return $incomes->groupBy('income_type.name')
             ->map(function ($group) {
                 return [
                     'total' => $group->sum('amount'),

@@ -29,6 +29,7 @@ class IncomeRepository implements IncomeRepositoryInterface {
             try{
                 return Income::create([
                     'amount' => $income['amount'],
+                    'user_id' => Auth::id(),
                     'income_date' => $income['income_date'],
                     'income_type_id' => $income['income_type_id'],
                     'notes' => $income['notes'] ?? null
@@ -50,7 +51,7 @@ class IncomeRepository implements IncomeRepositoryInterface {
             return false;
         }
         $idUser = Auth::id();
-        $query = Income::with('income_types')
+        $query = Income::with('incomeType')
             ->where('user_id', $idUser)
             ->whereYear('income_date', $year);
 

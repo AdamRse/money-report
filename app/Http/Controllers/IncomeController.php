@@ -50,16 +50,21 @@ class IncomeController extends Controller {
         $validated = $request->validated();
 
         // Création d'un nouveau type de revenu si demandé
-        $incomeType = $this->incomeTypeRepository->createIfNotExists([
-            'name' => $validated['new_type_name'],
-            'description' => $validated['new_type_description'] ?? null,
-            'taxable' => $validated['taxable'] ?? false,
-            'must_declare' => $validated['must_declare'] ?? false
-        ]);
+        if($validated['income_type_id'] == 0){
+            $incomeType = $this->incomeTypeRepository->createIfNotExists([
+                'name' => $validated['new_type_name'],
+                'description' => $validated['new_type_description'] ?? null,
+                'taxable' => $validated['taxable'] ?? false,
+                'must_declare' => $validated['must_declare'] ?? false
+            ]);
+        }
+        else{
+            $incomeType = $this->incomeTypeRepository->selectId($validated['income_type_id']);
+        }
         if(!$incomeType){
             return redirect()
                 ->route('incomes.index')
-                ->with('error', "L'enregistrement a été refusé à cause d'un type de revenu incohérent. " . $this->incomeTypeRepository->errorDisplayHTML())
+                ->with('error', "L'enregistrement a été refusé à cause d'un type de revenu incohérent. " . $this->incomeRepository->errorDisplayHTML())
                 ->withInput();
         }
         $validated['income_type_id'] = $incomeType->id;

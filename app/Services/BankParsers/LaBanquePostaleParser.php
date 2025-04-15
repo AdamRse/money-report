@@ -66,12 +66,12 @@ class LaBanquePostaleParser extends BankParserAbstract{
             if (!is_numeric($amount) || floatval($amount) <= 0) continue;
 
             $shouldBeSelected = !$this->shouldExclude($description);
-            $income_typesId = $this->detectIncomeType($description);
+            $incomeTypeId = $this->detectIncomeType($description);
 
             $Model_Income = Income::make([ // Make permet de créer un modèle Income sans l'enregistrer en BDD, on l'utilise pour encapsuler la donnée
                 'amount' => $amount,
                 'income_date' => Carbon::createFromFormat($carbonDateFormat, $date),
-                'income_type_id' => $income_typesId,
+                'income_type_id' => $incomeTypeId,
                 'notes' => $description
             ]);
 
@@ -86,7 +86,7 @@ class LaBanquePostaleParser extends BankParserAbstract{
                 'description' => $description,
                 'amount' => floatval($amount),
                 'selected' => $shouldBeSelected,
-                'income_type_id' => $income_typesId,
+                'income_type_id' => $incomeTypeId,
                 'duplicate' => $duplicate_level
             ];
         }

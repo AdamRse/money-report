@@ -21,7 +21,7 @@ class IncomeReportController extends Controller {
      */
     public function index(FilterIncomesRequest $request): View {
         // Construction de la requête de base
-        $query = Income::with('income_types')->orderBy('income_date', 'desc');
+        $query = Income::with('incomeType')->orderBy('income_date', 'desc');
 
         // Application des filtres
         $periodMessage = $this->applyFilters($query, $request);
