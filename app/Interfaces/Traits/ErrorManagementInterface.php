@@ -9,6 +9,6 @@ interface ErrorManagementInterface{
      * Affiche les erreurs rencontrées lord du processus dans un format html
      * @return string
      */
-    public function errorDisplayHTML(): string;
+    public function errorDisplayHTML(string $alt = ""): string;
     public function errorGetArray(): array;
 }

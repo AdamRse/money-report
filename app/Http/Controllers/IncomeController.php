@@ -16,7 +16,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 
-class IncomeController extends Controller {
+class IncomeController extends Controller{
 
     // Injecter le service dans le constructeur
     protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
@@ -32,7 +32,7 @@ class IncomeController extends Controller {
     /**
      * Affiche la liste des revenus pour l'année sélectionnée
      */
-    public function index(Request $request): View {
+    public function index(Request $request):View{
         $selectedYear = $request->input('year_filter', date('Y'));
 
         $incomes = $this->incomeRepository->getUserIncomesByYear($selectedYear);
@@ -47,20 +47,20 @@ class IncomeController extends Controller {
      * Enregistre un nouveau revenu
      * Peut également créer un nouveau type de revenu si nécessaire
      */
-    public function store(StoreIncomeRequest $request): RedirectResponse {
-        $validated = $request->validated();
+    public function store(StoreIncomeRequest $request):RedirectResponse{
+        $validatedForm = $request->validated();
 
         // Création d'un nouveau type de revenu si demandé
-        if($validated['income_type_id'] == 0){
+        if($validatedForm['income_type_id'] == 0){
             $incomeType = $this->incomeTypeRepository->createIfNotExists([
-                'name' => $validated['new_type_name'],
-                'description' => $validated['new_type_description'] ?? null,
-                'taxable' => $validated['taxable'] ?? false,
-                'must_declare' => $validated['must_declare'] ?? false
+                'name' => $validatedForm['new_type_name'],
+                'description' => $validatedForm['new_type_description'] ?? null,
+                'taxable' => $validatedForm['taxable'] ?? false,
+                'must_declare' => $validatedForm['must_declare'] ?? false
             ]);
         }
         else{
-            $incomeType = $this->incomeTypeRepository->selectId($validated['income_type_id']);
+            $incomeType = $this->incomeTypeRepository->selectId($validatedForm['income_type_id']);
         }
         if(!$incomeType){
             return redirect()
@@ -70,10 +70,10 @@ class IncomeController extends Controller {
         }
         // Création du revenu
         $income = $this->incomeRepository->createIfNotExists([
-            'amount' => $validated['amount'],
-            'income_date' => $validated['income_date'],
+            'amount' => $validatedForm['amount'],
+            'income_date' => $validatedForm['income_date'],
             'income_type_id' => $incomeType->id,
-            'notes' => $validated['notes'] ?? null
+            'notes' => $validatedForm['notes'] ?? null
         ]);
         if(!$income){
             return redirect()
@@ -90,18 +90,19 @@ class IncomeController extends Controller {
     /**
      * Met à jour un revenu existant
      */
-    public function update(UpdateIncomeRequest $request, string $id): RedirectResponse {
-        try {
-            $income = Income::findOrFail($id);
-            $income->update($request->validated());
+    public function update(UpdateIncomeRequest $request, string $id):RedirectResponse{
+        $income = $request->validated();
+        $income['id']=$id;
 
+        if($updatedIncome = $this->incomeRepository->update($income))
             return redirect()
                 ->route('incomes.index')
-                ->with('success', 'Le revenu a été modifié avec succès');
-        } catch (\Exception $e) {
+                ->with('success', 'Le revenu a été modifié avec succès !')
+                ->with('income', $updatedIncome);
+        else{
             return redirect()
                 ->route('incomes.index')
-                ->with('error', 'Une erreur est survenue lors de la modification : ' . $e->getMessage())
+                ->with('error', $this->incomeRepository->errorDisplayHTML("Une erreur est survenue lors de la modification."))
                 ->withInput();
         }
     }
@@ -109,18 +110,15 @@ class IncomeController extends Controller {
     /**
      * Supprime un revenu
      */
-    public function destroy(string $id): RedirectResponse {
-        try {
-            $income = Income::findOrFail($id);
-            $income->delete();
-
+    public function destroy(string $id):RedirectResponse{
+        if($this->incomeRepository->delete($id))
             return redirect()
                 ->route('incomes.index')
                 ->with('success', 'Le revenu a été supprimé avec succès');
-        } catch (\Exception $e) {
+        else{
             return redirect()
-                ->route('incomes.index')
-                ->with('error', 'Une erreur est survenue lors de la suppression : ' . $e->getMessage());
+            ->route('incomes.index')
+            ->with('error', $this->incomeRepository->errorDisplayHTML("Une erreur est survenue lors de la suppression"));
         }
     }
 }
