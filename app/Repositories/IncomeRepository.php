@@ -30,6 +30,16 @@ class IncomeRepository implements IncomeRepositoryInterface {
         }
     }
 
+    public function selectAllFromAuth():Collection|false{
+        try{
+            return Income::where('user_id', Auth::id())->get();
+        }
+        catch(Exception $e){
+            $this->errorAdd("Impossible de récupérer les revenus de l'utilisateur : ".$e->getMessage());
+            return false;
+        }
+    }
+
      /**
      * Ne génère pas d'erreur quand un doublon est détecté, rend le doublon à la place.
      */

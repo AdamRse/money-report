@@ -6,6 +6,7 @@ use App\Interfaces\Repositories\IncomeTypeRepositoryInterface;
 use App\Models\IncomeType;
 use App\Traits\ErrorManagementTrait;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class IncomeTypeRepository implements IncomeTypeRepositoryInterface{
@@ -39,6 +40,16 @@ class IncomeTypeRepository implements IncomeTypeRepositoryInterface{
         }
         catch(Exception $e){
             $this->errorAdd("La requête SQL Type de revenu n'a pu aboutir : ".$e->getMessage());
+            return false;
+        }
+    }
+
+    public function selectAll():Collection|false{
+        try{
+            return IncomeType::all();
+        }
+        catch(Exception $e){
+            $this->errorAdd("Impossible de récupérer toute la liste des revenus : ".$e->getMessage());
             return false;
         }
     }

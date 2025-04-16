@@ -36,11 +36,13 @@ class IncomeController extends Controller{
         $selectedYear = $request->input('year_filter', date('Y'));
 
         $incomes = $this->incomeRepository->getUserIncomesByYear($selectedYear);
-        if($this->incomeRepository->isError())
-            return view('error.index', ["title" => "La requête retourne une erreur.", "message" => $this->incomeRepository->errorDisplayHTML()]);
+        if(!$incomes)
+            return view('error.index', ["title" => "La requête retourne une erreur.", "message" => $this->incomeRepository->errorDisplayHTML("Impossible de récupérer la liste des revenus.")]);
 
-        $incomeTypes = IncomeType::all();
-        return view('incomes.index', compact('incomeTypes', 'incomes', 'selectedYear'));
+        if($incomeTypes = $this->incomeTypeRepository->selectAll())
+            return view('incomes.index', compact('incomeTypes', 'incomes', 'selectedYear'));
+        else
+            return view('error.index', ["title" => "La requête retourne une erreur.", "message" => $this->incomeRepository->errorDisplayHTML("Impossible de récupérer la liste des types de revenus.")]);
     }
 
     /**
@@ -65,7 +67,7 @@ class IncomeController extends Controller{
         if(!$incomeType){
             return redirect()
                 ->route('incomes.index')
-                ->with('error', "L'enregistrement a été refusé à cause d'un type de revenu incohérent. " . $this->incomeRepository->errorDisplayHTML())
+                ->with('error', $this->incomeRepository->errorDisplayHTML("L'enregistrement a été refusé à cause d'un type de revenu incohérent. "))
                 ->withInput();
         }
         // Création du revenu
@@ -78,7 +80,7 @@ class IncomeController extends Controller{
         if(!$income){
             return redirect()
                 ->route('incomes.index')
-                ->with('error', "L'enregistrement a été refusé à cause d'un revenu incohérent. " . $this->incomeTypeRepository->errorDisplayHTML())
+                ->with('error', $this->incomeTypeRepository->errorDisplayHTML("L'enregistrement a été refusé à cause d'un revenu incohérent."))
                 ->withInput();
         }
 
