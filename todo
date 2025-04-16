@@ -1,4 +1,9 @@
 Ajout des droits (champ users) pour un user, et les gérer dans les repositories
 
 //Optimisation
+//back
 les requêtes avec with() peuvent être changées en requêtes jointes pour optimiser le nombre de requêtes (with() en fait 2)
+//front
+Pour ajouter un revenu et un nouveau type de revenu en même temps, le formulaire ne fait pas sens.
+    Le <hr> entre revenu taxable et revenu à déclarer ???
+    Le textarea Notes (revenu) après le formulaire type de revenu quand il est déployé n'a aucun sens

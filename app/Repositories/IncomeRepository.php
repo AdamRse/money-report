@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\ErrorManagementTrait;
 use Exception;
+use Illuminate\Support\Arr;
 
 class IncomeRepository implements IncomeRepositoryInterface {
 
@@ -29,6 +30,9 @@ class IncomeRepository implements IncomeRepositoryInterface {
         }
     }
 
+     /**
+     * Ne génère pas d'erreur quand un doublon est détecté, rend le doublon à la place.
+     */
     public function createIfNotExists(array $income):Income|false{
         if (empty($income['id'])) {
             try{
@@ -129,5 +133,14 @@ class IncomeRepository implements IncomeRepositoryInterface {
             $this->errorAdd("La requête a échouée : ".$e->getMessage());
             return false;
         }
+    }
+
+    public function isDuplicate(array|Income $income):Income|false{
+        if(!is_array($income))
+            $income = $income->toArray();
+
+        $incomeFiltered = Arr::except($income, ['id', 'created_at', 'updated_at']);
+
+        return Income::where($incomeFiltered)->first() ?: false;
     }
 }

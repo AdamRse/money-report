@@ -2,38 +2,30 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\IncomeRepositoryInterface;
 use App\Interfaces\Repositories\IncomeTypeRepositoryInterface;
-use App\Models\Income;
 use App\Models\IncomeType;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use App\Traits\ErrorManagementTrait;
 use Exception;
+use Illuminate\Support\Arr;
 
 class IncomeTypeRepository implements IncomeTypeRepositoryInterface{
 
     use ErrorManagementTrait;
 
+    /**
+     * Ne génère pas d'erreur quand un doublon est détecté, rend le doublon à la place.
+     */
     public function createIfNotExists(array $incomeType):IncomeType|false{
-        if (empty($incomeType['income_type_id'])) {
-            try{
-                return IncomeType::create([
-                    'name' => $incomeType['new_type_name'],
-                    'description' => $incomeType['new_type_description'] ?? null,
-                    'taxable' => $incomeType['taxable'] ?? false,
-                    'must_declare' => $incomeType['must_declare'] ?? false
-                ]);
-            }
-            catch(Exception $e){
-                $this->errorAdd("Impossible de créer le type de revenu : ".$e->getMessage());
-                return false;
-            }
+        if($duplicate = $this->isDuplicate($incomeType))
+            return $duplicate;
+
+        try{
+            return IncomeType::create($incomeType);
         }
-        else
-            return $this->selectId(empty($incomeType['income_type_id'])) ?: false;
+        catch(Exception $e){
+            $this->errorAdd("Impossible de créer le type de revenu : ".$e->getMessage());
+            return false;
+        }
     }
 
     public function selectId(int|string $id):IncomeType|false{
@@ -90,5 +82,14 @@ class IncomeTypeRepository implements IncomeTypeRepositoryInterface{
             $this->errorAdd("Impossible de supprimer le type de revenu, la base de données renvoie une erreur : ".$e->getMessage());
             return false;
         }
+    }
+
+    public function isDuplicate(array|IncomeType $incomeType):IncomeType|false{
+        if(!is_array($incomeType))
+            $incomeType = $incomeType->toArray();
+
+        $incomeTypeFiltered = Arr::except($incomeType, ['id', 'created_at', 'updated_at']);
+
+        return IncomeType::where($incomeTypeFiltered)->first() ?: false;
     }
 }

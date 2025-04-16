@@ -15,4 +15,5 @@ interface IncomeRepositoryInterface extends ErrorManagementInterface{
     public function getUserIncomesByYear(null|string $year = null):Collection|false;
     public function getUserIncomesByDateRange(Carbon|string $dateStart, Carbon|string $dateEnd);
     public function findDuplicates(Income $income):Collection|false;
+    public function isDuplicate(array|Income $income):Income|false;
 }

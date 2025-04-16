@@ -9,6 +9,7 @@ use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
 use App\Repositories\IncomeTypeRepository;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -67,13 +68,11 @@ class IncomeController extends Controller {
                 ->with('error', "L'enregistrement a été refusé à cause d'un type de revenu incohérent. " . $this->incomeRepository->errorDisplayHTML())
                 ->withInput();
         }
-        $validated['income_type_id'] = $incomeType->id;
-
         // Création du revenu
         $income = $this->incomeRepository->createIfNotExists([
             'amount' => $validated['amount'],
             'income_date' => $validated['income_date'],
-            'income_type_id' => $validated['income_type_id'],
+            'income_type_id' => $incomeType->id,
             'notes' => $validated['notes'] ?? null
         ]);
         if(!$income){
