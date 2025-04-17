@@ -9,6 +9,8 @@ use App\Interfaces\Services\DocumentParserServiceInterface;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Models\Income;
 use App\Models\IncomeType;
+use App\Repositories\IncomeRepository;
+use App\Repositories\IncomeTypeRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,20 +23,30 @@ class IncomeImportController extends Controller {
     protected IncomeDuplicateCheckerServiceInterface $duplicateChecker;
     protected DateParserServiceInterface $dateParser;
     protected DocumentParserServiceInterface $documentParser;
+    protected IncomeTypeRepository $incomeTypeRepository;
+    protected IncomeRepository $incomeRepository;
 
-    public function __construct(DocumentParserServiceInterface $documentParser, IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser) {
+    public function __construct(DocumentParserServiceInterface $documentParser, IncomeDuplicateCheckerServiceInterface $duplicateChecker, DateParserServiceInterface $dateParser, IncomeRepository $incomeRepository, IncomeTypeRepository $incomeTypeRepository) {
         $this->duplicateChecker = $duplicateChecker;
         $this->dateParser = $dateParser;
         $this->documentParser = $documentParser;
+        $this->incomeRepository = $incomeRepository;
+        $this->incomeTypeRepository = $incomeTypeRepository;
     }
 
     /**
      * Affiche le formulaire d'import
      */
     public function showForm(): View {
-        return view('imports.index', [
-            'incomeTypes' => IncomeType::all()
-        ]);
+        if($incomeTypeList = $this->incomeTypeRepository->selectAll())
+            return view('imports.index', [
+                'incomeTypes' => $incomeTypeList
+            ]);
+        else
+            return view('error.index', [
+                'title' => "La requête SQL a échoué",
+                'message' => $this->incomeRepository->errorDisplayHTML("Aucune erreur n'a été renvoyée lors de la tentative de requête")
+            ]);
     }
 
     /**
