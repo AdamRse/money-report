@@ -28,6 +28,9 @@ class DateParserService implements DateParserServiceInterface{
         return false;
     }
 
+    /**
+     * Certifie que le format retourné est parsable avec Carbon::createFromFormat pour toutes les dates, ou renvoie false
+     */
     public function findDateFormat(array|string $find):string|false{
         return (is_string($find)) ? $this->findDateFormatDocument($find) : $this->findDateFormatArray($find);
     }

@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Interfaces\Traits\ErrorManagementInterface;
+
 trait ErrorManagementTrait
 {
     /**
@@ -57,5 +59,9 @@ trait ErrorManagementTrait
 
     public function errorGetArray(): array{
         return $this->_errors;
+    }
+
+    public function errorHeritFrom(ErrorManagementInterface $parent):void{
+        $this->_errors = array_merge($parent->errorGetArray(), $this->_errors);
     }
 }
