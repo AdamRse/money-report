@@ -4,6 +4,7 @@
 namespace Database\Seeders;
 
 use App\Models\IncomeType;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,18 @@ class DatabaseSeeder extends Seeder {
      * Seed the application's database.
      */
     public function run(): void {
+        $roles = [
+            [
+                'id' => 1,
+                'label' => 'user',
+                'admin' => 0
+            ],
+            [
+                'id' => 2,
+                'label' => 'admin',
+                'admin' => 1
+            ]
+        ];
         $types = [
             [
                 'name' => 'Professionnel',
@@ -51,8 +64,11 @@ class DatabaseSeeder extends Seeder {
             ]
         ];
 
-        foreach ($types as $type) {
+        foreach ($types as $type){
             IncomeType::create($type);
+        }
+        foreach ($roles as $role){
+            Role::create($role);
         }
     }
 }
