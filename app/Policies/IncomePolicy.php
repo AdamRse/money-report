@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Abstract\GlobalPolicyAbstract;
 use App\Models\Income;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
 
 class IncomePolicy extends GlobalPolicyAbstract{
