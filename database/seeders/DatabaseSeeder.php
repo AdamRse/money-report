@@ -7,22 +7,59 @@ use App\Models\IncomeType;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class DatabaseSeeder extends Seeder {
     /**
      * Seed the application's database.
      */
+
+    private function getAllModels():array{
+        //On doit chercher tous les modèles existants dans app/Models pour définir des droits spécifiques à chaque modèles
+        $modelsList = [];
+
+        $modelsPath = app_path('Models');
+        $files = File::allFiles($modelsPath);
+
+        foreach ($files as $file){
+            $relativePath = str_replace(
+                ['/', '.php'],
+                ['\\', ''],
+                $file->getRelativePathname()
+            );
+
+            $className = 'App\\Models\\' . $relativePath;
+
+            // Vérifier si la classe existe et qu'elle n'est pas déjà ajouté à $modelsList
+            if(class_exists($className)){
+                $addModel = true;
+                foreach ($modelsList as $model) {
+                    if($model==$className){
+                        $addModel = false;
+                        break;
+                    }
+                }
+
+                if($addModel)
+                    $modelsList[] = $className;
+            }
+        }
+        return $modelsList;
+    }
     public function run(): void {
+        $adminRignts = [];
+        foreach ($this->getAllModels() as $modelName){
+            $adminRignts[$modelName]="rwd";
+        }
         $roles = [
             [
                 'id' => 1,
-                'label' => 'user',
-                'admin' => 0
+                'label' => 'admin',
+                ...$adminRignts //Tout à rwd
             ],
             [
                 'id' => 2,
-                'label' => 'admin',
-                'admin' => 1
+                'label' => 'customer'
             ]
         ];
         $types = [

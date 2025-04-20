@@ -25,14 +25,19 @@ class AppServiceProvider extends ServiceProvider {
      * Register any application services.
      */
     public function register(): void {
+        //Models
         $this->app->bind(IncomeRepositoryInterface::class, IncomeRepository::class);
+        $this->app->bind(IncomeTypeRepositoryInterface::class, IncomeTypeRepository::class);
+
+        //services
         $this->app->bind(DateParserServiceInterface::class, DateParserService::class);
         $this->app->bind(IncomeDuplicateCheckerServiceInterface::class, IncomeDuplicateCheckerService::class);
         $this->app->bind(DocumentParserServiceInterface::class, DocumentParserService::class);
         $this->app->bind(IncomeStatisticsServiceInterface::class, IncomeStatisticsService::class);
-        $this->app->bind(BankParserFactoryInterface::class, BankParserFactory::class);
         $this->app->bind(FileEncodingServiceInterface::class, FileEncodingService::class);
-        $this->app->bind(IncomeTypeRepositoryInterface::class, IncomeTypeRepository::class);
+
+        //autres
+        $this->app->bind(BankParserFactoryInterface::class, BankParserFactory::class);
     }
 
     /**

@@ -6,8 +6,6 @@ use App\Interfaces\Services\BankParserInterface;
 use App\Traits\ErrorManagementTrait;
 use App\Interfaces\Services\IncomeDuplicateCheckerServiceInterface;
 use App\Interfaces\Services\DateParserServiceInterface;
-use App\Models\Income;
-use Carbon\Carbon;
 
 
 abstract class BankParserAbstract implements BankParserInterface{
