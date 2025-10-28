@@ -1,3 +1,5 @@
+-Ajouter IncomeReportController -> index
+    Besoin de créer IncomeRepository -> getUserIncomesByDateRange()
 -Ajout des droits (champ users) pour un user, et les gérer dans les repositories
 -Le calcul des statistiques ne doit pas se faire côté front
 -Utiliser les policies pour gérer le droit d'accès aux ressources, il ne doit pas se faire dans les repositories

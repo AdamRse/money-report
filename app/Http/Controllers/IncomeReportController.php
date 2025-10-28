@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeReport\FilterIncomesRequest;
+use App\Repositories\IncomeRepository;
 use App\Interfaces\Services\IncomeStatisticsServiceInterface;
 use App\Models\Income;
 use Carbon\Carbon;
@@ -11,23 +12,54 @@ use Illuminate\View\View;
 class IncomeReportController extends Controller {
 
     private IncomeStatisticsServiceInterface $statisticsService;
+    private IncomeRepository $incomeRepository;
 
-    public function __construct(private IncomeStatisticsServiceInterface $statistics) {
+    public function __construct(private IncomeStatisticsServiceInterface $statistics, IncomeRepository $incomeRepository) {
         $this->statisticsService = $statistics;
+        $this->incomeRepository = $incomeRepository;
     }
 
     /**
      * Affiche la liste des revenus avec les statistiques et les filtres
      */
+    //Old, affiche tous les incomes lol
+    // public function index(FilterIncomesRequest $request): View {
+    //     // Construction de la requête de base
+    //     $query = Income::with('incomeType')->orderBy('income_date', 'desc');
+    //     dd($query);
+    //     // Application des filtres
+    //     $periodMessage = $this->applyFilters($query, $request);
+
+    //     // Récupération des revenus
+    //     $incomes = $query->get();
+
+    //     // Calcul des statistiques
+    //     $statistics = $this->statisticsService->calculateStatistics($incomes);
+
+    //     return view('income-report.index', [
+    //         'incomes' => $incomes,
+    //         'statistics' => $statistics,
+    //         'periodMessage' => $periodMessage
+    //     ]);
+    // }
     public function index(FilterIncomesRequest $request): View {
         // Construction de la requête de base
-        $query = Income::with('incomeType')->orderBy('income_date', 'desc');
+        //$query = Income::with('incomeType')->orderBy('income_date', 'desc');
+        //dd($request);
+        
 
-        // Application des filtres
-        $periodMessage = $this->applyFilters($query, $request);
-
-        // Récupération des revenus
-        $incomes = $query->get();
+        switch($request->get("filter_type")){
+            case "period":
+                break;
+            case "month":
+                $incomes = $this->incomeRepository->getUserIncomesByDateRange($request->get("month_select"), $request->get("month_select"));
+                $periodMessage = "Revenus du mois de ".$request->get("month_select")." ".$request->get("year_select");
+                break;
+            default:
+                $incomes = $this->incomeRepository->getUserIncomesByYear();
+                $periodMessage = "Tous vos revenus de l'année en cours";
+                break;
+        }
 
         // Calcul des statistiques
         $statistics = $this->statisticsService->calculateStatistics($incomes);
