@@ -29,10 +29,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers du projet
+# Copier uniquement composer.json et composer.lock pour le cache
+COPY composer.json composer.lock ./
+
+# Installer les dépendances PHP (sera caché si composer.json/lock n'ont pas changé)
+RUN composer install --no-interaction --no-dev --optimize-autoloader --no-scripts
+
+# Copier le reste des fichiers
 COPY . .
 
-# Installer les dépendances PHP
+# Finaliser l'installation de composer avec les scripts
 RUN composer install --no-interaction --optimize-autoloader
 
 # Créer le fichier .env s'il n'existe pas
@@ -46,7 +52,7 @@ RUN mkdir -p storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data /app
 
-# Exposer le port (optionnel, utilisé par Nginx)
+# Exposer le port
 EXPOSE 9000
 
 # Commande par défaut
