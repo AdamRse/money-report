@@ -7,6 +7,7 @@ use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\Services\DateParserService;
 use App\Traits\ErrorManagementTrait;
 use Exception;
 use Illuminate\Support\Arr;
@@ -113,10 +114,11 @@ class IncomeRepository implements IncomeRepositoryInterface {
         $idUser = Auth::id();
         $query = Income::with('incomeType')
             ->where('user_id', $idUser)
-            ->whereYear('income_date', $year);
+            ->whereYear('income_date', $year)
+            ->orderBy('income_date', 'desc');
 
         try{
-            return $query->orderBy('income_date', 'desc')->get();
+            return $query->get();
         }
         catch(Exception $e){
             $this->errorAdd("La requête a échouée : ".$e->getMessage());
@@ -125,6 +127,23 @@ class IncomeRepository implements IncomeRepositoryInterface {
     }
 
     public function getUserIncomesByDateRange(Carbon|string $dateStart, Carbon|string $dateEnd){
+        if(is_string($dateStart))
+            $dateStart = Carbon::parse($dateStart);
+        if(is_string($dateEnd))
+            $dateEnd = Carbon::parse($dateEnd);
+
+        $idUser = Auth::id();
+        $query = Income::with('incomeType')
+            ->where('user_id', $idUser)
+            ->whereBetween('income_date', [$dateStart, $dateEnd])
+            ->orderBy('income_date', 'desc');
+        try{
+            return $query->get();
+        }
+        catch(Exception $e){
+            $this->errorAdd("La requête a échouée : ".$e->getMessage());
+            return false;
+        }
     }
 
     /**
