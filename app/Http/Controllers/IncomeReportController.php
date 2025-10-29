@@ -22,38 +22,28 @@ class IncomeReportController extends Controller {
     /**
      * Affiche la liste des revenus avec les statistiques et les filtres
      */
-    //Old, affiche tous les incomes lol
-    // public function index(FilterIncomesRequest $request): View {
-    //     // Construction de la requête de base
-    //     $query = Income::with('incomeType')->orderBy('income_date', 'desc');
-    //     dd($query);
-    //     // Application des filtres
-    //     $periodMessage = $this->applyFilters($query, $request);
-
-    //     // Récupération des revenus
-    //     $incomes = $query->get();
-
-    //     // Calcul des statistiques
-    //     $statistics = $this->statisticsService->calculateStatistics($incomes);
-
-    //     return view('income-report.index', [
-    //         'incomes' => $incomes,
-    //         'statistics' => $statistics,
-    //         'periodMessage' => $periodMessage
-    //     ]);
-    // }
     public function index(FilterIncomesRequest $request): View {
         // Construction de la requête de base
         //$query = Income::with('incomeType')->orderBy('income_date', 'desc');
         //dd($request);
         
+        if($request->get("start_date")){
+            dd(Carbon::parse($request->get("start_date"))->format('d/m/Y'), Carbon::parse($request->get("end_date"))->format('d/m/Y'));
+        }
+        elseif($request->get("month_number")){
+            dd(Carbon::parse($request->get("month_number").$request->get("year_number"))->format('m/Y'));
+        }
+        else
+            dd($request);
 
         switch($request->get("filter_type")){
             case "period":
+                $incomes = $this->incomeRepository->getUserIncomesByDateRange($request->get("start_date"), $request->get("end_date"));
+                $periodMessage = "Revenus du ".$request->get("start_date")." au ".$request->get("end_date");
                 break;
             case "month":
-                $incomes = $this->incomeRepository->getUserIncomesByDateRange($request->get("month_select"), $request->get("month_select"));
-                $periodMessage = "Revenus du mois de ".$request->get("month_select")." ".$request->get("year_select");
+                $incomes = $this->incomeRepository->getUserIncomesByDateRange($request->get("month_number"), $request->get("year_number"));
+                $periodMessage = "Revenus du mois de ".$request->get("month_number")." ".$request->get("year_number");
                 break;
             default:
                 $incomes = $this->incomeRepository->getUserIncomesByYear();
