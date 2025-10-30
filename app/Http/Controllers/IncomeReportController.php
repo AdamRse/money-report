@@ -34,7 +34,6 @@ class IncomeReportController extends Controller {
                 $dateRequestStart = Carbon::createFromDate($request->get("year_number"), $request->get("month_number"), 1);
                 $dateRequestEnd = Carbon::createFromDate($request->get("year_number"), $request->get("month_number"), 1)->endOfMonth();
                 $incomes = $this->incomeRepository->getUserIncomesByDateRange($dateRequestStart, $dateRequestEnd);
-                Carbon::setLocale('fr');
                 $periodMessage = "Revenus pour ".$dateRequestStart->translatedFormat('F Y');
                 break;
             default:
@@ -51,43 +50,5 @@ class IncomeReportController extends Controller {
             'statistics' => $statistics,
             'periodMessage' => $periodMessage
         ]);
-    }
-
-    /**
-     * Applique les filtres à la requête et retourne le message de période
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param FilterIncomesRequest $request
-     */
-    private function applyFilters($query, FilterIncomesRequest $request): string {
-        if (!$request->filled('filter_type')) {
-            return '';
-        }
-
-        if ($request->filter_type === 'period') {
-            $query->whereBetween('income_date', [
-                $request->start_date,
-                $request->end_date
-            ]);
-
-            if ($query->doesntExist()) {
-                $start = Carbon::parse($request->start_date)->format('d/m/Y');
-                $end = Carbon::parse($request->end_date)->format('d/m/Y');
-                return "Aucun revenu trouvé entre le $start et le $end";
-            }
-        } elseif ($request->filter_type === 'month') {
-            $query->whereYear('income_date', $request->year_number)
-                ->whereMonth('income_date', $request->month_number);
-
-            if ($query->doesntExist()) {
-                $date = Carbon::create()
-                    ->setYear((int)$request->year_number)
-                    ->setMonth((int)$request->month_number)
-                    ->locale('fr');
-                return "Aucun revenu trouvé pour " . $date->isoFormat('MMMM YYYY');
-            }
-        }
-
-        return '';
     }
 }

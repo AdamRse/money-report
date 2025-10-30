@@ -6,7 +6,3 @@
 //back
 -les requêtes avec with() peuvent être changées en requêtes jointes pour optimiser le nombre de requêtes (with() en fait 2)
 -le système de return new class pour les services bankParsers au lieu de scanner ? A voir
-//front
--Pour ajouter un revenu et un nouveau type de revenu en même temps, le formulaire ne fait pas sens.
-    Le <hr> entre revenu taxable et revenu à déclarer ???
-    Le textarea Notes (revenu) après le formulaire type de revenu quand il est déployé n'a aucun sens
